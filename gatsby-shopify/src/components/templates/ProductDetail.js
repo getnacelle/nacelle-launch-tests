@@ -1,10 +1,18 @@
 import React from 'react';
 import { Product } from '../Product';
+import Layout from './Layout';
 
 const ProductDetail = ({ pageContext }) => {
   const { title, handle, imageSrc, variants } = pageContext;
   return (
-    <Product title={title} handle={handle} src={imageSrc} variants={variants} />
+    <Layout>
+      <Product
+        title={title}
+        handle={handle}
+        src={imageSrc}
+        variants={variants}
+      />
+    </Layout>
   );
 };
 
