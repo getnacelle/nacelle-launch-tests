@@ -1,9 +1,30 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'gatsby';
+import styled from 'styled-components';
+import Image from './Image';
 import { addToCart } from '../state/actions';
 
-export const Product = ({ title, handle, src, variants }) => {
+const ProductCard = styled.article`
+  display: grid;
+  grid-template-rows: 6em 8em 4em 3em 2em;
+  justify-content: center;
+  text-align: center;
+  height: 500px;
+  width: 15em;
+  padding: 3em;
+  border: 1px solid rgba(0, 0, 0, 15%);
+  border-radius: 0.3em;
+  a {
+    text-decoration: none;
+    font-size: 0.8em;
+  }
+  select {
+    margin: 1em;
+  }
+`;
+
+const Product = ({ title, handle, src, variants }) => {
   const dispatch = useDispatch();
   const hasMultipleVariants = variants.length > 1;
   const [selectedVariant, selectVariant] = useState(variants[0]);
@@ -21,18 +42,12 @@ export const Product = ({ title, handle, src, variants }) => {
     [dispatch, handle, selectedVariant, src, title]
   );
   return (
-    <article
-      style={{
-        width: '15em',
-        borderBottom: '1px solid black',
-        padding: '3em 0'
-      }}
-    >
-      <h1>
+    <ProductCard>
+      <h2>
         {handle ? <Link to={`/products/${handle}`}>{title}</Link> : title}
-      </h1>
-      {src && <img src={src} alt={title} style={{ width: '15em' }} />}
-      {hasMultipleVariants && (
+      </h2>
+      {src && <Image src={src} alt={title} />}
+      {hasMultipleVariants ? (
         <div>
           <select name="choice" onBlur={handleChange} onChange={handleChange}>
             {variants.map((el, idx) => (
@@ -42,11 +57,15 @@ export const Product = ({ title, handle, src, variants }) => {
             ))}
           </select>
         </div>
+      ) : (
+        <div />
       )}
       <p>$ {Number(selectedVariant.price).toFixed(2)}</p>
       <button type="button" onClick={addToCartMemo}>
         Add To Cart
       </button>
-    </article>
+    </ProductCard>
   );
 };
+
+export default Product;

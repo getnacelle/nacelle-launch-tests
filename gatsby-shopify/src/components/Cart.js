@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'gatsby';
 import { useCheckout } from '@nacelle/nacelle-react-hooks';
+import styled from 'styled-components';
+import Image from './Image';
 import {
   increment,
   decrement,
@@ -9,6 +11,23 @@ import {
   toggleCart,
   storeCheckout
 } from '../state/actions';
+
+const CartContainer = styled.div`
+  position: fixed;
+  top: 100px;
+  right: 0;
+  height: calc(100% - 100px);
+  width: 20em;
+  overflow: auto;
+  border: 1px solid blue;
+  background-color: white;
+`;
+
+const ButtonContainer = styled.div`
+  margin: 1em 0;
+  display: flex;
+  justify-content: center;
+`;
 
 const Cart = () => {
   const lineItems = useSelector(state => state.cart.lineItems);
@@ -32,25 +51,8 @@ const Cart = () => {
   }, [checkoutData, dispatch]);
   const isCartEmpty = lineItems.length === 0;
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '0',
-        right: '0',
-        height: '100%',
-        width: '20em',
-        overflow: 'auto',
-        border: '1px solid blue',
-        backgroundColor: 'white'
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button type="button" onClick={() => dispatch(toggleCart())}>
-          Hide Cart
-        </button>
-      </div>
-      <h2 style={{ textAlign: 'center' }}>Cart</h2>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <CartContainer>
+      <ButtonContainer>
         <button
           type="button"
           onClick={() => getCheckoutData()}
@@ -58,13 +60,13 @@ const Cart = () => {
         >
           {isLoading ? <>Loading...</> : <>Checkout</>}
         </button>
-      </div>
+      </ButtonContainer>
       {isCartEmpty ? (
         <p style={{ padding: '2em' }}>Your cart is empty</p>
       ) : (
         <CartItems lineItems={lineItems} />
       )}
-    </div>
+    </CartContainer>
   );
 };
 
@@ -73,13 +75,10 @@ const CartMenu = () => {
   const dispatch = useDispatch();
   return (
     <div>
-      {isCartVisible ? (
-        <Cart />
-      ) : (
-        <button type="button" onClick={() => dispatch(toggleCart())}>
-          Cart
-        </button>
-      )}
+      {isCartVisible && <Cart />}
+      <button type="button" onClick={() => dispatch(toggleCart())}>
+        Cart
+      </button>
     </div>
   );
 };
@@ -95,7 +94,7 @@ const CartItem = ({ item }) => {
           item.title
         )}
       </h3>
-      <img src={item.src} alt={item.title} style={{ maxWidth: '150px' }} />
+      <Image src={item.src} alt={item.title} style={{ maxWidth: '150px' }} />
       <p>{item.variant.title}</p>
       <p>
         Quantity: {item.variant.qty}
@@ -122,10 +121,14 @@ const CartItems = ({ lineItems }) => {
   );
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <ButtonContainer>
         <button type="button" onClick={() => dispatch(clearCart())}>
           Clear Cart
         </button>
+      </ButtonContainer>
+      <div style={{ textAlign: 'center' }}>
+        <h3>Total</h3>
+        <p>$ {total.toFixed(2)}</p>
       </div>
       <ul style={{ listStyle: 'none' }}>
         {lineItems.map(el => (
@@ -134,10 +137,6 @@ const CartItems = ({ lineItems }) => {
           </li>
         ))}
       </ul>
-      <div style={{ textAlign: 'center' }}>
-        <h3>Total</h3>
-        <p>$ {total.toFixed(2)}</p>
-      </div>
     </>
   );
 };
