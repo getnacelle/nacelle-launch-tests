@@ -25,11 +25,6 @@ const HeaderStyle = styled.header`
     align-items: center;
     color: black;
   }
-  button a {
-    display: flex;
-    justify-content: center;
-    color: white;
-  }
 `;
 
 const Inner = styled.div`

@@ -7,11 +7,11 @@ import { addToCart } from '../state/actions';
 
 const ProductCard = styled.article`
   display: grid;
-  grid-template-rows: 6em 8em 4em 3em 2em;
+  grid-template-rows: 4em 10em 4em 3em 2em;
   justify-content: center;
   text-align: center;
-  height: 500px;
-  width: 15em;
+  min-width: 15em;
+  max-width: 20em;
   padding: 3em;
   border: 1px solid rgba(0, 0, 0, 15%);
   border-radius: 0.3em;

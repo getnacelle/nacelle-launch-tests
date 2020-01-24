@@ -24,6 +24,7 @@ const HeroContainer = styled.div`
   }
   div {
     margin: 0 auto;
+    min-width: 12em;
     padding: 1em;
     border: 1px solid white;
     border-radius: 4px;
