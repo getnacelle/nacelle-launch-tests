@@ -5,3 +5,7 @@ export { default as Logo } from './Logo';
 export { default as Product } from './Product';
 export { default as Products } from './Products';
 export { default as Image } from './Image';
+export { default as Landing } from './Landing';
+export { default as Blog } from './Blog';
+export { default as Layout } from './Layout';
+export { default as SEO } from './SEO';
