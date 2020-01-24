@@ -19,14 +19,26 @@ const CartContainer = styled.div`
   height: calc(100% - 100px);
   width: 20em;
   overflow: auto;
-  border: 1px solid blue;
+  border: 1px solid slategray;
   background-color: white;
+  p {
+    text-align: center;
+  }
 `;
 
 const ButtonContainer = styled.div`
   margin: 1em 0;
   display: flex;
   justify-content: center;
+`;
+
+const CartButton = styled.button`
+  border: 1px solid rgba(0, 0, 0, 10%);
+  border-radius: 5px;
+  padding: 0.25em 2em;
+  background-color: #212736;
+  color: white;
+  cursor: pointer;
 `;
 
 const Cart = () => {
@@ -53,16 +65,18 @@ const Cart = () => {
   return (
     <CartContainer>
       <ButtonContainer>
-        <button
-          type="button"
-          onClick={() => getCheckoutData()}
-          disabled={isLoading}
-        >
-          {isLoading ? <>Loading...</> : <>Checkout</>}
-        </button>
+        {!isCartEmpty && (
+          <button
+            type="button"
+            onClick={() => getCheckoutData()}
+            disabled={isLoading}
+          >
+            {isLoading ? <>Loading...</> : <>Checkout</>}
+          </button>
+        )}
       </ButtonContainer>
       {isCartEmpty ? (
-        <p style={{ padding: '2em' }}>Your cart is empty</p>
+        <p>Your cart is empty</p>
       ) : (
         <CartItems lineItems={lineItems} />
       )}
@@ -76,9 +90,9 @@ const CartMenu = () => {
   return (
     <div>
       {isCartVisible && <Cart />}
-      <button type="button" onClick={() => dispatch(toggleCart())}>
+      <CartButton type="button" onClick={() => dispatch(toggleCart())}>
         Cart
-      </button>
+      </CartButton>
     </div>
   );
 };
