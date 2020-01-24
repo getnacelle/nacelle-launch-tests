@@ -1,4 +1,3 @@
-const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -6,8 +5,8 @@ dotenv.config();
 module.exports = {
   siteMetadata: {
     title: `Nacelle Launch Test: Gatsby Shopify`,
-    description: `This project uses Shopify for a 
-    PIM & CMS, with a Gatsby frontend.`,
+    description: `This project is powered by Nacelle, with
+    Shopify for a PIM & CMS, with a Gatsby frontend.`,
     author: `Nacelle Inc. (getnacelle.com)`
   },
   plugins: [
@@ -16,13 +15,6 @@ module.exports = {
       options: {
         nacelle_space_id: process.env.NACELLE_SPACE_ID,
         nacelle_graphql_token: process.env.NACELLE_GRAPHQL_TOKEN
-      }
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `images`,
-        path: path.join(__dirname, `src`, `images`)
       }
     },
     {
@@ -37,10 +29,6 @@ module.exports = {
         icon: `src/images/favicon/favicon-32x32.png`
       }
     },
-    `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-styled-components`,
     {
       resolve: `gatsby-alias-imports`,
       options: {
@@ -48,6 +36,8 @@ module.exports = {
           src: `src/`
         }
       }
-    }
+    },
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-styled-components`
   ]
 };
