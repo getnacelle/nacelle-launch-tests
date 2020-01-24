@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Header from '../Header';
-import '../../styles/layout.css';
+import Header from './Header';
+import '../styles/layout.css';
 
 const Container = styled.div`
   position: relative;

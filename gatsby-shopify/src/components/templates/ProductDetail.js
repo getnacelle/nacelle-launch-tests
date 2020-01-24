@@ -1,6 +1,6 @@
 import React from 'react';
+import Layout from 'src/components/Layout';
 import Product from '../Product';
-import Layout from './Layout';
 
 const ProductDetail = ({ pageContext }) => {
   const { title, handle, imageSrc, variants } = pageContext;

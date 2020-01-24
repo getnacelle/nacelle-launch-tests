@@ -1,6 +1,6 @@
 import React from 'react';
 import { HeroImage, Products } from 'src/components';
-import Layout from './Layout';
+import Layout from 'src/components/Layout';
 
 const Collection = ({ pageContext }) => {
   const { title, imageSrc, products } = pageContext;
