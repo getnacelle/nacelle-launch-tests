@@ -1,7 +1,7 @@
-const path = require('path')
-const dotenv = require('dotenv')
+const path = require('path');
+const dotenv = require('dotenv');
 
-dotenv.config()
+dotenv.config();
 
 module.exports = {
   siteMetadata: {
@@ -22,8 +22,8 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
-        path: path.join(__dirname, `src`, `images`),
-      },
+        path: path.join(__dirname, `src`, `images`)
+      }
     },
     {
       resolve: `gatsby-plugin-manifest`,
@@ -38,8 +38,16 @@ module.exports = {
       }
     },
     `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-sharp`, 
+    `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-styled-components`
+    `gatsby-plugin-styled-components`,
+    {
+      resolve: `gatsby-alias-imports`,
+      options: {
+        aliases: {
+          src: `src/`
+        }
+      }
+    }
   ]
 };

@@ -105,5 +105,12 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
   },
-  "plugins": ["html", "prettier", "react-hooks"]
+  "plugins": ["html", "prettier", "react-hooks"],
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["src", "./src"]]
+      }
+    }
+  }
 }
