@@ -32,14 +32,16 @@ const LandingPage = ({ item, recentArrivals }) => {
     case 'hero-banner':
       return (
         <article>
-          {src && <HeroImage src={src} alt={title} title={title} />}
+          {src && (
+            <HeroImage src={src} alt={title} title={title} height="100vh" />
+          )}
         </article>
       );
     case 'side-by-side':
       return (
         <article>
           <SideBySidePanel>
-            {src && <HeroImage src={src} alt={title} />}
+            {src && <HeroImage src={src} alt={title} minHeight="400px" />}
             <div>
               <h2>{title}</h2>
               <p>{content}</p>
@@ -55,7 +57,7 @@ const LandingPage = ({ item, recentArrivals }) => {
               <h2>{title}</h2>
               <p>{content}</p>
             </div>
-            {src && <HeroImage src={src} alt={title} />}
+            {src && <HeroImage src={src} alt={title} minHeight="400px" />}
           </SideBySidePanel>
         </article>
       );

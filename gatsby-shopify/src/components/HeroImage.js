@@ -6,7 +6,8 @@ const HeroContainer = styled.div`
   margin: 0 auto;
   position: relative;
   width: 100%;
-  min-height: 18em;
+  min-height: ${({ minHeight }) => minHeight || '18em'};
+  height: ${({ height }) => height || 'inherit'};
   display: flex;
   align-items: center;
   picture {
@@ -36,9 +37,9 @@ const HeroContainer = styled.div`
   }
 `;
 
-const HeroImage = ({ title, src }) => (
-  <HeroContainer>
-    <Image src={src} alt={title} />
+const HeroImage = ({ title, src, height, minHeight }) => (
+  <HeroContainer height={height} minHeight={minHeight}>
+    <Image src={src} alt={title} hero />
     {title && (
       <div>
         <h1>{title}</h1>
