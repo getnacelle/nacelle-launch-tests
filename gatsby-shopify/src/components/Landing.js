@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 import HeroImage from './HeroImage';
 import Products from './Products';
 
@@ -8,55 +9,98 @@ const CenteredTextBlock = styled.div`
   padding-top: 2em;
 `;
 
+const CenteredBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+  p {
+    max-width: 30em;
+  }
+  @media screen and (max-width: 768px) {
+    height: 30em;
+  }
+`;
+
 const SideBySidePanel = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 10%);
-  div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2em;
-    p {
-      max-width: 30em;
-    }
-  }
 `;
 
 const LandingPage = ({ item, recentArrivals }) => {
+  const isMobile = useSelector(state => state.user.isMobile);
   const { title, handle, content } = item;
   const src = item.featuredMedia ? item.featuredMedia.src : null;
   switch (handle) {
     case 'hero-banner':
       return (
         <article>
-          {src && <HeroImage src={src} alt={title} title={title} />}
+          {src && (
+            <HeroImage src={src} alt={title} title={title} height="100vh" />
+          )}
         </article>
       );
     case 'side-by-side':
       return (
         <article>
-          <SideBySidePanel>
-            {src && <HeroImage src={src} alt={title} />}
-            <div>
-              <h2>{title}</h2>
-              <p>{content}</p>
-            </div>
-          </SideBySidePanel>
+          {isMobile && (
+            <>
+              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
+              <CenteredBlock>
+                <h2>{title}</h2>
+                <p>{content}</p>
+              </CenteredBlock>
+            </>
+          )}
+          {!isMobile && (
+            <SideBySidePanel>
+              {src && (
+                <HeroImage
+                  src={src}
+                  alt={title}
+                  title={title}
+                  minHeight="400px"
+                />
+              )}
+              <CenteredBlock>
+                <h2>{title}</h2>
+                <p>{content}</p>
+              </CenteredBlock>
+            </SideBySidePanel>
+          )}
         </article>
       );
     case 'side-by-side-2':
       return (
         <article>
-          <SideBySidePanel>
-            <div>
-              <h2>{title}</h2>
-              <p>{content}</p>
-            </div>
-            {src && <HeroImage src={src} alt={title} />}
-          </SideBySidePanel>
+          {isMobile && (
+            <>
+              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
+              <CenteredBlock>
+                <h2>{title}</h2>
+                <p>{content}</p>
+              </CenteredBlock>
+            </>
+          )}
+          {!isMobile && (
+            <SideBySidePanel>
+              <CenteredBlock>
+                <h2>{title}</h2>
+                <p>{content}</p>
+              </CenteredBlock>
+              {src && (
+                <HeroImage
+                  src={src}
+                  alt={title}
+                  title={title}
+                  minHeight="400px"
+                />
+              )}
+            </SideBySidePanel>
+          )}
         </article>
       );
     case 'product-grid':

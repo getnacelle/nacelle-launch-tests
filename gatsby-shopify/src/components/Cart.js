@@ -20,10 +20,10 @@ const CartContainer = styled.div`
   overflow: auto;
   border: 1px solid slategray;
   background-color: white;
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 769px) {
     width: 20em;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     width: 100%;
   }
   p {
@@ -34,11 +34,14 @@ const CartContainer = styled.div`
 const ButtonContainer = styled.div`
   margin: 1em 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  padding: 0 3em;
 `;
 
 const CartButton = styled.button`
   border: 1px solid rgba(0, 0, 0, 10%);
+  width: 8em;
   border-radius: 5px;
   padding: 0.25em 2em;
   background-color: #212736;
@@ -69,22 +72,29 @@ const Cart = () => {
   const isCartEmpty = lineItems.length === 0;
   return (
     <CartContainer>
-      <ButtonContainer>
-        {!isCartEmpty && (
-          <button
-            type="button"
-            onClick={() => getCheckoutData()}
-            disabled={isLoading}
-          >
-            {isLoading ? <>Loading...</> : <>Checkout</>}
-          </button>
+      <div>
+        <ButtonContainer>
+          {!isCartEmpty && (
+            <button
+              type="button"
+              onClick={() => getCheckoutData()}
+              disabled={isLoading}
+            >
+              {isLoading ? <>Loading...</> : <>Checkout</>}
+            </button>
+          )}
+        </ButtonContainer>
+        {isCartEmpty ? (
+          <ButtonContainer>
+            <p>Your cart is empty</p>
+            <button type="button" onClick={() => dispatch(toggleCart())}>
+              Continue Shopping
+            </button>
+          </ButtonContainer>
+        ) : (
+          <CartItems lineItems={lineItems} />
         )}
-      </ButtonContainer>
-      {isCartEmpty ? (
-        <p>Your cart is empty</p>
-      ) : (
-        <CartItems lineItems={lineItems} />
-      )}
+      </div>
     </CartContainer>
   );
 };
@@ -96,16 +106,20 @@ const CartMenu = () => {
     <div>
       {isCartVisible && <Cart />}
       <CartButton type="button" onClick={() => dispatch(toggleCart())}>
-        Cart
+        {isCartVisible ? 'Close' : 'Cart'}
       </CartButton>
     </div>
   );
 };
 
+const CartItemContainer = styled.div`
+  border-bottom: 1px solid slategray;
+`;
+
 const CartItem = ({ item }) => {
   const dispatch = useDispatch();
   return (
-    <div style={{ borderBottom: '1px solid black' }}>
+    <CartItemContainer>
       <h3>
         {item.handle ? (
           <Link to={`/products/${item.handle}`}>{item.title}</Link>
@@ -113,7 +127,7 @@ const CartItem = ({ item }) => {
           item.title
         )}
       </h3>
-      <Image src={item.src} alt={item.title} style={{ maxWidth: '150px' }} />
+      <Image src={item.src} alt={item.title} />
       <p>{item.variant.title}</p>
       <p>
         Quantity: {item.variant.qty}
@@ -127,7 +141,7 @@ const CartItem = ({ item }) => {
         </span>
       </p>
       <p>$ {(Number(item.variant.price) * item.variant.qty).toFixed(2)}</p>
-    </div>
+    </CartItemContainer>
   );
 };
 
