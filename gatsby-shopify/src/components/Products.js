@@ -4,11 +4,14 @@ import Product from './Product';
 
 const ProductGrid = styled.ul`
   display: grid;
-  min-width: 70%;
   list-style-type: none;
-  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
   grid-column-gap: 1em;
   grid-row-gap: 1em;
+  margin: 0;
+  @media screen and (min-width: 1023px) {
+    min-width: 70%;
+  }
 `;
 
 const Container = styled.div`

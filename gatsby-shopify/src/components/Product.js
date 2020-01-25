@@ -3,15 +3,15 @@ import { useDispatch } from 'react-redux';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
 import Image from './Image';
-import { addToCart } from '../state/actions';
+import { addToCart } from '../state/cart-actions';
 
 const ProductCard = styled.article`
   display: grid;
-  grid-template-rows: 4em 10em 4em 3em 2em;
+  grid-template-rows: 4em 1fr 4em 3em 2em;
   justify-content: center;
   text-align: center;
-  min-width: 15em;
-  max-width: 20em;
+  min-width: 20%;
+  margin: 0 2em;
   padding: 3em;
   border: 1px solid rgba(0, 0, 0, 15%);
   border-radius: 0.3em;
