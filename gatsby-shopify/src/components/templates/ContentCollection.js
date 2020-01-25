@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroImage, Products, Landing, Blog } from 'src/components';
+import { HeroImage, Products, Landing, Blog, SEO } from 'src/components';
 import Layout from 'src/components/Layout';
 
 const CollectionItem = ({ item, page, recentArrivals }) => {
@@ -21,7 +21,7 @@ const CollectionItem = ({ item, page, recentArrivals }) => {
 };
 
 const ContentPage = ({ pageContext }) => {
-  const { handle, content, collection, products } = pageContext;
+  const { title, handle, content, collection, products } = pageContext;
   let recentArrivals;
   if (handle === 'homepage' && products !== null) {
     const getLatestArrivalTimes = limit =>
@@ -36,6 +36,7 @@ const ContentPage = ({ pageContext }) => {
   }
   return (
     <Layout>
+      <SEO title={title} />
       {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
       {collection.map(
         (el, idx) =>

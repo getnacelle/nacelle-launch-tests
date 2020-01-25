@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { HeroImage } from 'src/components';
-import Layout from 'src/components/Layout';
+import { HeroImage, Layout, SEO } from 'src/components';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -18,6 +17,7 @@ const ContentPage = ({ pageContext }) => {
   const { title, content, imageSrc } = pageContext;
   return (
     <Layout>
+      <SEO title={title} />
       <Container>
         <h1>{title}</h1>
         {imageSrc && <HeroImage src={imageSrc} alt={title} />}
