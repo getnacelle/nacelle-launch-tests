@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'gatsby';
 import styled from 'styled-components';
 import HeroImage from './HeroImage';
 import Products from './Products';
@@ -76,7 +75,7 @@ const LandingPage = ({ item, recentArrivals }) => {
     default:
       return (
         <div>
-          <h2>{handle && <Link to={`/${page}/${handle}`}>{title}</Link>}</h2>
+          <h2>>{title}</h2>
           {src && <HeroImage src={src} alt={title} />}
         </div>
       );
