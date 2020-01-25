@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { setUserDevice } from 'src/state/user-actions';
 import Header from './Header';
 import '../styles/layout.css';
 
@@ -24,34 +27,47 @@ const Main = styled.main`
   }
 `;
 
-const Layout = ({ children }) => (
-  <>
-    <Container>
-      <Header />
-      <Main>{children}</Main>
-    </Container>
-    <footer>
-      <CenteredText>
-        © {new Date().getFullYear()}, Built with
-        {` `}
-        <a
-          href="https://www.getnacelle.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Nacelle
-        </a>
-        {` and `}
-        <a
-          href="https://www.gatsbyjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Gatsby
-        </a>
-      </CenteredText>
-    </footer>
-  </>
-);
+const Layout = ({ children }) => {
+  const dispatch = useDispatch();
+  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
+  const isNotMobileScreen = useMediaQuery({ minWidth: 768 });
+  const isMobile =
+    // return undefined during SSR, return true / false in the browser
+    isMobileScreen === true || isNotMobileScreen === true
+      ? isMobileScreen
+      : undefined;
+  useEffect(() => {
+    dispatch(setUserDevice({ isMobile }));
+  }, [dispatch, isMobile]);
+  return (
+    <>
+      <Container>
+        <Header />
+        <Main>{children}</Main>
+      </Container>
+      <footer>
+        <CenteredText>
+          © {new Date().getFullYear()}, Built with
+          {` `}
+          <a
+            href="https://www.getnacelle.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Nacelle
+          </a>
+          {` and `}
+          <a
+            href="https://www.gatsbyjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Gatsby
+          </a>
+        </CenteredText>
+      </footer>
+    </>
+  );
+};
 
 export default Layout;
