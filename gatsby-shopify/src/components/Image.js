@@ -6,11 +6,11 @@ const Image = ({ src, title }) => {
   let imageSrc;
   const cloudinaryPrefix = 'https://res.cloudinary.com/';
   if (cloudinaryCloudName) {
-    imageSrc = `${cloudinaryPrefix}${cloudinaryCloudName}/image/fetch/f_auto/w_auto/${src}`;
+    imageSrc = `${cloudinaryPrefix}${cloudinaryCloudName}/image/fetch/f_auto/w_auto,dpr_auto,c_scale/${src}`;
   } else imageSrc = src;
   return (
     <picture>
-      <img src={imageSrc} alt={title} />
+      <img src={imageSrc} alt={title} sizes="100vw" />
     </picture>
   );
 };
