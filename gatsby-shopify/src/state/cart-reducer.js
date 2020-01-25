@@ -5,7 +5,7 @@ import {
   CLEAR_CART,
   TOGGLE_CART,
   STORE_CHECKOUT
-} from './actions';
+} from './cart-actions';
 
 const initialState = {
   lineItems: [],
