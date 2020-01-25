@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useStaticQuery, graphql } from 'gatsby';
+import { useSelector } from 'react-redux';
+import { HamburgerSpring } from 'react-animated-burgers';
 import Cart from './Cart';
 import Logo from './Logo';
 
@@ -50,8 +52,28 @@ const LinkBar = styled.span`
   @media screen and (min-width: 1200px) {
     min-width: 45em;
   }
-  @media screen and (max-width: 1199px) {
-    min-width: 30em;
+  @media screen and (min-width: 768px) and (max-width: 1199px) {
+    min-width: 25em;
+  }
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+const MobileMenuContainer = styled.div`
+  position: fixed;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border: 1px solid slategray;
+  background-color: white;
+  padding: 2em;
+  line-height: 3;
+  p {
+    text-align: center;
   }
 `;
 
@@ -94,18 +116,38 @@ const Links = () => {
   );
 };
 
-const Header = () => (
-  <HeaderStyle>
-    <Inner>
-      <NavBar aria-label="Main Navigation" right>
-        <Logo />
-        <LinkBar>
-          <Links />
-        </LinkBar>
-        <Cart />
-      </NavBar>
-    </Inner>
-  </HeaderStyle>
-);
+const Header = () => {
+  const isMobile = useSelector(state => state.user.isMobile);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const toggleNav = () => setIsNavOpen(!isNavOpen);
+  return (
+    <HeaderStyle>
+      <Inner>
+        <NavBar aria-label="Main Navigation" right>
+          {isMobile && isNavOpen && (
+            <MobileMenuContainer>
+              <LinkBar>
+                <Logo />
+                <Links />
+              </LinkBar>
+            </MobileMenuContainer>
+          )}
+          {isMobile && (
+            <HamburgerSpring isActive={isNavOpen} toggleButton={toggleNav} />
+          )}
+          {!isMobile && (
+            <>
+              <Logo />
+              <LinkBar>
+                <Links />
+              </LinkBar>
+            </>
+          )}
+          <Cart />
+        </NavBar>
+      </Inner>
+    </HeaderStyle>
+  );
+};
 
 export default Header;
