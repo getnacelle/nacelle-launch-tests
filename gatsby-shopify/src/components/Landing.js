@@ -57,19 +57,17 @@ const LandingPage = ({ item, recentArrivals }) => {
           )}
           {!isMobile && (
             <SideBySidePanel>
+              {src && (
+                <HeroImage
+                  src={src}
+                  alt={title}
+                  title={title}
+                  minHeight="400px"
+                />
+              )}
               <CenteredBlock>
-                {src && (
-                  <HeroImage
-                    src={src}
-                    alt={title}
-                    title={title}
-                    minHeight="400px"
-                  />
-                )}
-                <div>
-                  <h2>{title}</h2>
-                  <p>{content}</p>
-                </div>
+                <h2>{title}</h2>
+                <p>{content}</p>
               </CenteredBlock>
             </SideBySidePanel>
           )}
@@ -90,19 +88,17 @@ const LandingPage = ({ item, recentArrivals }) => {
           {!isMobile && (
             <SideBySidePanel>
               <CenteredBlock>
-                <div>
-                  <h2>{title}</h2>
-                  <p>{content}</p>
-                </div>
-                {src && (
-                  <HeroImage
-                    src={src}
-                    alt={title}
-                    title={title}
-                    minHeight="400px"
-                  />
-                )}
+                <h2>{title}</h2>
+                <p>{content}</p>
               </CenteredBlock>
+              {src && (
+                <HeroImage
+                  src={src}
+                  alt={title}
+                  title={title}
+                  minHeight="400px"
+                />
+              )}
             </SideBySidePanel>
           )}
         </article>
