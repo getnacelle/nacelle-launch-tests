@@ -10,17 +10,22 @@ import {
   clearCart,
   toggleCart,
   storeCheckout
-} from '../state/actions';
+} from '../state/cart-actions';
 
 const CartContainer = styled.div`
   position: fixed;
   top: 100px;
   right: 0;
   height: calc(100% - 100px);
-  width: 20em;
   overflow: auto;
   border: 1px solid slategray;
   background-color: white;
+  @media screen and (min-width: 768px) {
+    width: 20em;
+  }
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
   p {
     text-align: center;
   }
