@@ -29,8 +29,8 @@ const Main = styled.main`
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
-  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
-  const isNotMobileScreen = useMediaQuery({ minWidth: 768 });
+  const isMobileScreen = useMediaQuery({ maxWidth: 768 });
+  const isNotMobileScreen = useMediaQuery({ minWidth: 769 });
   const isMobile =
     // return undefined during SSR, return true / false in the browser
     isMobileScreen === true || isNotMobileScreen === true

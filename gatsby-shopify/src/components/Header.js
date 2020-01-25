@@ -49,13 +49,13 @@ const NavBar = styled.nav`
 const LinkBar = styled.span`
   display: flex;
   justify-content: space-between;
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1216px) {
     min-width: 45em;
   }
-  @media screen and (min-width: 768px) and (max-width: 1199px) {
+  @media screen and (min-width: 769px) and (max-width: 1215px) {
     min-width: 25em;
   }
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
     flex-direction: column;
     align-items: center;
   }
