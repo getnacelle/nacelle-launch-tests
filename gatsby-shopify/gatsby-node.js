@@ -9,6 +9,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           items {
             title
             handle
+            description
             createdAt
             featuredMedia {
               src
@@ -31,7 +32,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     }
   `);
   products.data.nacelle.getProducts.items.forEach(item => {
-    const { title, handle, variants } = item;
+    const { title, handle, description, variants } = item;
     let src;
     if (item.featuredMedia) {
       src = item.featuredMedia.src;
@@ -43,6 +44,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       context: {
         title,
         handle,
+        description,
         imageSrc: src,
         variants
       }
