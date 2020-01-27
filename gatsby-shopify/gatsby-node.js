@@ -110,6 +110,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             handle
             title
             content
+            excerpt
             createdAt
             featuredMedia {
               src
@@ -161,6 +162,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           handle: el.handle,
           type: el.type,
           content: el.content,
+          excerpt: el.excerpt,
           imageSrc: el.featuredMedia ? el.featuredMedia.src : null
         }
       })
