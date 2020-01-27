@@ -133,7 +133,11 @@ const Header = () => {
             </MobileMenuContainer>
           )}
           {isMobile && (
-            <HamburgerSpring isActive={isNavOpen} toggleButton={toggleNav} />
+            <HamburgerSpring
+              isActive={isNavOpen}
+              toggleButton={toggleNav}
+              buttonWidth={28}
+            />
           )}
           {!isMobile && (
             <>
