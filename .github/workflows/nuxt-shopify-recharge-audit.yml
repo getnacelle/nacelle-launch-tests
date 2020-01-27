@@ -1,5 +1,8 @@
 name: Performance audit on nuxt-shopify-recharge site on pull request
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - nuxt-shopify-recharge/**
 
 jobs:
   audit:
