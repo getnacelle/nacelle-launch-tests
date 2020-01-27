@@ -1,0 +1,15 @@
+name: Performance audit on nuxt-shopify-recharge site on pull request
+on: pull_request
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Audit Netlify deploy preview
+      uses: jakejarvis/lighthouse-action@master
+      with:
+        netlify_site: 'sleepy-mahavira-19bfe6.netlify.com'
+    - uses: actions/upload-artifact@master
+      with:
+        name: report
+        path: './report'
