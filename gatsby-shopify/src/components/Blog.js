@@ -9,7 +9,7 @@ const FlexCenter = styled.div`
 `;
 
 const BlogArticle = styled.article`
-  width: 70%;
+  width: 90%;
   max-width: 800px;
   margin: 1em;
   padding: 1em;
@@ -18,16 +18,27 @@ const BlogArticle = styled.article`
   a {
     text-decoration: none;
   }
+  p {
+    margin-top: 1em;
+  }
+  h2 {
+    margin-top: 1em;
+    a {
+      color: black;
+    }
+  }
 `;
 
 const Blog = ({ item, page }) => {
-  const { title, handle } = item;
+  const { title, handle, excerpt } = item;
   const src = item.featuredMedia ? item.featuredMedia.src : null;
   return (
     <FlexCenter>
       <BlogArticle>
-        <h2>{handle && <Link to={`/${page}/${handle}`}>{title}</Link>}</h2>
         {src && <HeroImage src={src} alt={title} />}
+        <h2>{handle && <Link to={`/${page}/${handle}`}>{title}</Link>}</h2>
+        {excerpt && <p>{excerpt}</p>}
+        {handle && <Link to={`/${page}/${handle}`}>Read More</Link>}
       </BlogArticle>
     </FlexCenter>
   );
