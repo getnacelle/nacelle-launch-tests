@@ -25,7 +25,7 @@ const HeaderStyle = styled.header`
   a {
     display: flex;
     align-items: center;
-    color: black;
+    color: #212736;
   }
 `;
 
