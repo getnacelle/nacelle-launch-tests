@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'gatsby';
 import styled from 'styled-components';
 import Product from './Product';
 
@@ -6,9 +7,18 @@ const ProductGrid = styled.ul`
   display: grid;
   list-style-type: none;
   grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
-  grid-column-gap: 1em;
-  grid-row-gap: 1em;
-  margin: 0;
+  margin-left: 0;
+  grid-row-gap: 2em;
+  justify-items: center;
+  justify-content: center;
+  li {
+    margin: 0 auto;
+    padding: 0;
+    max-width: 80%;
+  }
+  a {
+    text-decoration: none;
+  }
   @media screen and (min-width: 1023px) {
     min-width: 70%;
   }
@@ -26,12 +36,14 @@ const Products = ({ products }) => (
     <ProductGrid>
       {products.map(el => (
         <li key={el.handle}>
-          <Product
-            title={el.title}
-            handle={el.handle}
-            src={el.featuredMedia.src}
-            variants={el.variants}
-          />
+          <Link to={`products/${el.handle}`}>
+            <Product
+              title={el.title}
+              handle={el.handle}
+              src={el.featuredMedia.src}
+              variants={el.variants}
+            />
+          </Link>
         </li>
       ))}
     </ProductGrid>

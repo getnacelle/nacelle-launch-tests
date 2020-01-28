@@ -24,7 +24,7 @@ const BlogArticle = styled.article`
   h2 {
     margin-top: 1em;
     a {
-      color: black;
+      color: #212736;
     }
   }
 `;

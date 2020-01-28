@@ -1,8 +1,8 @@
 const path = require('path');
 
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
-  // Fetch all products
-  const products = await graphql(`
+  // Fetch data from Nacelle's Hail Frequency API
+  const nacelleQuery = await graphql(`
     {
       nacelle {
         getProducts {
@@ -28,33 +28,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             }
           }
         }
-      }
-    }
-  `);
-  products.data.nacelle.getProducts.items.forEach(item => {
-    const { title, handle, description, variants } = item;
-    let src;
-    if (item.featuredMedia) {
-      src = item.featuredMedia.src;
-    }
-    createPage({
-      // Build a page for each product
-      path: `/products/${handle}`,
-      component: path.resolve('./src/components/templates/ProductDetail.js'),
-      context: {
-        title,
-        handle,
-        description,
-        imageSrc: src,
-        variants
-      }
-    });
-  });
-
-  // Fetch all collections
-  const collections = await graphql(`
-    {
-      nacelle {
         getCollections {
           items {
             title
@@ -67,43 +40,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             }
           }
         }
-      }
-    }
-  `);
-  collections.data.nacelle.getCollections.items.forEach(item => {
-    const { title, handle } = item;
-    let src;
-    let handles;
-    let allProducts;
-    let productsInCollection;
-    if (item.featuredMedia) {
-      src = item.featuredMedia.src;
-    }
-    if (item.productLists) {
-      const [handlesArray] = item.productLists;
-      handles = handlesArray ? handlesArray.handles : [];
-      allProducts = products.data.nacelle.getProducts.items;
-      productsInCollection = allProducts.filter(product =>
-        handles.includes(product.handle)
-      );
-    }
-    createPage({
-      // Build a page for each collection
-      path: `/collections/${handle}`,
-      component: path.resolve('./src/components/templates/Collection.js'),
-      context: {
-        title,
-        imageSrc: src,
-        handles,
-        products: productsInCollection
-      }
-    });
-  });
-
-  // Fetch all content (blogs, articles)
-  const content = await graphql(`
-    {
-      nacelle {
         getContent {
           items {
             type
@@ -123,8 +59,61 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
     }
   `);
-  const allContent = content.data.nacelle.getContent.items;
-  const contentCollections = content.data.nacelle.getContent.items.filter(
+  // Build pages for products
+  nacelleQuery.data.nacelle.getProducts.items.forEach(item => {
+    const { title, handle, description, variants } = item;
+    let src;
+    if (item.featuredMedia) {
+      src = item.featuredMedia.src;
+    }
+    createPage({
+      // Build a page for each product
+      path: `/products/${handle}`,
+      component: path.resolve('./src/components/templates/ProductDetail.js'),
+      context: {
+        title,
+        handle,
+        description,
+        imageSrc: src,
+        variants
+      }
+    });
+  });
+
+  // Build pages for collections
+  nacelleQuery.data.nacelle.getCollections.items.forEach(item => {
+    const { title, handle } = item;
+    let src;
+    let handles;
+    let allProducts;
+    let productsInCollection;
+    if (item.featuredMedia) {
+      src = item.featuredMedia.src;
+    }
+    if (item.productLists) {
+      const [handlesArray] = item.productLists;
+      handles = handlesArray ? handlesArray.handles : [];
+      allProducts = nacelleQuery.data.nacelle.getProducts.items;
+      productsInCollection = allProducts.filter(product =>
+        handles.includes(product.handle)
+      );
+    }
+    createPage({
+      // Build a page for each collection
+      path: `/collections/${handle}`,
+      component: path.resolve('./src/components/templates/Collection.js'),
+      context: {
+        title,
+        imageSrc: src,
+        handles,
+        products: productsInCollection
+      }
+    });
+  });
+
+  // Build pages for all content (blogs, articles)
+  const allContent = nacelleQuery.data.nacelle.getContent.items;
+  const contentCollections = nacelleQuery.data.nacelle.getContent.items.filter(
     // Only return content that has a non-null articleList array
     el => el.articleLists
   );
@@ -148,7 +137,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         imageSrc: featuredMedia ? featuredMedia.src : null,
         collection: contentInCollection,
         products: ['shop', 'homepage'].includes(handle)
-          ? products.data.nacelle.getProducts.items
+          ? nacelleQuery.data.nacelle.getProducts.items
           : null
       }
     });
