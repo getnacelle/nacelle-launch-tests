@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import HeroImage from './HeroImage';
+import BannerImage from './BannerImage';
 import Products from './Products';
 
 const CenteredTextBlock = styled.div`
@@ -39,7 +39,13 @@ const LandingPage = ({ item, recentArrivals }) => {
       return (
         <article>
           {src && (
-            <HeroImage src={src} alt={title} title={title} height="100vh" />
+            <BannerImage
+              src={src}
+              alt={title}
+              title={title}
+              height="100vh"
+              fill
+            />
           )}
         </article>
       );
@@ -48,7 +54,7 @@ const LandingPage = ({ item, recentArrivals }) => {
         <article>
           {isMobile && (
             <>
-              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
+              {src && <BannerImage src={src} alt={title} minHeight="400px" />}
               <CenteredBlock>
                 <h2>{title}</h2>
                 <p>{content}</p>
@@ -58,7 +64,7 @@ const LandingPage = ({ item, recentArrivals }) => {
           {!isMobile && (
             <SideBySidePanel>
               {src && (
-                <HeroImage
+                <BannerImage
                   src={src}
                   alt={title}
                   title={title}
@@ -78,7 +84,7 @@ const LandingPage = ({ item, recentArrivals }) => {
         <article>
           {isMobile && (
             <>
-              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
+              {src && <BannerImage src={src} alt={title} minHeight="400px" />}
               <CenteredBlock>
                 <h2>{title}</h2>
                 <p>{content}</p>
@@ -92,7 +98,7 @@ const LandingPage = ({ item, recentArrivals }) => {
                 <p>{content}</p>
               </CenteredBlock>
               {src && (
-                <HeroImage
+                <BannerImage
                   src={src}
                   alt={title}
                   title={title}
@@ -108,7 +114,7 @@ const LandingPage = ({ item, recentArrivals }) => {
         <article>
           <CenteredTextBlock>
             <h2>{title}</h2>
-            {src && <HeroImage src={src} alt={title} />}
+            {src && <BannerImage src={src} alt={title} />}
             <p>{content}</p>
             {recentArrivals && <Products products={recentArrivals} />}
           </CenteredTextBlock>
@@ -120,7 +126,7 @@ const LandingPage = ({ item, recentArrivals }) => {
       return (
         <div>
           <h2>>{title}</h2>
-          {src && <HeroImage src={src} alt={title} />}
+          {src && <BannerImage src={src} alt={title} />}
         </div>
       );
   }

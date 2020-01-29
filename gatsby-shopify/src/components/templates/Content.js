@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { HeroImage, Layout, SEO } from 'src/components';
+import { BannerImage, Layout, SEO } from 'src/components';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -20,7 +20,7 @@ const ContentPage = ({ pageContext }) => {
       <SEO title={title} />
       <Container>
         <h1>{title}</h1>
-        {imageSrc && <HeroImage src={imageSrc} alt={title} />}
+        {imageSrc && <BannerImage src={imageSrc} alt={title} />}
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </Container>
     </Layout>

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from './Image';
 
-const HeroContainer = styled.div`
+const BannerContainer = styled.div`
   margin: 0 auto;
   position: relative;
   width: 100%;
@@ -37,15 +37,15 @@ const HeroContainer = styled.div`
   }
 `;
 
-const HeroImage = ({ title, src, height, minHeight }) => (
-  <HeroContainer height={height} minHeight={minHeight}>
-    <Image src={src} alt={title} hero />
+const BannerImage = ({ title, src, height, minHeight, fill }) => (
+  <BannerContainer height={height} minHeight={minHeight}>
+    <Image src={src} alt={title} fill={fill} />
     {title && (
       <div>
         <h1>{title}</h1>
       </div>
     )}
-  </HeroContainer>
+  </BannerContainer>
 );
 
-export default HeroImage;
+export default BannerImage;

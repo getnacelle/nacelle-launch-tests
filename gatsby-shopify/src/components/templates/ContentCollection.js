@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroImage, Products, Landing, Blog, SEO } from 'src/components';
+import { BannerImage, Products, Landing, Blog, SEO } from 'src/components';
 import Layout from 'src/components/Layout';
 
 const CollectionItem = ({ item, page, recentArrivals }) => {
@@ -8,7 +8,7 @@ const CollectionItem = ({ item, page, recentArrivals }) => {
   if (page === 'shop') {
     return (
       <article>
-        {src && <HeroImage src={src} alt={title} title={title} />}
+        {src && <BannerImage src={src} alt={title} title={title} />}
       </article>
     );
   }

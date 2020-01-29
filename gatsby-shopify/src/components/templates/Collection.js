@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroImage, Products, SEO } from 'src/components';
+import { BannerImage, Products, SEO } from 'src/components';
 import Layout from 'src/components/Layout';
 
 const Collection = ({ pageContext }) => {
@@ -7,7 +7,7 @@ const Collection = ({ pageContext }) => {
   return (
     <Layout>
       <SEO title={title} />
-      <HeroImage src={imageSrc} title={title} />
+      <BannerImage src={imageSrc} title={title} />
       <Products products={products} />
     </Layout>
   );
