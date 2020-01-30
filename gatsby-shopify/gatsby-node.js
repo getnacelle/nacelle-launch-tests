@@ -1,66 +1,38 @@
 const path = require('path');
+const {
+  PRODUCT_QUERY,
+  COLLECTIONS_QUERY,
+  CONTENT_QUERY
+} = require('./src/queries');
 
-exports.createPages = async ({ graphql, actions: { createPage } }) => {
-  // Fetch data from Nacelle's Hail Frequency API
-  const nacelleQuery = await graphql(`
-    {
-      nacelle {
-        getProducts {
-          items {
-            title
-            handle
-            description
-            createdAt
-            featuredMedia {
-              src
-            }
-            variants {
-              id
-              title
-              price
-              selectedOptions {
-                name
-                value
-              }
-              featuredMedia {
-                src
-              }
-            }
-          }
-        }
-        getCollections {
-          items {
-            title
-            handle
-            featuredMedia {
-              src
-            }
-            productLists {
-              handles
-            }
-          }
-        }
-        getContent {
-          items {
-            type
-            handle
-            title
-            content
-            excerpt
-            createdAt
-            featuredMedia {
-              src
-            }
-            articleLists {
-              handles
-            }
-          }
-        }
+async function paginatedArray({ query, queryName, graphql }) {
+  try {
+    let results = await graphql(query);
+    const arr = results.data.nacelle[queryName].items;
+    while (results.data.nacelle[queryName].nextToken) {
+      try {
+        results = await graphql(query, {
+          after: results.data.nacelle[queryName].nextToken
+        });
+        arr.push(...results.data.nacelle[queryName].items);
+      } catch (err) {
+        throw new Error(err);
       }
     }
-  `);
+    return arr;
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+exports.createPages = async ({ graphql, actions: { createPage } }) => {
   // Build pages for products
-  nacelleQuery.data.nacelle.getProducts.items.forEach(item => {
+  const products = await paginatedArray({
+    query: PRODUCT_QUERY,
+    queryName: 'getProducts',
+    graphql
+  });
+  products.forEach(item => {
     const { title, handle, description, variants } = item;
     let src;
     if (item.featuredMedia) {
@@ -81,7 +53,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   });
 
   // Build pages for collections
-  nacelleQuery.data.nacelle.getCollections.items.forEach(item => {
+  const collections = await paginatedArray({
+    query: COLLECTIONS_QUERY,
+    queryName: 'getCollections',
+    graphql
+  });
+  collections.forEach(item => {
     const { title, handle } = item;
     let src;
     let handles;
@@ -93,7 +70,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     if (item.productLists) {
       const [handlesArray] = item.productLists;
       handles = handlesArray ? handlesArray.handles : [];
-      allProducts = nacelleQuery.data.nacelle.getProducts.items;
+      allProducts = products;
       productsInCollection = allProducts.filter(product =>
         handles.includes(product.handle)
       );
@@ -112,15 +89,19 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   });
 
   // Build pages for all content (blogs, articles)
-  const allContent = nacelleQuery.data.nacelle.getContent.items;
-  const contentCollections = nacelleQuery.data.nacelle.getContent.items.filter(
+  const content = await paginatedArray({
+    query: CONTENT_QUERY,
+    queryName: 'getContent',
+    graphql
+  });
+  const contentCollections = content.filter(
     // Only return content that has a non-null articleList array
     el => el.articleLists
   );
   contentCollections.forEach(contentCollection => {
     const { type, handle, title, featuredMedia } = contentCollection;
     const [articleList] = contentCollection.articleLists;
-    const contentInCollection = allContent.filter(el =>
+    const contentInCollection = content.filter(el =>
       articleList.handles.includes(el.handle)
     );
     createPage({
@@ -136,9 +117,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         content: contentCollection.content,
         imageSrc: featuredMedia ? featuredMedia.src : null,
         collection: contentInCollection,
-        products: ['shop', 'homepage'].includes(handle)
-          ? nacelleQuery.data.nacelle.getProducts.items
-          : null
+        products: ['shop', 'homepage'].includes(handle) ? products : null
       }
     });
     contentInCollection.forEach(el =>
