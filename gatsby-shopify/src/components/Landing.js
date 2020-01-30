@@ -121,7 +121,7 @@ const LandingPage = ({ item, recentArrivals }) => {
         </article>
       );
     case 'testimonials':
-      return <></>;
+      return null;
     default:
       return (
         <div>

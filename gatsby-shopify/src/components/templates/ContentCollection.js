@@ -18,6 +18,7 @@ const CollectionItem = ({ item, page, recentArrivals }) => {
   if (page === 'homepage') {
     return <Landing item={item} recentArrivals={recentArrivals} />;
   }
+  return null;
 };
 
 const ContentPage = ({ pageContext }) => {
