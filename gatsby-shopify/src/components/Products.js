@@ -6,7 +6,7 @@ import Product from './Product';
 const ProductGrid = styled.ul`
   display: grid;
   list-style-type: none;
-  grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(22em, 1fr));
   margin-left: 0;
   grid-row-gap: 2em;
   justify-items: center;
@@ -36,11 +36,11 @@ const Products = ({ products }) => (
     <ProductGrid>
       {products.map(el => (
         <li key={el.handle}>
-          <Link to={`products/${el.handle}`}>
+          <Link to={`/products/${el.handle}`}>
             <Product
               title={el.title}
               handle={el.handle}
-              src={el.featuredMedia.src}
+              src={el.featuredMedia ? el.featuredMedia.src : null}
               variants={el.variants}
             />
           </Link>
