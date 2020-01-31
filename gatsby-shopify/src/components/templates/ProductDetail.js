@@ -41,7 +41,12 @@ const ProductDetail = ({ pageContext }) => {
       <Container isMobile={isMobile}>
         <SideBySidePanel isMobile={isMobile}>
           <div>
-            <Product handle={handle} src={imageSrc} variants={variants} />
+            <Product
+              handle={handle}
+              src={imageSrc}
+              variants={variants}
+              link={false}
+            />
           </div>
           <div>
             <h3>{title}</h3>
