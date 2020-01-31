@@ -124,7 +124,7 @@ const Header = () => {
     <HeaderStyle>
       <Inner>
         <NavBar aria-label="Main Navigation" right>
-          {isMobile && isNavOpen && (
+          {isMobile === true && isNavOpen && (
             <MobileMenuContainer>
               <LinkBar>
                 <Logo />
@@ -132,14 +132,14 @@ const Header = () => {
               </LinkBar>
             </MobileMenuContainer>
           )}
-          {isMobile && (
+          {isMobile === true && (
             <HamburgerSpring
               isActive={isNavOpen}
               toggleButton={toggleNav}
               buttonWidth={28}
             />
           )}
-          {!isMobile && (
+          {isMobile === false && (
             <>
               <Logo />
               <LinkBar>
