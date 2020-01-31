@@ -7,7 +7,7 @@ const BannerContainer = styled.div`
   position: relative;
   width: 100%;
   min-height: ${({ minHeight }) => minHeight || '18em'};
-  height: ${({ height }) => height || 'inherit'};
+  height: ${({ height }) => height || 'auto'};
   display: flex;
   align-items: center;
   picture {
@@ -21,7 +21,7 @@ const BannerContainer = styled.div`
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: ${({ fillImage }) => (fillImage ? 'cover' : 'contain')};
   }
   div {
     margin: 0 auto;
@@ -38,7 +38,7 @@ const BannerContainer = styled.div`
 `;
 
 const BannerImage = ({ title, src, height, minHeight, fill }) => (
-  <BannerContainer height={height} minHeight={minHeight}>
+  <BannerContainer height={height} minHeight={minHeight} fillImage={fill}>
     <Image src={src} alt={title} fill={fill} />
     {title && (
       <div>
@@ -47,5 +47,9 @@ const BannerImage = ({ title, src, height, minHeight, fill }) => (
     )}
   </BannerContainer>
 );
+
+BannerImage.defaultProps = {
+  fill: false
+};
 
 export default BannerImage;

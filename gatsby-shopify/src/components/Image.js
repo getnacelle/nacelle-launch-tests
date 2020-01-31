@@ -62,9 +62,9 @@ const Source = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
   }
 };
 
-const Image = ({ src, alt, title, hero }) => {
-  const crop = hero ? 'lfill' : '';
-  const aspectRatio = hero ? [3, 4] : null;
+const Image = ({ src, alt, title, fill }) => {
+  const crop = fill ? 'lfill' : '';
+  const aspectRatio = fill ? [3, 4] : null;
   const imageSrc = cloudinaryCloudName ? cloudinarySrc({ src }) : src;
   const sizes = [
     { maxWidth: 768 },
