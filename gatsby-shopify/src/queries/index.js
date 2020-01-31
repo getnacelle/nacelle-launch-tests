@@ -1,9 +1,9 @@
 // Fetch data from Nacelle's Hail Frequency API
 
 const COLLECTIONS_QUERY = `
-  {
+  query($after: String) {
     nacelle {
-      getCollections {
+      getCollections(first: 500, after: $after) {
         items {
           title
           handle
@@ -20,9 +20,9 @@ const COLLECTIONS_QUERY = `
 `;
 
 const CONTENT_QUERY = `
-    {
+  query($after: String) {
     nacelle {
-      getContent {
+      getContent(first: 500, after: $after) {
         items {
           type
           handle
@@ -30,6 +30,8 @@ const CONTENT_QUERY = `
           content
           excerpt
           createdAt
+          tags
+          publishDate
           featuredMedia {
             src
           }
@@ -73,8 +75,26 @@ const PRODUCT_QUERY = `
   }
 `;
 
+const LINK_LISTS_QUERY = `
+  {
+    nacelle {
+      getSpace {
+        linklists {
+          handle
+          links {
+            title
+            to
+            type
+          }
+        }
+      }
+    }
+  }
+`;
+
 module.exports = {
   PRODUCT_QUERY,
   COLLECTIONS_QUERY,
-  CONTENT_QUERY
+  CONTENT_QUERY,
+  LINK_LISTS_QUERY
 };
