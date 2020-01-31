@@ -7,7 +7,7 @@ const Collection = ({ pageContext }) => {
   return (
     <Layout>
       <SEO title={title} />
-      <BannerImage src={imageSrc} title={title} />
+      <BannerImage src={imageSrc} title={title} fill />
       <Products products={products} />
     </Layout>
   );
