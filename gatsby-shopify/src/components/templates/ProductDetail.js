@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Layout from 'src/components/Layout';
-import { Product, SEO } from 'src/components';
+import { Product, SEO, Description } from 'src/components';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -50,11 +50,7 @@ const ProductDetail = ({ pageContext }) => {
           </div>
           <div>
             <h3>{title}</h3>
-            {description.includes('</') ? (
-              <p dangerouslySetInnerHTML={{ __html: description }} />
-            ) : (
-              <p>{description}</p>
-            )}
+            <Description content={description} />
           </div>
         </SideBySidePanel>
       </Container>

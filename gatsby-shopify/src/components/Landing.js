@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import BannerImage from './BannerImage';
-import Products from './Products';
+import { BannerImage, Products, Description } from 'src/components';
 
 const CenteredTextBlock = styled.div`
   text-align: center;
@@ -29,16 +28,6 @@ const SideBySidePanel = styled.div`
   text-align: center;
   direction: ${({ flip }) => (flip ? 'rtl' : 'ltr')};
 `;
-
-const Description = ({ content }) => {
-  if (content) {
-    if (content.includes('</')) {
-      return <p dangerouslySetInnerHTML={{ __html: content }} />;
-    }
-    return <p>{content}</p>;
-  }
-  return null;
-};
 
 const LandingPage = ({ item, recentArrivals }) => {
   const isMobile = useSelector(state => state.user.isMobile);
