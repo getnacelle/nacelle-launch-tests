@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Description = ({ content }) => {
   if (content) {
     if (content.includes('</')) {
