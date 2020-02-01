@@ -50,7 +50,11 @@ const ProductDetail = ({ pageContext }) => {
           </div>
           <div>
             <h3>{title}</h3>
-            <p>{description}</p>
+            {description.includes('</') ? (
+              <p dangerouslySetInnerHTML={{ __html: description }} />
+            ) : (
+              <p>{description}</p>
+            )}
           </div>
         </SideBySidePanel>
       </Container>
