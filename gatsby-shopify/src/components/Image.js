@@ -10,7 +10,7 @@ const roundedUpToNearest50px = x => {
   return '';
 };
 
-const cloudinarySrc = ({ src, width, height, crop } = {}) => {
+const cloudinarySrcString = ({ src, width, height, crop } = {}) => {
   const cloudinaryPrefix = 'https://res.cloudinary.com/';
   const baseString = `${cloudinaryPrefix}${cloudinaryCloudName}/image/fetch/f_auto`;
   const getDimensionsString = () => {
@@ -31,7 +31,7 @@ const cloudinarySrc = ({ src, width, height, crop } = {}) => {
   return `${baseString}/${dimensionsString}${cropString},dpr_auto/${src}`;
 };
 
-const Source = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
+const SourceCloudinary = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
   const width = roundedUpToNearest50px(maxWidth);
   const height = aspectRatio
     ? roundedUpToNearest50px((width / aspectRatio[0]) * aspectRatio[1])
@@ -40,7 +40,7 @@ const Source = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
     return (
       <source
         media={`(min-width: ${minWidth}px) and (max-width: ${maxWidth}px)`}
-        srcSet={cloudinarySrc({ src, width, height, crop })}
+        srcSet={cloudinarySrcString({ src, width, height, crop })}
       />
     );
   }
@@ -48,7 +48,7 @@ const Source = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
     return (
       <source
         media={`(max-width: ${maxWidth}px)`}
-        srcSet={cloudinarySrc({ src, width, height, crop })}
+        srcSet={cloudinarySrcString({ src, width, height, crop })}
       />
     );
   }
@@ -56,16 +56,16 @@ const Source = ({ src, minWidth, maxWidth, crop, aspectRatio }) => {
     return (
       <source
         media={`(min-width: ${minWidth}px)`}
-        srcSet={cloudinarySrc({ src, width, height, crop })}
+        srcSet={cloudinarySrcString({ src, width, height, crop })}
       />
     );
   }
 };
 
-const Image = ({ src, alt, title, hero }) => {
-  const crop = hero ? 'lfill' : '';
-  const aspectRatio = hero ? [3, 4] : null;
-  const imageSrc = cloudinaryCloudName ? cloudinarySrc({ src }) : src;
+const Image = ({ src, alt, title, fill, origin }) => {
+  const crop = fill ? 'lfill' : '';
+  const aspectRatio = fill ? [3, 4] : null;
+  const imageSrc = cloudinaryCloudName ? cloudinarySrcString({ src }) : src;
   const sizes = [
     { maxWidth: 768 },
     { minWidth: 769, maxWidth: 1023 },
@@ -73,22 +73,32 @@ const Image = ({ src, alt, title, hero }) => {
     { minWidth: 1216, maxWidth: 1407 },
     { minWidth: 1408 }
   ];
-  return (
-    <picture>
-      {cloudinaryCloudName &&
-        sizes.map(el => (
-          <Source
-            src={src}
-            crop={crop}
-            minWidth={el.minWidth}
-            maxWidth={el.maxWidth}
-            aspectRatio={aspectRatio}
-            key={`${el.minWidth}-${el.maxWidth}`}
-          />
-        ))}
-      <img src={imageSrc} alt={alt || title} sizes="100vw" />
-    </picture>
-  );
+  if (src) {
+    if (origin === 'cloudinary') {
+      return (
+        <picture>
+          {cloudinaryCloudName &&
+            sizes.map(el => (
+              <SourceCloudinary
+                src={src}
+                crop={crop}
+                minWidth={el.minWidth}
+                maxWidth={el.maxWidth}
+                aspectRatio={aspectRatio}
+                key={`${el.minWidth}-${el.maxWidth}`}
+              />
+            ))}
+          <img src={imageSrc} alt={alt || title} sizes="100vw" />
+        </picture>
+      );
+    }
+  }
+  return null;
+};
+
+Image.defaultProps = {
+  origin: 'cloudinary',
+  fill: false
 };
 
 export default Image;

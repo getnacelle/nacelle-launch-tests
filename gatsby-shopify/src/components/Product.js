@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'gatsby';
 import styled from 'styled-components';
 import Image from './Image';
 import { addToCart } from '../state/cart-actions';
@@ -18,6 +19,7 @@ const ProductCard = styled.article`
   a {
     text-decoration: none;
     font-size: 0.8em;
+    cursor: default;
   }
   select {
     margin: 1em;
@@ -42,7 +44,14 @@ const CartButton = styled.button`
   cursor: pointer;
 `;
 
-const Product = ({ title, handle, src, variants }) => {
+const Product = ({
+  title,
+  handle,
+  src,
+  variants,
+  handleMouseIn,
+  handleMouseOut
+}) => {
   const dispatch = useDispatch();
   const hasMultipleVariants = variants.length > 1;
   const [selectedVariant, selectVariant] = useState(variants[0]);
@@ -78,7 +87,14 @@ const Product = ({ title, handle, src, variants }) => {
       )}
       <p>$ {Number(selectedVariant.price).toFixed(2)}</p>
       <ButtonContainer>
-        <CartButton type="button" onClick={addToCartMemo}>
+        <CartButton
+          type="button"
+          onClick={addToCartMemo}
+          onPointerEnter={handleMouseIn}
+          onPointerLeave={handleMouseOut}
+          onTouchStart={handleMouseIn}
+          onTouchEnd={handleMouseOut}
+        >
           Add To Cart
         </CartButton>
       </ButtonContainer>
@@ -86,4 +102,36 @@ const Product = ({ title, handle, src, variants }) => {
   );
 };
 
-export default Product;
+const ProductWithLink = ({ title, handle, src, variants, link }) => {
+  const [linkActive, setLinkActive] = useState(true);
+  const handleMouseIn = () => setLinkActive(false);
+  const handleMouseOut = () => setLinkActive(true);
+  const path = `/products/${handle}`;
+  return link && linkActive ? (
+    <Link to={path}>
+      <Product
+        title={title}
+        handle={handle}
+        src={src}
+        variants={variants}
+        handleMouseIn={handleMouseIn}
+        handleMouseOut={handleMouseOut}
+      />
+    </Link>
+  ) : (
+    <Product
+      title={title}
+      handle={handle}
+      src={src}
+      variants={variants}
+      handleMouseIn={handleMouseIn}
+      handleMouseOut={handleMouseOut}
+    />
+  );
+};
+
+ProductWithLink.defaultProps = {
+  link: true
+};
+
+export default ProductWithLink;

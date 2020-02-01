@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Layout from 'src/components/Layout';
-import { Product, SEO } from 'src/components';
+import { Product, SEO, Description } from 'src/components';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -41,16 +41,27 @@ const ProductDetail = ({ pageContext }) => {
       <Container isMobile={isMobile}>
         <SideBySidePanel isMobile={isMobile}>
           <div>
-            <Product handle={handle} src={imageSrc} variants={variants} />
+            <Product
+              handle={handle}
+              src={imageSrc}
+              variants={variants}
+              link={false}
+            />
           </div>
           <div>
             <h3>{title}</h3>
-            <p>{description}</p>
+            <Description content={description} />
           </div>
         </SideBySidePanel>
       </Container>
     </Layout>
   );
+};
+
+ProductDetail.defaultProps = {
+  pageContext: {
+    description: ''
+  }
 };
 
 export default ProductDetail;

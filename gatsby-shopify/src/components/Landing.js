@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import HeroImage from './HeroImage';
-import Products from './Products';
+import { BannerImage, Products, Description } from 'src/components';
 
 const CenteredTextBlock = styled.div`
   text-align: center;
@@ -27,100 +26,80 @@ const SideBySidePanel = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 10%);
+  direction: ${({ flip }) => (flip ? 'rtl' : 'ltr')};
 `;
 
 const LandingPage = ({ item, recentArrivals }) => {
   const isMobile = useSelector(state => state.user.isMobile);
-  const { title, handle, content } = item;
+  const { title, content, handle, tags } = item;
   const src = item.featuredMedia ? item.featuredMedia.src : null;
-  switch (handle) {
-    case 'hero-banner':
+  const contentType = tags.find(el => el.includes('field::contentType'));
+  switch (contentType.split('::')[2]) {
+    case 'ContentHeroBanner': {
       return (
         <article>
           {src && (
-            <HeroImage src={src} alt={title} title={title} height="100vh" />
+            <BannerImage
+              src={src}
+              alt={title}
+              title={title}
+              height="100vh"
+              fill
+            />
           )}
         </article>
       );
-    case 'side-by-side':
+    }
+    case 'ContentSideBySide': {
+      const shouldFlip = ['2', '4', '6', '8', '10'].some(el =>
+        handle.includes(el)
+      );
       return (
         <article>
           {isMobile && (
             <>
-              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
+              {src && <BannerImage src={src} alt={title} minHeight="300px" />}
               <CenteredBlock>
                 <h2>{title}</h2>
-                <p>{content}</p>
+                <Description content={content} />
               </CenteredBlock>
             </>
           )}
           {!isMobile && (
-            <SideBySidePanel>
+            <SideBySidePanel flip={shouldFlip}>
               {src && (
-                <HeroImage
-                  src={src}
-                  alt={title}
-                  title={title}
-                  minHeight="400px"
-                />
+                <BannerImage src={src} alt={title} minHeight="400px" fill />
               )}
               <CenteredBlock>
                 <h2>{title}</h2>
-                <p>{content}</p>
+                <Description content={content} />
               </CenteredBlock>
             </SideBySidePanel>
           )}
         </article>
       );
-    case 'side-by-side-2':
-      return (
-        <article>
-          {isMobile && (
-            <>
-              {src && <HeroImage src={src} alt={title} minHeight="400px" />}
-              <CenteredBlock>
-                <h2>{title}</h2>
-                <p>{content}</p>
-              </CenteredBlock>
-            </>
-          )}
-          {!isMobile && (
-            <SideBySidePanel>
-              <CenteredBlock>
-                <h2>{title}</h2>
-                <p>{content}</p>
-              </CenteredBlock>
-              {src && (
-                <HeroImage
-                  src={src}
-                  alt={title}
-                  title={title}
-                  minHeight="400px"
-                />
-              )}
-            </SideBySidePanel>
-          )}
-        </article>
-      );
-    case 'product-grid':
+    }
+    case 'ContentProductGrid': {
       return (
         <article>
           <CenteredTextBlock>
             <h2>{title}</h2>
-            {src && <HeroImage src={src} alt={title} />}
-            <p>{content}</p>
+            {src && <BannerImage src={src} alt={title} />}
+            <Description content={content} />
             {recentArrivals && <Products products={recentArrivals} />}
           </CenteredTextBlock>
         </article>
       );
-    case 'testimonials':
-      return <></>;
+    }
+    case 'ContentTestimonial':
+      return null;
+    case 'ContentTestimonials':
+      return null;
     default:
       return (
         <div>
-          <h2>>{title}</h2>
-          {src && <HeroImage src={src} alt={title} />}
+          <h2>>{contentType}</h2>
+          {src && <BannerImage src={src} alt={title} />}
         </div>
       );
   }

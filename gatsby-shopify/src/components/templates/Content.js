@@ -1,28 +1,67 @@
 import React from 'react';
 import styled from 'styled-components';
-import { HeroImage, Layout, SEO } from 'src/components';
+import { BannerImage, Products, Landing, Blog, SEO } from 'src/components';
+import Layout from 'src/components/Layout';
 
-const Container = styled.div`
-  margin: 0 auto;
-  padding: 0 2rem;
-  div {
-    margin: 2em auto;
-  }
-  h1 {
-    text-align: center;
-  }
+const InnerHtmlBlock = styled.div`
+  margin: 1em 4em;
 `;
 
+const CollectionItem = ({ item, page, recentArrivals }) => {
+  const { title } = item;
+  const src = item.featuredMedia ? item.featuredMedia.src : null;
+  if (page === 'shop') {
+    return (
+      <article>
+        {src && <BannerImage src={src} alt={title} title={title} />}
+      </article>
+    );
+  }
+  if (page === 'blog') {
+    return <Blog item={item} page={page} />;
+  }
+  if (page === 'homepage') {
+    return <Landing item={item} recentArrivals={recentArrivals} />;
+  }
+  return null;
+};
+
 const ContentPage = ({ pageContext }) => {
-  const { title, content, imageSrc } = pageContext;
+  const { title, handle, content, collection, products } = pageContext;
+  let recentArrivals;
+  if (handle === 'homepage' && products !== null) {
+    const getLatestArrivalTimes = limit =>
+      products
+        .map(el => el.createdAt)
+        .sort()
+        .slice(0, limit);
+    const fourMostRecentTimes = getLatestArrivalTimes(4);
+    recentArrivals = products.filter(el =>
+      fourMostRecentTimes.includes(el.createdAt)
+    );
+  }
   return (
     <Layout>
       <SEO title={title} />
-      <Container>
-        <h1>{title}</h1>
-        {imageSrc && <HeroImage src={imageSrc} alt={title} />}
-        <div dangerouslySetInnerHTML={{ __html: content }} />
-      </Container>
+      {content && (
+        <InnerHtmlBlock>
+          <h1>{title}</h1>
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        </InnerHtmlBlock>
+      )}
+      {collection &&
+        collection.map(
+          (el, idx) =>
+            el.type.toLowerCase() === 'article' && (
+              <CollectionItem
+                item={el}
+                page={handle}
+                key={`${el.title}-${idx}`}
+                recentArrivals={recentArrivals}
+              />
+            )
+        )}
+      {products && handle !== 'homepage' && <Products products={products} />}
     </Layout>
   );
 };

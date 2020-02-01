@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
-import HeroImage from './HeroImage';
+import BannerImage from './BannerImage';
 
 const FlexCenter = styled.div`
   display: flex;
@@ -35,7 +35,11 @@ const Blog = ({ item, page }) => {
   return (
     <FlexCenter>
       <BlogArticle>
-        {src && <HeroImage src={src} alt={title} />}
+        {src && handle && (
+          <Link to={`/${page}/${handle}`}>
+            <BannerImage src={src} alt={title} fill />
+          </Link>
+        )}
         <h2>{handle && <Link to={`/${page}/${handle}`}>{title}</Link>}</h2>
         {excerpt && <p>{excerpt}</p>}
         {handle && <Link to={`/${page}/${handle}`}>Read More</Link>}

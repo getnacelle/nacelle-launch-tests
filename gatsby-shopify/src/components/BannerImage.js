@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from './Image';
 
-const HeroContainer = styled.div`
+const BannerContainer = styled.div`
   margin: 0 auto;
   position: relative;
   width: 100%;
   min-height: ${({ minHeight }) => minHeight || '18em'};
-  height: ${({ height }) => height || 'inherit'};
+  height: ${({ height }) => height || 'auto'};
   display: flex;
   align-items: center;
   picture {
@@ -21,7 +21,7 @@ const HeroContainer = styled.div`
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: ${({ fillImage }) => (fillImage ? 'cover' : 'contain')};
   }
   div {
     margin: 0 auto;
@@ -37,15 +37,19 @@ const HeroContainer = styled.div`
   }
 `;
 
-const HeroImage = ({ title, src, height, minHeight }) => (
-  <HeroContainer height={height} minHeight={minHeight}>
-    <Image src={src} alt={title} hero />
+const BannerImage = ({ title, src, height, minHeight, fill }) => (
+  <BannerContainer height={height} minHeight={minHeight} fillImage={fill}>
+    <Image src={src} alt={title} fill={fill} />
     {title && (
       <div>
         <h1>{title}</h1>
       </div>
     )}
-  </HeroContainer>
+  </BannerContainer>
 );
 
-export default HeroImage;
+BannerImage.defaultProps = {
+  fill: false
+};
+
+export default BannerImage;

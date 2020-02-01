@@ -12,15 +12,15 @@ const Logo = () => {
     }
   `);
   const spaceId = spaceIdQuery.nacelle.getSpace.id;
-  return (
+  return spaceId ? (
     <Link to="/">
       <img
         src={`https://d3ej2r3y1rjyfi.cloudfront.net/space/${spaceId}/logo.png`}
         alt="brand logo"
-        width="150px"
+        width="120px"
       />
     </Link>
-  );
+  ) : null;
 };
 
 export default Logo;
