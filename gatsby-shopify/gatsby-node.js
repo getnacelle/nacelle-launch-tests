@@ -35,23 +35,21 @@ async function paginatedArray({ query, queryName, graphql }) {
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const linkListsQuery = await graphql(LINK_LISTS_QUERY);
 
-  const uniqueLinks = new Set('/');
-  linkListsQuery.data.nacelle.getSpace.linklists.forEach(linkList =>
-    linkList.links.forEach(
-      link => link.type !== 'External' && uniqueLinks.add(link.to)
-    )
-  );
-  const links = [...uniqueLinks];
+  const linkList = linkListsQuery.data.nacelle.getSpace.linklists
+    .find(el => el.handle === 'main-menu')
+    .links.filter(el => el.type.toLowerCase() !== 'external');
+  linkList.splice(0, 0, { title: 'Homepage', to: '/', type: 'Page' });
   console.log('\nNacelle Link List:');
-  links.forEach(el => console.log(`- ${el}`));
+  linkList.forEach(el => console.log(`- ${JSON.stringify(el)}`));
 
   // Build pages for products
-  console.log('\n\nBuilding products...\n');
+  console.log('\n\nBuilding products...');
   const products = await paginatedArray({
     query: PRODUCT_QUERY,
     queryName: 'getProducts',
     graphql
   });
+  let productsCount = 0;
   products.forEach(product => {
     const { title, handle, description, variants } = product;
     let src;
@@ -70,10 +68,14 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         imageSrc: src
       }
     });
+    productsCount += 1;
   });
+  if (productsCount) {
+    console.log(`\nCreated ${productsCount} product pages ✔️ \n`);
+  }
 
   // Build pages for collections
-  console.log('\nBuilding collections...\n');
+  console.log('\n\nBuilding collections...');
   const collections = await paginatedArray({
     query: COLLECTIONS_QUERY,
     queryName: 'getCollections',
@@ -97,7 +99,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       );
     }
     const collectionPath = `/collections/${handle}`;
-    if (links.includes(collectionPath)) {
+    if (
+      linkList
+        .filter(el => el.type.toLowerCase() === 'collection')
+        .map(el => el.to)
+        .includes(collectionPath)
+    ) {
       console.log(
         `\nCreating 'Collections' page: /collections/${handle} \nfor: ${handle}`
       );
@@ -116,15 +123,18 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   });
 
   // Build pages for all content (pages, blogs, articles)
-  console.log('\nBuilding content...\n');
+  console.log('\n\nBuilding content...');
   const content = await paginatedArray({
     query: CONTENT_QUERY,
     queryName: 'getContent',
     graphql
   });
-  const pages = content.filter(el => el.type === 'page');
-  const blogs = content.filter(el => el.type === 'blog');
-  const articles = content.filter(el => el.type === 'article');
+  const pages = content.filter(el => el.type.toLowerCase() === 'page');
+  const blogs = content.filter(el => el.type.toLowerCase() === 'blog');
+  const articles = content.filter(el => el.type.toLowerCase() === 'article');
+  if (pages.find(el => el.handle.toLowerCase() === 'homepage') === undefined) {
+    pages.splice(0, 0, { handle: 'homepage', type: 'page', title: 'Homepage' });
+  }
   pages.forEach(page => {
     const [pageBlog] = blogs.filter(blog => blog.handle === page.handle);
     if (pageBlog) {
@@ -133,17 +143,20 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const articlesInBlog = articles
         .filter(article => articleList.handles.includes(article.handle))
         .sort((a, b) => (b.publishDate > a.publishDate ? -1 : 1));
-      const pageBlogPath = `/${
-        handle.toLowerCase() === 'homepage' ? '' : handle
-      }`;
-      if (links.includes(pageBlogPath)) {
+      const pagePath = `/${handle.toLowerCase() === 'homepage' ? '' : handle}`;
+      if (
+        linkList
+          .filter(el => el.type.toLowerCase() === 'page')
+          .map(el => el.to)
+          .includes(pagePath)
+      ) {
         console.log(
           `\nCreating 'Page' page: /${
             handle.toLowerCase() === 'homepage' ? '' : handle
           } \nfor: ${handle}`
         );
         createPage({
-          path: pageBlogPath,
+          path: pagePath,
           component: path.resolve('./src/components/templates/Content.js'),
           context: {
             title,
@@ -155,24 +168,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             collection: articlesInBlog,
             products: ['shop', 'homepage'].includes(handle) ? products : null
           }
-        });
-        articlesInBlog.forEach(article => {
-          console.log(
-            `\nCreating 'Article' page: /${handle}/${article.handle} \nfor: ${handle}`
-          );
-          createPage({
-            path: `/${handle}/${article.handle}`,
-            component: path.resolve('./src/components/templates/Content.js'),
-            context: {
-              title: article.title,
-              handle: article.handle,
-              type: article.type,
-              content: article.content,
-              excerpt: article.excerpt,
-              publishDate: article.publishDate,
-              imageSrc: article.featuredMedia ? article.featuredMedia.src : null
-            }
-          });
         });
       }
     }
@@ -188,7 +183,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const blogPath = `/blog${
         handle.toLowerCase() === 'blog' ? '' : `/${handle}`
       }`;
-      if (links.includes(blogPath)) {
+      if (
+        linkList
+          .filter(el => el.type.toLowerCase() === 'blog')
+          .map(el => el.to)
+          .includes(blogPath)
+      ) {
         console.log(
           `\nCreating 'Blog' page: /blog${
             handle.toLowerCase() === 'blog' ? '' : `/${handle}`
@@ -226,4 +226,5 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
     }
   });
+  console.log(`\nFinished building pages from Nacelle data 🚀\n`);
 };
