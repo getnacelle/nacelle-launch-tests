@@ -62,4 +62,8 @@ const ProductDetail = ({ pageContext }) => {
   );
 };
 
+ProductDetail.defaultProps = {
+  description: ''
+};
+
 export default ProductDetail;
