@@ -30,6 +30,16 @@ const SideBySidePanel = styled.div`
   direction: ${({ flip }) => (flip ? 'rtl' : 'ltr')};
 `;
 
+const Description = ({ content }) => {
+  if (content) {
+    if (content.includes('</')) {
+      return <p dangerouslySetInnerHTML={{ __html: content }} />;
+    }
+    return <p>{content}</p>;
+  }
+  return null;
+};
+
 const LandingPage = ({ item, recentArrivals }) => {
   const isMobile = useSelector(state => state.user.isMobile);
   const { title, content, handle, tags } = item;
@@ -62,7 +72,7 @@ const LandingPage = ({ item, recentArrivals }) => {
               {src && <BannerImage src={src} alt={title} minHeight="300px" />}
               <CenteredBlock>
                 <h2>{title}</h2>
-                {content && <p>{content}</p>}
+                <Description content={content} />
               </CenteredBlock>
             </>
           )}
@@ -73,7 +83,7 @@ const LandingPage = ({ item, recentArrivals }) => {
               )}
               <CenteredBlock>
                 <h2>{title}</h2>
-                {content && <p>{content}</p>}
+                <Description content={content} />
               </CenteredBlock>
             </SideBySidePanel>
           )}
@@ -86,13 +96,15 @@ const LandingPage = ({ item, recentArrivals }) => {
           <CenteredTextBlock>
             <h2>{title}</h2>
             {src && <BannerImage src={src} alt={title} />}
-            {content && <p>{content}</p>}
+            <Description content={content} />
             {recentArrivals && <Products products={recentArrivals} />}
           </CenteredTextBlock>
         </article>
       );
     }
     case 'ContentTestimonial':
+      return null;
+    case 'ContentTestimonials':
       return null;
     default:
       return (
