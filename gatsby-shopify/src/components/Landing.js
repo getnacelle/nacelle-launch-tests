@@ -62,24 +62,18 @@ const LandingPage = ({ item, recentArrivals }) => {
               {src && <BannerImage src={src} alt={title} minHeight="300px" />}
               <CenteredBlock>
                 <h2>{title}</h2>
-                <p>{content}</p>
+                {content && <p>{content}</p>}
               </CenteredBlock>
             </>
           )}
           {!isMobile && (
             <SideBySidePanel flip={shouldFlip}>
               {src && (
-                <BannerImage
-                  src={src}
-                  alt={title}
-                  title={title}
-                  minHeight="400px"
-                  fill
-                />
+                <BannerImage src={src} alt={title} minHeight="400px" fill />
               )}
               <CenteredBlock>
                 <h2>{title}</h2>
-                <p>{content}</p>
+                {content && <p>{content}</p>}
               </CenteredBlock>
             </SideBySidePanel>
           )}
@@ -92,7 +86,7 @@ const LandingPage = ({ item, recentArrivals }) => {
           <CenteredTextBlock>
             <h2>{title}</h2>
             {src && <BannerImage src={src} alt={title} />}
-            <p>{content}</p>
+            {content && <p>{content}</p>}
             {recentArrivals && <Products products={recentArrivals} />}
           </CenteredTextBlock>
         </article>
