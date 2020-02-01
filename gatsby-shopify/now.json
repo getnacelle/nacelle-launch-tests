@@ -1,0 +1,13 @@
+{
+  "name": "gatsby-shopify",
+  "version": 2,
+  "build": {
+    "env": {
+      "NACELLE_GRAPHQL_TOKEN": "@nacelle_graphql_token_fewer_pots",
+      "NACELLE_SPACE_ID": "@nacelle_space_id_fewer_pots",
+      "GATSBY_NACELLE_GRAPHQL_TOKEN": "@nacelle_graphql_token_fewer_pots",
+      "GATSBY_NACELLE_SPACE_ID": "@nacelle_space_id_fewer_pots",
+      "GATSBY_CLOUDINARY_CLOUD_NAME": "nacelle"
+    }
+  }
+}
