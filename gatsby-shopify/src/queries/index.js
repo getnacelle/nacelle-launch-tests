@@ -1,9 +1,10 @@
 // Fetch data from Nacelle's Hail Frequency API
 
 const COLLECTIONS_QUERY = `
-  query($after: String) {
+  query($first: Int, $after: String) {
     nacelle {
-      getCollections(first: 500, after: $after) {
+      getCollections(first: $first, after: $after) {
+        nextToken
         items {
           title
           handle
@@ -20,9 +21,10 @@ const COLLECTIONS_QUERY = `
 `;
 
 const CONTENT_QUERY = `
-  query($after: String) {
+  query($first: Int, $after: String) {
     nacelle {
-      getContent(first: 500, after: $after) {
+      getContent(first: $first, after: $after) {
+        nextToken
         items {
           type
           handle
@@ -45,9 +47,9 @@ const CONTENT_QUERY = `
 `;
 
 const PRODUCT_QUERY = `
-  query($after: String) {
+  query($first: Int, $after: String) {
     nacelle {
-      getProducts(first: 500, after: $after) {
+      getProducts(first: $first, after: $after) {
         nextToken
         items {
           title
