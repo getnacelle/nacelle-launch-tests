@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { BannerImage, Products, Description } from 'src/components';
+import BannerImage from './BannerImage';
+import Products from './Products';
+import Description from './Description';
 
 const CenteredTextBlock = styled.div`
   text-align: center;
