@@ -68,7 +68,7 @@ export default function(state = initialState, action) {
       }
       return {
         ...state,
-        lineItems: [...lineItems].filter((el, idx) => idx !== index)
+        lineItems: [...lineItems].filter((_, idx) => idx !== index)
       };
     }
     case CLEAR_CART: {
