@@ -7,6 +7,7 @@ export { default as Products } from './Products';
 export { default as Description } from './Description';
 export { default as Image } from './Image';
 export { default as Landing } from './Landing';
-export { default as Blog } from './Blog';
+export { default as BlogArticle } from './BlogArticle';
 export { default as Layout } from './Layout';
 export { default as SEO } from './SEO';
+export { default as PageNavButtons } from './PageNavButtons';
