@@ -1,13 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BannerImage, Products, Landing, Blog, SEO } from 'src/components';
-import Layout from 'src/components/Layout';
+import {
+  Layout,
+  BannerImage,
+  Products,
+  PageNavButtons,
+  Landing,
+  SEO
+} from 'src/components';
 
 const InnerHtmlBlock = styled.div`
   margin: 1em 4em;
 `;
 
-const CollectionItem = ({ item, page, recentArrivals }) => {
+const Article = ({ item, page, recentArrivals }) => {
   const { title } = item;
   const src = item.featuredMedia ? item.featuredMedia.src : null;
   if (page === 'shop') {
@@ -17,29 +23,23 @@ const CollectionItem = ({ item, page, recentArrivals }) => {
       </article>
     );
   }
-  if (page === 'blog') {
-    return <Blog item={item} page={page} />;
-  }
   if (page === 'homepage') {
     return <Landing item={item} recentArrivals={recentArrivals} />;
   }
   return null;
 };
 
-const ContentPage = ({ pageContext }) => {
-  const { title, handle, content, collection, products } = pageContext;
-  let recentArrivals;
-  if (handle === 'homepage' && products !== null) {
-    const getLatestArrivalTimes = limit =>
-      products
-        .map(el => el.createdAt)
-        .sort()
-        .slice(0, limit);
-    const fourMostRecentTimes = getLatestArrivalTimes(4);
-    recentArrivals = products.filter(el =>
-      fourMostRecentTimes.includes(el.createdAt)
-    );
-  }
+const ContentPage = ({ pageContext, path }) => {
+  const {
+    title,
+    handle,
+    content,
+    articles,
+    products,
+    recentArrivals,
+    currentPage,
+    numPages
+  } = pageContext;
   return (
     <Layout>
       <SEO title={title} />
@@ -49,11 +49,11 @@ const ContentPage = ({ pageContext }) => {
           <div dangerouslySetInnerHTML={{ __html: content }} />
         </InnerHtmlBlock>
       )}
-      {collection &&
-        collection.map(
+      {articles &&
+        articles.map(
           (el, idx) =>
             el.type.toLowerCase() === 'article' && (
-              <CollectionItem
+              <Article
                 item={el}
                 page={handle}
                 key={`${el.title}-${idx}`}
@@ -61,7 +61,13 @@ const ContentPage = ({ pageContext }) => {
               />
             )
         )}
-      {products && handle !== 'homepage' && <Products products={products} />}
+      {products && handle === 'shop' && <Products products={products} />}
+      <PageNavButtons
+        path={path}
+        handle={handle}
+        currentPage={currentPage}
+        numPages={numPages}
+      />
     </Layout>
   );
 };
