@@ -8,7 +8,7 @@ const FlexCenter = styled.div`
   justify-content: center;
 `;
 
-const BlogArticle = styled.article`
+const Article = styled.article`
   width: 90%;
   max-width: 800px;
   margin: 1em;
@@ -29,12 +29,12 @@ const BlogArticle = styled.article`
   }
 `;
 
-const Blog = ({ item, page }) => {
+const BlogArticle = ({ item, page }) => {
   const { title, handle, excerpt } = item;
   const src = item.featuredMedia ? item.featuredMedia.src : null;
   return (
     <FlexCenter>
-      <BlogArticle>
+      <Article>
         {src && handle && (
           <Link to={`/${page}/${handle}`}>
             <BannerImage src={src} alt={title} fill />
@@ -43,9 +43,9 @@ const Blog = ({ item, page }) => {
         <h2>{handle && <Link to={`/${page}/${handle}`}>{title}</Link>}</h2>
         {excerpt && <p>{excerpt}</p>}
         {handle && <Link to={`/${page}/${handle}`}>Read More</Link>}
-      </BlogArticle>
+      </Article>
     </FlexCenter>
   );
 };
 
-export default Blog;
+export default BlogArticle;
