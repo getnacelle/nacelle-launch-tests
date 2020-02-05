@@ -54,6 +54,32 @@ export const CUSTOMER_ACCESS_TOKEN_RENEW = `mutation customerAccessTokenRenew($c
   }
 }`
 
+export const CUSTOMER_ACCESS_TOKEN_DELETE = `mutation customerAccessTokenDelete($customerAccessToken: String!) {
+  customerAccessTokenDelete(customerAccessToken: $customerAccessToken) {
+    deletedAccessToken
+    deletedCustomerAccessTokenId
+    userErrors {
+      field
+      message
+    }
+  }
+}`
+
+export const GET_CUSTOMER = `query getCustomer($customerAccessToken: String!) {
+  customer(customerAccessToken: $customerAccessToken) {
+    id
+    email
+    acceptsMarketing
+    createdAt
+    updatedAt
+    displayName
+    lastName
+    firstName
+    phone
+    tags
+  }
+}`
+
 export const GET_CUSTOMER_ORDERS = `query getCustomer($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) {
     orders (first: 25) {
@@ -291,6 +317,35 @@ export const GET_CUSTOMER_ADDRESSES = `query getCustomer($customerAccessToken: S
           zip
         }
       }
+    }
+  }
+}`
+
+export const CHECKOUT_CUSTOMER_ASSOCIATE = `mutation checkoutCustomerAssociateV2($checkoutId: ID!, $customerAccessToken: String!) {
+  checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
+    checkout {
+      id
+    }
+    checkoutUserErrors {
+      code
+      field
+      message
+    }
+    customer {
+      id
+    }
+  }
+}`
+
+export const CHECKOUT_CUSTOMER_DISASSOCIATE = `mutation checkoutCustomerDisassociateV2($checkoutId: ID!) {
+  checkoutCustomerDisassociateV2(checkoutId: $checkoutId) {
+    checkout {
+      id
+    }
+    checkoutUserErrors {
+      code
+      field
+      message
     }
   }
 }`

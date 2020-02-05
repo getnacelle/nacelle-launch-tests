@@ -2,9 +2,31 @@ require('dotenv').config()
 
 import path from 'path'
 import fs from 'fs-extra'
+import bodyParser from 'body-parser'
+import session from 'express-session'
 
 export default {
   mode: process.env.BUILD_MODE,
+  server: {
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, 'cert.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem'))
+    }
+  },
+  serverMiddleware: [
+    // body-parser middleware
+    bodyParser.json(),
+    // session middleware
+    session({
+      secret: 'nacelle-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 60000 }
+    }),
+    // Api middleware
+    // We add /api/login & /api/logout routes
+    '~/api'
+  ],
   /*
    ** Headers of the page
    */
@@ -50,7 +72,9 @@ export default {
   env: {
     nacelleSpaceID: process.env.NACELLE_SPACE_ID,
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
-    buildMode: process.env.BUILD_MODE
+    buildMode: process.env.BUILD_MODE,
+    shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
+    hostDomain: process.env.HOST_DOMAIN,
   },
 
   modules: [
@@ -79,7 +103,9 @@ export default {
     gaID: process.env.NACELLE_GA_ID,
     fbID: process.env.NACELLE_FB_ID,
     skipPrefetch: process.env.SKIP_PREFETCH === 'true',
-    customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT
+    customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
+    shopifyUrl: process.env.SHOPIFY_URL,
+    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
   },
 
   generate: {

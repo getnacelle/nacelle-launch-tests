@@ -1,12 +1,12 @@
 <template>
   <div class="page page-account">
     <section class="section section-header">
-      <h1>Account <span class="logout-link"><a>logout</a></span></h1>
+      <h1>Account <span class="logout-link"><a @click="logout">logout</a></span></h1>
     </section>
 
     <section class="section section-orders">
       <h2>Order History</h2>
-      <table v-if="orders" class="responsive-table">
+      <table v-if="orders.length" class="responsive-table">
         <thead>
           <tr>
             <th scope="col">Order</th>
@@ -52,7 +52,6 @@ export default {
     }
   },
   async mounted() {
-    await this.$store.dispatch('account/readCustomerAccessToken')
     if (this.customerAccessToken) {
       this.$store.dispatch('account/fetchOrders')
       this.$store.dispatch('account/fetchDefaultAddress')
@@ -72,10 +71,18 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['customerAccessToken', 'orders', 'defaultAddress', 'addresses'])
+    ...mapState('account', ['customerAccessToken', 'orders', 'defaultAddress', 'addresses']),
+    action () {
+      // Not being used.
+      return `https://${this.$nacelle.shopifyUrl}/account/logout`
+    }
   },
   methods: {
-    ...mapActions('account', ['logout'])
+    async logout () {
+      await this.$store.dispatch('account/logout')
+      // TODO: logout on shopify utilizing action
+      this.$router.push('/')
+    }
   }
 }
 </script>

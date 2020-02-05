@@ -12,7 +12,10 @@
 <script>
 import nacelleVue from "@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js"
 export default nacelleVue({
-  type: "default-layout"
+  type: "default-layout",
+  async mounted () {
+    await this.$store.dispatch('account/readCustomerAccessToken')
+  }
 })
 </script>
 

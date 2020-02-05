@@ -6,6 +6,9 @@ export const mutations = {}
 
 export const actions = {
   async nuxtServerInit(ctx, context) {
+    if (context.req.session && context.req.session.customerAccessToken) {
+      await ctx.commit('account/setCustomerAccessToken', context.req.session.customerAccessToken)
+    }
     await this.$nacelle.nacelleNuxtServerInit(ctx, context)
   }
 }
