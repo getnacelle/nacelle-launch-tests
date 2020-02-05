@@ -7,12 +7,6 @@ import session from 'express-session'
 
 export default {
   mode: process.env.BUILD_MODE,
-  server: {
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'cert.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem'))
-    }
-  },
   serverMiddleware: [
     // body-parser middleware
     bodyParser.json(),

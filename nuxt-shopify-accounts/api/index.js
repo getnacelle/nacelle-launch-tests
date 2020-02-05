@@ -57,7 +57,7 @@ router.post('/login', async (req, res) => {
       const customerData = {
         ...customer,
         // remote_ip: req.ip,
-        return_to: `https://${process.env.HOST_DOMAIN}/account`
+        return_to: `${req.protocol}://${req.get('host')}/account`
       }
       const multipassUrl = multipassify.generateUrl(customerData, process.env.SHOPIFY_URL);
       // set session
