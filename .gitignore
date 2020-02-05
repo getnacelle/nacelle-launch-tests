@@ -105,3 +105,8 @@ public
 
 # Backup markdown files
 *.md.backup
+
+# Local Certs
+cert.key
+cert.pem
+req.cnf
