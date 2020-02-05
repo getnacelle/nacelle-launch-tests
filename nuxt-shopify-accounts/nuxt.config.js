@@ -5,6 +5,9 @@ import fs from 'fs-extra'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 
+const FileStore = require('session-file-store')(session);
+const fileStoreOptions = {};
+
 export default {
   mode: process.env.BUILD_MODE,
   serverMiddleware: [
@@ -12,7 +15,8 @@ export default {
     bodyParser.json(),
     // session middleware
     session({
-      secret: 'nacelle-secret-key',
+      store: new FileStore(fileStoreOptions),
+      secret: 'Make it so',
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: 60000 }
@@ -68,7 +72,6 @@ export default {
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
     buildMode: process.env.BUILD_MODE,
     shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
-    hostDomain: process.env.HOST_DOMAIN,
   },
 
   modules: [

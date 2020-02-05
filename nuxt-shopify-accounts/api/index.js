@@ -23,6 +23,7 @@ const getCustomerData = async (customerAccessToken) => {
   return await accountClient.post(null, { query, variables })
 }
 
+// Create multipass utility
 const multipassify = new Multipassify(process.env.SHOPIFY_MULTIPASS_SECRET);
 
 // Create express router
@@ -42,30 +43,33 @@ router.use((req, res, next) => {
 // Add POST - /api/login
 router.post('/login', async (req, res) => {
   // TODO: figure out remote ip
-
-  const variables = { input: { email: req.body.email, password: req.body.password } }
-  const query = CUSTOMER_ACCESS_TOKEN_CREATE
-  const response = await accountClient.post(null, { query, variables })
-  const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenCreate
-
-  if (customerAccessToken) {
-    // get customer data
-    const response = await getCustomerData(customerAccessToken.accessToken)
-    const { customer } = response.data.data
-    if (customer) {
-      // multipass login
-      const customerData = {
-        ...customer,
-        // remote_ip: req.ip,
-        return_to: `${req.protocol}://${req.get('host')}/account`
+  try {
+    const variables = { input: { email: req.body.email, password: req.body.password } }
+    const query = CUSTOMER_ACCESS_TOKEN_CREATE
+    const response = await accountClient.post(null, { query, variables })
+    const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenCreate
+  
+    if (customerAccessToken) {
+      // get customer data
+      const response = await getCustomerData(customerAccessToken.accessToken)
+      const { customer } = response.data.data
+      if (customer) {
+        // multipass login
+        const customerData = {
+          ...customer,
+          // remote_ip: req.ip,
+          return_to: `${req.protocol}://${req.get('host')}/account`
+        }
+        const multipassUrl = multipassify.generateUrl(customerData, process.env.SHOPIFY_URL);
+        // set session
+        req.session.customerAccessToken = customerAccessToken
+        return res.json({ customerAccessToken, multipassUrl, userErrors })
       }
-      const multipassUrl = multipassify.generateUrl(customerData, process.env.SHOPIFY_URL);
-      // set session
-      req.session.customerAccessToken = customerAccessToken
-      return res.json({ customerAccessToken, multipassUrl, userErrors })
     }
+    res.status(401).json({ message: 'Bad credentials' })
+  } catch (err) {
+    next(err);
   }
-  res.status(401).json({ message: 'Bad credentials' })
 })
 
 // Add POST - /api/logout
