@@ -1,6 +1,6 @@
 <template>
   <div class="app nacelle">
-    <global-header ref="header" />
+    <g-header ref="header" />
     <nuxt :style="{ 'margin-top': `${headerHeight}px` }" />
     <site-footer />
     <cookie-banner />
@@ -10,11 +10,17 @@
 </template>
 
 <script>
+import GlobalHeader from '~/components/GlobalHeader'
 import nacelleVue from "@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js"
 export default nacelleVue({
   type: "default-layout",
-  async mounted () {
-    await this.$store.dispatch('account/readCustomerAccessToken')
+  components: {
+    'g-header': GlobalHeader
+  },
+  mounted () {
+    setTimeout(() => {
+      this.headerHeight = this.$refs.header.$el.clientHeight
+    }, 200)
   }
 })
 </script>
