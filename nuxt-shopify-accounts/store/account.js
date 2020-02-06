@@ -35,7 +35,7 @@ const accountClient = axios.create({
   }
 })
 
-const multipassify = new Multipassify(process.env.SHOPIFY_MULTIPASS_SECRET);
+const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
 export const state = () => ({
   customer: null,
