@@ -1,9 +1,12 @@
 import localforage from 'localforage'
 import axios from 'axios'
+import Multipassify from 'multipassify';
+
 import {
   CUSTOMER_ACCESS_TOKEN_CREATE,
   CUSTOMER_ACCESS_TOKEN_RENEW,
   CUSTOMER_ACCESS_TOKEN_DELETE,
+  GET_CUSTOMER,
   GET_CUSTOMER_ORDERS,
   GET_CUSTOMER_DEFAULT_ADDRESS,
   GET_CUSTOMER_ADDRESSES,
@@ -12,6 +15,15 @@ import {
   transformEdges,
   transformOrders
 } from '../gql'
+import { stat } from 'fs';
+
+import {
+  set as setCookie,
+  get as getCookie,
+  remove as removeCookie,
+  parse as parseCookie,
+  encode as encodeCookie
+} from 'es-cookie';
 
 const accountClient = axios.create({
   baseURL: `https://${process.env.SHOPIFY_URL}/api/2020-01/graphql`,
@@ -23,14 +35,7 @@ const accountClient = axios.create({
   }
 })
 
-const apiClient = axios.create({
-  baseURL: '/',
-  timeout: 1000,
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  }
-})
+const multipassify = new Multipassify(process.env.SHOPIFY_MULTIPASS_SECRET);
 
 export const state = () => ({
   customer: null,
@@ -44,6 +49,9 @@ export const state = () => ({
 export const mutations = {
   setErrors(state, userErrors) {
     state.userErrors = userErrors
+  },
+  setCustomer(state, customer) {
+    state.customer = customer
   },
   setCustomerAccessToken(state, customerAccessToken) {
     state.customerAccessToken = customerAccessToken
@@ -60,57 +68,74 @@ export const mutations = {
 }
 
 export const actions = {
-  async readCustomerAccessToken({ dispatch, commit }) {
-    const customerAccessToken = await localforage.getItem('customerAccessToken')
-
-    if (customerAccessToken === null) { return }
-    if (new Date(customerAccessToken.expiresAt) < Date.now()) {
-      localforage.removeItem('customerAccessToken')
-    } else {
-      commit('setCustomerAccessToken', customerAccessToken)
-      dispatch('renewCustomerAccessToken', customerAccessToken.accessToken)
-    }
-  },
-
   async renewCustomerAccessToken({ commit }, payload) {
-    const variables = { customerAccessToken: payload }
-    const query = CUSTOMER_ACCESS_TOKEN_RENEW
-    const response = await accountClient.post(null, { query, variables })
-    const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenRenew
-    if (customerAccessToken) {
-      localforage.setItem('customerAccessToken', customerAccessToken)
-      commit('setCustomerAccessToken', customerAccessToken)
-    }
-    commit('setErrors', userErrors)
-  },
-
-  // async login({ state, dispatch, commit, rootState }, payload) {
-  //   const variables = { input: { email: payload.email, password: payload.password } }
-  //   const query = CUSTOMER_ACCESS_TOKEN_CREATE
-  //   const response = await accountClient.post(null, { query, variables })
-  //   const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenCreate
-  //   if (customerAccessToken) {
-  //     localforage.setItem('customerAccessToken', customerAccessToken)
-  //     commit('setCustomerAccessToken', customerAccessToken)
-  //     // dispatch('setShopifySession', payload)
-  //   }
-  //   commit('setErrors', userErrors)
-  // },
-
-  async login ({ commit }, { email, password }) {
     try {
-      const { data } = await apiClient.post('api/login', { email, password })
-      const { customerAccessToken, multipassUrl, userErrors } = data
+      const variables = { customerAccessToken: payload }
+      const query = CUSTOMER_ACCESS_TOKEN_RENEW
+      const response = await accountClient.post(null, { query, variables })
+      const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenRenew
       if (customerAccessToken) {
-        localforage.setItem('customerAccessToken', customerAccessToken)
+        const { accessToken, expiresAt } = customerAccessToken
+        let expires = new Date(expiresAt);
+        expires.setHours(expires.getHours());
+        setCookie('customerAccessToken', accessToken, { expires })
         commit('setCustomerAccessToken', customerAccessToken)
       }
       commit('setErrors', userErrors)
-      return data
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        throw new Error('Bad credentials')
+      throw error
+    }
+  },
+
+  async getCustomer({ state, commit, dispatch }) {
+    try {
+      const variables = { customerAccessToken: state.customerAccessToken.accessToken }
+      const query = GET_CUSTOMER
+      const response = await accountClient.post(null, { query, variables })
+      const { customer, userErrors } = response.data.data
+      if (customer) {
+        commit('setCustomer', customer)
       }
+      commit('setErrors', userErrors || [])
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async multipassLogin({ state, commit, dispatch }) {
+    // TODO: figure out remote ip
+    if (process.browser) {
+      const { host, protocol } = window.location
+      // multipass login
+      const customerData = {
+        ...state.customer,
+        // remote_ip: req.ip,
+        return_to: `${protocol}//${host}/account`
+      }
+      return {
+        multipassUrl: multipassify.generateUrl(customerData, process.env.SHOPIFY_URL)
+      }
+    }
+  },
+
+  async login ({ state, commit, dispatch }, { email, password }) {
+    try {
+      const variables = { input: { email, password } }
+      const query = CUSTOMER_ACCESS_TOKEN_CREATE
+      const response = await accountClient.post(null, { query, variables })
+      const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenCreate
+
+      if (customerAccessToken) {
+        const { accessToken, expiresAt } = customerAccessToken
+        let expires = new Date(expiresAt);
+        expires.setHours(expires.getHours());
+        setCookie('customerAccessToken', accessToken, { expires })
+        await commit('setCustomerAccessToken', customerAccessToken)
+        await dispatch('getCustomer')
+        return await dispatch('multipassLogin') 
+      }
+      commit('setErrors', userErrors)
+    } catch (error) {
       throw error
     }
   },
@@ -121,69 +146,56 @@ export const actions = {
     const response = await accountClient.post(null, { query, variables })
     const { deletedAccessToken, deletedCustomerAccessTokenId, userErrors } = response.data.data.customerAccessTokenDelete
     if (deletedAccessToken) {
-      await axios.post('/api/logout')
-      localforage.removeItem('customerAccessToken')
+      removeCookie('customerAccessToken')
       commit('setCustomerAccessToken', null)
+      commit('setCustomer', null)
     }
     commit('setErrors', userErrors)
   },
 
-  // async setShopifySession({ state, dispatch, commit, rootState }, payload) {
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.set('form_type', 'customer_login');
-  //   bodyFormData.set('utf8', '✓');
-  //   bodyFormData.set('customer[email]', payload.email);
-  //   bodyFormData.set('customer[password]', payload.password);
-
-  //   console.log('payload', payload)
-
-  //   axios({
-  //     method: 'post',
-  //     url: payload.action,
-  //     data: bodyFormData,
-  //     headers: {'Content-Type': 'multipart/form-data'}
-  //   })
-  //   .then(function (response) {
-  //     //handle success
-  //     console.log(response);
-  //   })
-  //   .catch(function (response) {
-  //     //handle error
-  //     console.log(response);
-  //   });
-  // },
-
   async fetchOrders({ state, dispatch, commit, rootState }, payload) {
-    const variables = { customerAccessToken: state.customerAccessToken.accessToken }
-    const query = GET_CUSTOMER_ORDERS
-    const response = await accountClient.post(null, { query, variables })
-    const { customer, userErrors } = response.data.data
-    if (customer) {
-      commit('setOrders', transformOrders(customer.orders))
+    try {
+      const variables = { customerAccessToken: state.customerAccessToken.accessToken }
+      const query = GET_CUSTOMER_ORDERS
+      const response = await accountClient.post(null, { query, variables })
+      const { customer, userErrors } = response.data.data
+      if (customer) {
+        commit('setOrders', transformOrders(customer.orders))
+      }
+      commit('setErrors', userErrors)
+    } catch (error) {
+      throw error
     }
-    commit('setErrors', userErrors)
   },
 
   async fetchDefaultAddress({ state, dispatch, commit, rootState }, payload) {
-    const variables = { customerAccessToken: state.customerAccessToken.accessToken }
-    const query = GET_CUSTOMER_DEFAULT_ADDRESS
-    const response = await accountClient.post(null, { query, variables })
-    const { customer, userErrors } = response.data.data
-    if (customer) {
-      commit('setDefaultAddress', customer.defaultAddress)
+    try {
+      const variables = { customerAccessToken: state.customerAccessToken.accessToken }
+      const query = GET_CUSTOMER_DEFAULT_ADDRESS
+      const response = await accountClient.post(null, { query, variables })
+      const { customer, userErrors } = response.data.data
+      if (customer) {
+        commit('setDefaultAddress', customer.defaultAddress)
+      }
+      commit('setErrors', userErrors)
+    } catch (error) {
+      throw error
     }
-    commit('setErrors', userErrors)
   },
 
   async fetchAddresses({ state, dispatch, commit, rootState }, payload) {
-    const variables = { customerAccessToken: state.customerAccessToken.accessToken }
-    const query = GET_CUSTOMER_ADDRESSES
-    const response = await accountClient.post(null, { query, variables })
-    const { customer, userErrors } = response.data.data
-    if (customer) {
-      commit('setAddresses', transformEdges(customer.addresses))
+    try {
+      const variables = { customerAccessToken: state.customerAccessToken.accessToken }
+      const query = GET_CUSTOMER_ADDRESSES
+      const response = await accountClient.post(null, { query, variables })
+      const { customer, userErrors } = response.data.data
+      if (customer) {
+        commit('setAddresses', transformEdges(customer.addresses))
+      }
+      commit('setErrors', userErrors)
+    } catch (error) {
+      throw error
     }
-    commit('setErrors', userErrors)
   },
 
   async checkoutCustomerAssociate({ state, dispatch, commit, rootState }, { checkoutId }) {

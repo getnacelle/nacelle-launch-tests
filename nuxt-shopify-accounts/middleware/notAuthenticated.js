@@ -1,9 +1,11 @@
 export default function ({ store, redirect }) {
-  // If the user is authenticated redirect to home page
-  const { customerAccessToken } = store.state.account
+  // If the user is authenticated redirect to account
+  const {
+    customerAccessToken
+  } = store.state.account
+  
   if (
-    customerAccessToken &&
-    new Date(customerAccessToken.expiresAt) > Date.now()
+    customerAccessToken
   ) {
     return redirect('/account')
   }

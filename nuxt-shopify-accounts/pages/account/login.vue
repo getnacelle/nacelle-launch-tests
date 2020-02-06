@@ -67,7 +67,9 @@ export default {
     ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
     ...mapActions('cart', ['saveCheckoutId', 'saveCheckoutUrl', 'getLinkerParam']),
     async submitForm () {
-      const response = await this.login({ email: this.loginForm.email, password: this.loginForm.password })
+      const { email, password } = this.loginForm
+      const response = await this.login({ email, password })
+      console.log('response', response)
 
       if (response.multipassUrl) {
         window.location.href = response.multipassUrl

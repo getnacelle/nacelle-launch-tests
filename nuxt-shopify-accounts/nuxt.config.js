@@ -2,29 +2,9 @@ require('dotenv').config()
 
 import path from 'path'
 import fs from 'fs-extra'
-import bodyParser from 'body-parser'
-import session from 'express-session'
-
-const FileStore = require('session-file-store')(session);
-const fileStoreOptions = {};
 
 export default {
   mode: process.env.BUILD_MODE,
-  serverMiddleware: [
-    // body-parser middleware
-    bodyParser.json(),
-    // session middleware
-    session({
-      store: new FileStore(fileStoreOptions),
-      secret: 'Make it so',
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: 60000 }
-    }),
-    // Api middleware
-    // We add /api/login & /api/logout routes
-    '~/api'
-  ],
   /*
    ** Headers of the page
    */
@@ -102,6 +82,7 @@ export default {
     skipPrefetch: process.env.SKIP_PREFETCH === 'true',
     customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
     shopifyUrl: process.env.SHOPIFY_URL,
+    shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
     shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
   },
 

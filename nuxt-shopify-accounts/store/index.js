@@ -1,3 +1,5 @@
+const cookieparser = process.server ? require('cookieparser') : undefined
+
 export const state = () => ({
   collectionLimit: 12
 })
@@ -5,10 +7,19 @@ export const state = () => ({
 export const mutations = {}
 
 export const actions = {
-  async nuxtServerInit(ctx, context) {
-    if (context && context.req &&  context.req.session && context.req.session.customerAccessToken) {
-      await ctx.commit('account/setCustomerAccessToken', context.req.session.customerAccessToken)
+  nuxtServerInit(ctx, context) {
+    let customerAccessToken = null
+    if (context.req && context.req.headers.cookie) {
+      const parsed = cookieparser.parse(context.req.headers.cookie)
+      if (parsed.customerAccessToken) {
+        customerAccessToken = {
+          accessToken: parsed.customerAccessToken,
+          expiresAt: null
+        }
+      }
     }
-    await this.$nacelle.nacelleNuxtServerInit(ctx, context)
+    
+    ctx.commit('account/setCustomerAccessToken', customerAccessToken)
+    this.$nacelle.nacelleNuxtServerInit(ctx, context)
   }
 }
