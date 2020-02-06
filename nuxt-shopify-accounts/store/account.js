@@ -26,12 +26,12 @@ import {
 } from 'es-cookie';
 
 const accountClient = axios.create({
-  baseURL: `https://${process.env.SHOPIFY_URL}/api/2020-01/graphql`,
+  baseURL: `https://${process.env.shopifyUrl}/api/2020-01/graphql`,
   timeout: 1000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_GRAPHQL_TOKEN
+    'X-Shopify-Storefront-Access-Token': process.env.shopifyToken
   }
 })
 
@@ -113,7 +113,7 @@ export const actions = {
         return_to: `${protocol}//${host}/account`
       }
       return {
-        multipassUrl: multipassify.generateUrl(customerData, process.env.SHOPIFY_URL)
+        multipassUrl: multipassify.generateUrl(customerData, process.env.shopifyUrl)
       }
     }
   },

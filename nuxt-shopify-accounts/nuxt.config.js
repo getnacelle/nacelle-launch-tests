@@ -52,6 +52,8 @@ export default {
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
     buildMode: process.env.BUILD_MODE,
     shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
+    shopifyUrl: process.env.SHOPIFY_URL,
+    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
   },
 
   modules: [
