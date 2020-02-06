@@ -70,7 +70,7 @@ export default {
     async routes() {
       const staticDir = path.resolve(__dirname, './static/data')
       const routes = fs.readJsonSync(`${staticDir}/routes.json`)
-      const routesOnly = routes.map(route => route.route)
+      const routesOnly = routes.map(route => route.route).concat(['/account','/account/login'])
       
       return routesOnly
     }
