@@ -11,7 +11,6 @@
         method="post"
         accept-charset="UTF-8"
         novalidate="novalidate"
-        :action="action"
         @submit.prevent="submitForm"
       >
         <input type="hidden" name="form_type" value="customer_login">
@@ -51,17 +50,6 @@ export default {
   computed: {
     ...mapState('account', ['customerAccessToken', 'userErrors']),
     ...mapGetters('cart', ['checkoutIdForBackend', 'checkoutLineItems']),
-    action () {
-      return `https://${this.$nacelle.shopifyUrl}/account/login`
-    }
-  },
-  watch: {
-    // async customerAccessToken () {
-    //   // const checkoutId = await this.fetchCheckoutId()
-    //   // this.checkoutCustomerAssociate({ checkoutId })
-    //   // this.$refs.form.submit()
-    //   // this.$router.push('/account')
-    // }
   },
   methods: {
     ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
@@ -69,35 +57,10 @@ export default {
     async submitForm () {
       const { email, password } = this.loginForm
       const response = await this.login({ email, password })
-      console.log('response', response)
 
       if (response.multipassUrl) {
         window.location.href = response.multipassUrl
       }
-    },
-    async fetchCheckoutId () {
-      const vm = this
-      let processCheckoutObject = {
-        id: vm.checkoutIdForBackend,
-        url: vm.$store.state.cart.checkoutUrl
-      }
-      if (!!processCheckoutObject.id) { return processCheckoutObject.id }
-      processCheckoutObject = await this.$nacelle
-      .checkout({
-        cartItems: vm.checkoutLineItems,
-        checkoutId: processCheckoutObject.id
-      })
-      await this.saveCheckoutId(processCheckoutObject.id)
-      let url
-      const linkerParam = await this.getLinkerParam()
-
-      if (processCheckoutObject.url.includes('?')) {
-        url = `${processCheckoutObject.url}&c=${JSON.stringify({})}&${linkerParam}`
-      } else {
-        url = `${processCheckoutObject.url}?c=${JSON.stringify({})}&${linkerParam}`
-      }
-      await this.saveCheckoutUrl(url)
-      return processCheckoutObject.id
     }
   }
 }

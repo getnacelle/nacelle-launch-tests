@@ -1,4 +1,3 @@
-import localforage from 'localforage'
 import axios from 'axios'
 import Multipassify from 'multipassify';
 
@@ -68,6 +67,13 @@ export const mutations = {
 }
 
 export const actions = {
+  async readCustomerAccessToken({ dispatch, commit }, { accessToken }) {
+    if (accessToken) { 
+      commit('setCustomerAccessToken', { accessToken, expiresAt: null })
+      dispatch('renewCustomerAccessToken', accessToken)
+    }
+  },
+
   async renewCustomerAccessToken({ commit }, payload) {
     try {
       const variables = { customerAccessToken: payload }
@@ -141,7 +147,8 @@ export const actions = {
   },
 
   async logout({ state, dispatch, commit, rootState }) {
-    const variables = { customerAccessToken: state.customerAccessToken.accessToken }
+    const accessToken = (state.customerAccessToken && state.customerAccessToken.accessToken) || getCookie('customerAccessToken')
+    const variables = { customerAccessToken: accessToken }
     const query = CUSTOMER_ACCESS_TOKEN_DELETE
     const response = await accountClient.post(null, { query, variables })
     const { deletedAccessToken, deletedCustomerAccessTokenId, userErrors } = response.data.data.customerAccessTokenDelete

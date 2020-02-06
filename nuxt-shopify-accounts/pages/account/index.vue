@@ -51,7 +51,8 @@ export default {
     return {
     }
   },
-  async mounted() {
+  async mounted () {
+    console.log("this.customerAccessToken", this.customerAccessToken)
     if (this.customerAccessToken) {
       this.$store.dispatch('account/fetchOrders')
       this.$store.dispatch('account/fetchDefaultAddress')

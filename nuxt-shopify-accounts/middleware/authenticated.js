@@ -1,13 +1,10 @@
-export default function ({ store, redirect }) {
+export default function (ctx) {
+  const { store, redirect, app } = ctx
   // If the user is not authenticated
-  // const { account } = store.state
-  const {
-    customerAccessToken
-  } = store.state.account
+  const customerAccessToken = app.$cookies.get('customerAccessToken')
 
-  if (
-    !customerAccessToken
-  ) {
+  if (customerAccessToken === undefined || customerAccessToken === false) {
+    console.log('not authenticated')
     return redirect('/account/login')
   }
 }

@@ -8,9 +8,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "build-netlify": "npm run generate && npm run build:lambda",
-    "build:lambda": "netlify-lambda build lambda-src",
-    "lambda-serve": "netlify-lambda serve lambda-src",
+    "gen": "node node_modules/@nacelle/nacelle-tools/dist/scripts/npm-run-generate-script.js",
     "serve": "npx http-server dist"
   },
   "dependencies": {
@@ -22,7 +20,7 @@
     "@nuxtjs/pwa": "3.0.0-beta.16",
     "@nuxtjs/sitemap": "^1.2.0",
     "apollo-cache-inmemory": "^1.6.2",
-    "cookieparser": "^0.1.0",
+    "cookie-universal-nuxt": "^2.1.1",
     "cookies": "^0.8.0",
     "core-js": "^2.6.9",
     "dotenv": "^8.0.0",

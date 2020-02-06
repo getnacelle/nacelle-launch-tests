@@ -62,7 +62,8 @@ export default {
     '@nacelle/nacelle-nuxt-module',
     '@nuxtjs/sitemap',
     '@nuxtjs/axios',
-    'vue-currency-filter/nuxt'
+    'vue-currency-filter/nuxt',
+    'cookie-universal-nuxt',
   ],
 
   sitemap: {

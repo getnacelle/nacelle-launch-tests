@@ -17,6 +17,10 @@ export default nacelleVue({
   components: {
     'g-header': GlobalHeader
   },
+  created () {
+    const accessToken = this.$cookies.get('customerAccessToken')
+    this.$store.dispatch('account/readCustomerAccessToken', { accessToken })
+  },
   mounted () {
     setTimeout(() => {
       this.headerHeight = this.$refs.header.$el.clientHeight
