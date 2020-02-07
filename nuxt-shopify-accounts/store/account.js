@@ -80,7 +80,6 @@ export const actions = {
       const query = CUSTOMER_ACCESS_TOKEN_RENEW
       const response = await accountClient.post(null, { query, variables })
       const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenRenew
-      console.log('customerAccessToken', customerAccessToken)
       if (customerAccessToken && customerAccessToken.accessToken) {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);

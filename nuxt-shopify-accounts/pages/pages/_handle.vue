@@ -7,7 +7,7 @@
         /****
       -->
 
-        <!-- <template v-slot:section="{ section }"> -->
+      <!-- <template v-slot:section="{ section }"> -->
 
       <!-- 
             * Edit Hero Banner *
@@ -65,11 +65,51 @@
 </template>
 
 <script>
-import nacelleVue from '@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js'
+import PageContent from "~/components/PageContent";
+import { getPageData } from '@nacelle/nacelle-tools'
+export default {
+  components: { PageContent },
+  data() {
+    return {
+      handle: null,
+      page: null,
+      noPageData: false
+    };
+  },
+  async asyncData(context) {
+    const { params, app, payload } = context;
+    const { handle } = params;
+    const { $nacelle } = app;
 
-export default nacelleVue({
-  // type defines the default Nacelle data objects to use for this route
-  type: 'page',
-  // add your own mixins and vue instance properties here
-})
+    const pageData = await getPageData({
+      handle: handle,
+      locale: $nacelle.locale,
+      payload
+    });
+
+    return {
+      ...pageData
+    };
+  },
+  async created() {
+    this.handle =  this.$route.params.handle;
+
+    if (process.browser && !this.page && !this.noPageData) {
+      const pageData = await this.$nacelle.content({
+        handle: this.handle,
+        locale:  this.$nacelle.locale
+      });
+
+      if (pageData) {
+        if (pageData.noData) {
+          this.noPageData = true;
+        } else {
+          this.page = pageData;
+        }
+      } else {
+        this.noPageData = true;
+      }
+    }
+  }
+};
 </script>

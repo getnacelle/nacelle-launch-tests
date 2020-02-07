@@ -90,3 +90,10 @@ sw.*
 
 # Nacelle
 static/data
+
+# Netlify Lambda Functions
+lambdas-dist
+netlify-lambda-build
+
+# Local Netlify folder
+.netlify

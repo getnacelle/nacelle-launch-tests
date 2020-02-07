@@ -65,10 +65,49 @@
 </template>
 
 <script>
-import nacelleVue from "@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js"
-export default nacelleVue({
-  // type defines the default Nacelle data objects to use for this route
-  type: "page",
-  // add your own mixins and vue instance properties here
-})
+import { getPageData } from '@nacelle/nacelle-tools'
+export default {
+      data () {
+      return {
+        handle: null,
+        page: null,
+        noPageData: false
+      }
+    },
+    async asyncData (context) {
+      const { params, app, payload } = context
+      const { handle } = params
+      const { $nacelle } = app
+
+      const pageData = await getPageData({
+        handle: pageHandle || handle,
+        locale: locale || $nacelle.locale,
+        payload
+      })
+
+      return {
+        ...pageData
+      }
+    },
+    async created () {
+      this.handle = pageHandle || this.$route.params.handle
+
+      if (process.browser && !this.page && !this.noPageData) {
+        const pageData = await this.$nacelle.content({
+          handle: this.handle,
+          locale: locale || this.$nacelle.locale
+        })
+
+        if (pageData) {
+          if (pageData.noData) {
+            this.noPageData = true
+          } else {
+            this.page = pageData
+          }
+        } else {
+          this.noPageData = true
+        }
+      }
+    }
+}
 </script>

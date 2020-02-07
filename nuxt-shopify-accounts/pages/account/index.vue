@@ -55,6 +55,11 @@ export default {
     return {
     }
   },
+  head: {
+    script: [
+      { src: '/head.js' },
+    ]
+  },
   async mounted () {
     if (this.customerAccessToken) {
       this.$store.dispatch('account/fetchOrders')
@@ -73,6 +78,13 @@ export default {
       const dayOfWeek = DD[date.getDay()]
       return `${dayOfWeek}, ${month} ${day}, ${year}`
     }
+  },
+  watch: {
+    customerAccessToken: function (val) {
+      if (val === null) {
+        this.$router.push('/')
+      }
+    },
   },
   computed: {
     ...mapState('account', ['customerAccessToken', 'userErrors', 'orders', 'defaultAddress', 'addresses']),

@@ -98,11 +98,15 @@
 </template>
 
 <script>
-import nacelleVue from "@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js"
-export default nacelleVue({
-  type: "homepage",
-  mounted() {
-    console.log("hi from homepage")
-  }
-})
+import getPage from '~/mixins/getPage'
+import getCollection from '~/mixins/getCollection'
+import ContentHeroBanner from '~/components/ContentHeroBanner'
+import ContentSideBySide from '~/components/ContentSideBySide'
+import PageContent from '~/components/PageContent'
+export default {
+  components: {ContentHeroBanner, ContentSideBySide, PageContent},
+  mixins: [getPage({ pageHandle: 'homepage' }), 
+  getCollection({ pageHandle: 'homepage' })
+  ]
+}
 </script>

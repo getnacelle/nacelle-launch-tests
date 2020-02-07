@@ -49,10 +49,54 @@
 </template>
 
 <script>
-import nacelleVue from "@nacelle/nacelle-vue-components/dist/nacelleVueInstance.js"
-export default nacelleVue({
-  type: "search",
-})
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import SearchBox from '~/components/SearchBox'
+import RefinementFilters from '~/components/RefinementFilters'
+import SearchResults from '~/components/SearchResults'
+import ProductGrid from '~/components/ProductGrid'
+import SearchNoResults from '~/components/SearchNoResults'
+export default {
+  components:{
+    SearchBox,
+    RefinementFilters,
+    SearchResults,
+    ProductGrid,
+    SearchNoResults
+  },
+    data() {
+      return {
+        filteredData: null
+      }
+    },
+    computed: {
+      ...mapState('search', ['query', 'loadedData']),
+      ...mapGetters('search', ['productData'])
+    },
+    watch: {
+      loadedData(newVal) {
+        if (newVal) {
+          if (this.$route.query && this.$route.query.q) {
+            this.setQuery({
+              origin: 'in-page',
+              value: this.$route.query.q
+            })
+          }
+        }
+      }
+    },
+    created () {
+      if (process.browser) {
+        this.getProductData()
+      }
+    },
+    methods: {
+      ...mapMutations('search', ['setQuery']),
+      ...mapActions('search', ['getProductData']),
+      updateFilteredData(data) {
+        this.filteredData = data
+      }
+    }
+}
 </script>
 
 <style>
