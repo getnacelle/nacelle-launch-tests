@@ -2,6 +2,10 @@
   <div class="page page-account">
     <section class="section section-header">
       <h1>Account <span class="logout-link"><a @click="logout">logout</a></span></h1>
+      <ul v-if="userErrors.length">
+        <li>Error:</li>
+        <li class="error" v-for="(error, index) in userErrors" :key="index">{{ error.message }}</li>
+      </ul>
     </section>
 
     <section class="section section-orders">
@@ -52,7 +56,6 @@ export default {
     }
   },
   async mounted () {
-    console.log("this.customerAccessToken", this.customerAccessToken)
     if (this.customerAccessToken) {
       this.$store.dispatch('account/fetchOrders')
       this.$store.dispatch('account/fetchDefaultAddress')
@@ -72,7 +75,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['customerAccessToken', 'orders', 'defaultAddress', 'addresses']),
+    ...mapState('account', ['customerAccessToken', 'userErrors', 'orders', 'defaultAddress', 'addresses']),
     action () {
       // Not being used.
       return `https://${this.$nacelle.shopifyUrl}/account/logout`
@@ -102,5 +105,8 @@ export default {
   .logout-link {
     margin: 0 10px;
     font-size: 9px;
+  }
+  .error {
+    color: #8f1212
   }
 </style>

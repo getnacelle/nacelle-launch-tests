@@ -3,7 +3,6 @@ export default function ({ store, redirect, app }) {
   const customerAccessToken = app.$cookies.get('customerAccessToken')
   
   if (customerAccessToken) {
-    console.log('already logged in')
     return redirect('/account')
   }
 }

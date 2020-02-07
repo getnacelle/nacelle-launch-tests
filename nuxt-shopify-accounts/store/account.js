@@ -47,7 +47,7 @@ export const state = () => ({
 
 export const mutations = {
   setErrors(state, userErrors) {
-    state.userErrors = userErrors
+    state.userErrors = userErrors || []
   },
   setCustomer(state, customer) {
     state.customer = customer
@@ -74,18 +74,24 @@ export const actions = {
     }
   },
 
-  async renewCustomerAccessToken({ commit }, payload) {
+  async renewCustomerAccessToken({ commit, dispatch }, payload) {
     try {
       const variables = { customerAccessToken: payload }
       const query = CUSTOMER_ACCESS_TOKEN_RENEW
       const response = await accountClient.post(null, { query, variables })
       const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenRenew
-      if (customerAccessToken) {
+      console.log('customerAccessToken', customerAccessToken)
+      if (customerAccessToken && customerAccessToken.accessToken) {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);
         expires.setHours(expires.getHours());
         setCookie('customerAccessToken', accessToken, { expires })
         commit('setCustomerAccessToken', customerAccessToken)
+      } else {
+        // access token does not exist
+        removeCookie('customerAccessToken')
+        commit('setCustomerAccessToken', null)
+        commit('setCustomer', null)
       }
       commit('setErrors', userErrors)
     } catch (error) {
@@ -102,7 +108,7 @@ export const actions = {
       if (customer) {
         commit('setCustomer', customer)
       }
-      commit('setErrors', userErrors || [])
+      commit('setErrors', userErrors)
     } catch (error) {
       throw error
     }

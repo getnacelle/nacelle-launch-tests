@@ -66,6 +66,10 @@ export default {
     'cookie-universal-nuxt',
   ],
 
+  plugins: [
+    { src: '~/plugins/authOnLoad.js', ssr: false }
+  ],
+
   sitemap: {
     gzip: true,
     async routes() {
