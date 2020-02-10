@@ -1,10 +1,10 @@
 <template>
-  <div class="page page-login">
+  <div class="page page-reset">
     <section class="section section-header">
-      <h1>Login</h1>
+      <h1>Reset Account Password</h1>
     </section>
 
-    <section class="section section-login">
+    <section class="section section-reset">
       <form
         ref="form"
         method="post"
@@ -12,12 +12,13 @@
         novalidate="novalidate"
         @submit.prevent="submitForm"
       >
-        <input type="hidden" name="form_type" value="customer_login">
+        <input type="hidden" name="form_type" value="reset_customer_password">
         <input type="hidden" name="utf8" value="✓">
         <input type="hidden" name="return_url" value="/account">
-        <input type="text" name="customer[email]" placeholder="email" v-model="form.email" />
+        <input type="hidden" name="token" v-model="form.resetToken">
+        <input type="hidden" name="id" v-model="form.customerId">
         <input type="password" name="customer[password]" placeholder="password" v-model="form.password" />
-        <button class="button">Login</button>
+        <button class="button">Reset Password</button>
 
         <ul v-if="userErrors.length">
           <li>Error:</li>
@@ -25,18 +26,6 @@
         </ul>
       </form>
 
-      <nuxt-link
-        :to="`/account/recover`"
-        class="breadcrumb"
-      >
-        Forgot your password?
-      </nuxt-link>
-      <nuxt-link
-        :to="`/account/register`"
-        class="breadcrumb"
-      >
-        Create Account
-      </nuxt-link>
     </section>
   </div>
 </template>
@@ -49,25 +38,32 @@ export default {
   data () {
     return {
       form: {
-        email: '',
-        password: ''
+        password: '',
+        resetToken: '',
+        customerId: ''
       }
     }
   },
+  head: {
+    script: [
+      { src: '/reset-head.js' },
+    ]
+  },
   mounted() {
+    // TODO Guard Route if resetToken and customerId are not available
+    this.form.resetToken = this.$route.query.token
+    this.form.customerId = this.$route.query.id
   },
   computed: {
     ...mapState('account', ['customerAccessToken', 'userErrors']),
   },
   methods: {
-    ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
+    ...mapActions('account', ['reset']),
     async submitForm () {
-      const { email, password } = this.form
-      const response = await this.login({ email, password })
-
-      if (response.multipassUrl) {
-        window.location.href = response.multipassUrl
-      }
+      const { password, resetToken, customerId } = this.form
+      await this.reset({ password, resetToken, customerId })
+      // TODO: handle success
+      this.$router.push('/account/login')
     }
   }
 }

@@ -34,6 +34,8 @@ export default {
   },
   created() {
     this.$nacelle.setSpace()
+    // Accounts Modifications
+    // Get, read, validate, and renew accessToken from cookies.
     const accessToken = this.$cookies.get('customerAccessToken')
     this.$store.dispatch('account/readCustomerAccessToken', { accessToken })
   },

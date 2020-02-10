@@ -1,10 +1,10 @@
 <template>
-  <div class="page page-login">
+  <div class="page page-recover">
     <section class="section section-header">
-      <h1>Login</h1>
+      <h1>Reset Your Password</h1>
     </section>
 
-    <section class="section section-login">
+    <section class="section section-recover">
       <form
         ref="form"
         method="post"
@@ -12,12 +12,11 @@
         novalidate="novalidate"
         @submit.prevent="submitForm"
       >
-        <input type="hidden" name="form_type" value="customer_login">
+        <input type="hidden" name="form_type" value="recover_customer_password">
         <input type="hidden" name="utf8" value="✓">
         <input type="hidden" name="return_url" value="/account">
-        <input type="text" name="customer[email]" placeholder="email" v-model="form.email" />
-        <input type="password" name="customer[password]" placeholder="password" v-model="form.password" />
-        <button class="button">Login</button>
+        <input type="text" name="customer[email]" placeholder="email" autocomplete="email" v-model="form.email" />
+        <button class="button">Create</button>
 
         <ul v-if="userErrors.length">
           <li>Error:</li>
@@ -26,16 +25,10 @@
       </form>
 
       <nuxt-link
-        :to="`/account/recover`"
+        :to="`/account/login`"
         class="breadcrumb"
       >
-        Forgot your password?
-      </nuxt-link>
-      <nuxt-link
-        :to="`/account/register`"
-        class="breadcrumb"
-      >
-        Create Account
+        Login
       </nuxt-link>
     </section>
   </div>
@@ -50,7 +43,6 @@ export default {
     return {
       form: {
         email: '',
-        password: ''
       }
     }
   },
@@ -60,14 +52,12 @@ export default {
     ...mapState('account', ['customerAccessToken', 'userErrors']),
   },
   methods: {
-    ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
+    ...mapActions('account', ['recover']),
     async submitForm () {
-      const { email, password } = this.form
-      const response = await this.login({ email, password })
-
-      if (response.multipassUrl) {
-        window.location.href = response.multipassUrl
-      }
+      const { email } = this.form
+      const response = await this.recover({ email })
+      // TODO: handle success
+      this.$router.push('/account/login')
     }
   }
 }

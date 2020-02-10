@@ -52,7 +52,7 @@ export default {
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
     buildMode: process.env.BUILD_MODE,
     shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
-    shopifyUrl: process.env.SHOPIFY_URL,
+    myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
   },
 
@@ -75,7 +75,7 @@ export default {
     async routes() {
       const staticDir = path.resolve(__dirname, './static/data')
       const routes = fs.readJsonSync(`${staticDir}/routes.json`)
-      const routesOnly = routes.map(route => route.route).concat(['/account','/account/login'])
+      const routesOnly = routes.map(route => route.route) // .concat(['/account','/account/login'])
       
       return routesOnly
     }
@@ -88,7 +88,7 @@ export default {
     fbID: process.env.NACELLE_FB_ID,
     skipPrefetch: process.env.SKIP_PREFETCH === 'true',
     customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
-    shopifyUrl: process.env.SHOPIFY_URL,
+    myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
     shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
   },

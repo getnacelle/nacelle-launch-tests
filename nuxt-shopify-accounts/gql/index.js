@@ -321,28 +321,40 @@ export const GET_CUSTOMER_ADDRESSES = `query getCustomer($customerAccessToken: S
   }
 }`
 
-export const CHECKOUT_CUSTOMER_ASSOCIATE = `mutation checkoutCustomerAssociateV2($checkoutId: ID!, $customerAccessToken: String!) {
-  checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
-    checkout {
+export const CUSTOMER_CREATE = `mutation customerCreate($input: CustomerCreateInput!) {
+  customerCreate(input: $input) {
+    customer {
       id
     }
-    checkoutUserErrors {
+    customerUserErrors {
       code
       field
       message
     }
-    customer {
-      id
+  }
+}`
+
+export const CUSTOMER_RECOVER = `mutation customerRecover($email: String!) {
+  customerRecover(email: $email) {
+    customerUserErrors {
+      code
+      field
+      message
     }
   }
 }`
 
-export const CHECKOUT_CUSTOMER_DISASSOCIATE = `mutation checkoutCustomerDisassociateV2($checkoutId: ID!) {
-  checkoutCustomerDisassociateV2(checkoutId: $checkoutId) {
-    checkout {
+export const CUSTOMER_RESET = `mutation customerReset($id: ID!, $input: CustomerResetInput!) {
+  customerReset(id: $id, input: $input) {
+    customer {
       id
+      email
     }
-    checkoutUserErrors {
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
       code
       field
       message

@@ -51,6 +51,8 @@ export default {
         })
         .then(data => {
           if (data && data.id && data.url) {
+            // Accounts Modifications
+            // Intercept checkout url and add custom domain
             if (vm.$nacelle.shopifyCustomDomain) {
               const { protocol, pathname, search } = vm.getLocation(data.url)
               data.url = `${protocol}//${vm.$nacelle.shopifyCustomDomain}${pathname}${search}`

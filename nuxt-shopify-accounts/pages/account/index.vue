@@ -57,7 +57,7 @@ export default {
   },
   head: {
     script: [
-      { src: '/head.js' },
+      { src: '/account-head.js' },
     ]
   },
   async mounted () {
@@ -90,7 +90,7 @@ export default {
     ...mapState('account', ['customerAccessToken', 'userErrors', 'orders', 'defaultAddress', 'addresses']),
     action () {
       // Not being used.
-      return `https://${this.$nacelle.shopifyUrl}/account/logout`
+      return `https://${this.$nacelle.myshopifyDomain}/account/logout`
     }
   },
   methods: {

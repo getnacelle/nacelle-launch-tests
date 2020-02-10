@@ -5,12 +5,13 @@ import {
   CUSTOMER_ACCESS_TOKEN_CREATE,
   CUSTOMER_ACCESS_TOKEN_RENEW,
   CUSTOMER_ACCESS_TOKEN_DELETE,
+  CUSTOMER_CREATE,
+  CUSTOMER_RECOVER,
+  CUSTOMER_RESET,
   GET_CUSTOMER,
   GET_CUSTOMER_ORDERS,
   GET_CUSTOMER_DEFAULT_ADDRESS,
   GET_CUSTOMER_ADDRESSES,
-  CHECKOUT_CUSTOMER_ASSOCIATE,
-  CHECKOUT_CUSTOMER_DISASSOCIATE,
   transformEdges,
   transformOrders
 } from '../gql'
@@ -25,8 +26,8 @@ import {
 } from 'es-cookie';
 
 const accountClient = axios.create({
-  baseURL: `https://${process.env.shopifyUrl}/api/2020-01/graphql`,
-  timeout: 1000,
+  baseURL: `https://${process.env.myshopifyDomain}/api/2020-01/graphql`,
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -124,7 +125,7 @@ export const actions = {
         return_to: `${protocol}//${host}/account`
       }
       return {
-        multipassUrl: multipassify.generateUrl(customerData, process.env.shopifyUrl)
+        multipassUrl: multipassify.generateUrl(customerData, process.env.myshopifyDomain)
       }
     }
   },
@@ -210,19 +211,56 @@ export const actions = {
     }
   },
 
-  async checkoutCustomerAssociate({ state, dispatch, commit, rootState }, { checkoutId }) {
-    // console.log('rootState', rootState, checkoutId)
-    const variables = {
-      checkoutId: checkoutId,
-      customerAccessToken: state.customerAccessToken.accessToken
+  async register ({ state, commit, dispatch }, { firstName, lastName, email, password }) {
+    try {
+      const variables = { input: { firstName, lastName, email, password } }
+      const query = CUSTOMER_CREATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customer, customerUserErrors } = data.customerCreate
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
     }
-    const query = CHECKOUT_CUSTOMER_ASSOCIATE
-    const response = await accountClient.post(null, { query, variables })
-    // console.log('response', response)
-    // const { customer, userErrors } = response.data.data
-    // if (customer) {
-    //   commit('setAddresses', transformEdges(customer.addresses))
-    // }
-    // commit('setErrors', userErrors)
-  }
+  },
+
+  // will need to adjust notifications:
+  // https://community.shopify.com/c/Shopify-APIs-SDKs/Reset-Password-Token-in-Notification-Email/td-p/367455
+  async recover ({ state, commit, dispatch }, { email }) {
+    try {
+      const variables = { input: { email } }
+      const query = CUSTOMER_RECOVER
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customerUserErrors } = data.customerRecover
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async reset ({ state, commit, dispatch }, { password, resetToken, customerId }) {
+    try {
+      
+      const id = Buffer.from(`gid://shopify/Customer/${customerId}`).toString('base64')
+      const variables = { id: id, input: { password, resetToken } }
+      const query = CUSTOMER_RESET
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customer, customerAccessToken, customerUserErrors } = data.customerReset
+      // TODO: Login w/ multipass
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
+    }
+  },
 }

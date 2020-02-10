@@ -1,10 +1,10 @@
 <template>
-  <div class="page page-login">
+  <div class="page page-register">
     <section class="section section-header">
-      <h1>Login</h1>
+      <h1>Register</h1>
     </section>
 
-    <section class="section section-login">
+    <section class="section section-register">
       <form
         ref="form"
         method="post"
@@ -12,12 +12,14 @@
         novalidate="novalidate"
         @submit.prevent="submitForm"
       >
-        <input type="hidden" name="form_type" value="customer_login">
+        <input type="hidden" name="form_type" value="create_customer">
         <input type="hidden" name="utf8" value="✓">
         <input type="hidden" name="return_url" value="/account">
-        <input type="text" name="customer[email]" placeholder="email" v-model="form.email" />
+        <input type="text" name="customer[first_name]" placeholder="First Name" autocomplete="given-name" v-model="form.firstName" />
+        <input type="text" name="customer[last_name]" placeholder="Last Name" autocomplete="family-name" v-model="form.lastName" />
+        <input type="text" name="customer[email]" placeholder="email" autocomplete="email" v-model="form.email" />
         <input type="password" name="customer[password]" placeholder="password" v-model="form.password" />
-        <button class="button">Login</button>
+        <button class="button">Create</button>
 
         <ul v-if="userErrors.length">
           <li>Error:</li>
@@ -32,10 +34,10 @@
         Forgot your password?
       </nuxt-link>
       <nuxt-link
-        :to="`/account/register`"
+        :to="`/account/login`"
         class="breadcrumb"
       >
-        Create Account
+        Login
       </nuxt-link>
     </section>
   </div>
@@ -49,6 +51,8 @@ export default {
   data () {
     return {
       form: {
+        firstName: '',
+        lastName: '',
         email: '',
         password: ''
       }
@@ -60,14 +64,12 @@ export default {
     ...mapState('account', ['customerAccessToken', 'userErrors']),
   },
   methods: {
-    ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
+    ...mapActions('account', ['register']),
     async submitForm () {
-      const { email, password } = this.form
-      const response = await this.login({ email, password })
-
-      if (response.multipassUrl) {
-        window.location.href = response.multipassUrl
-      }
+      const { firstName, lastName, email, password } = this.form
+      await this.register({ firstName, lastName, email, password })
+      // TODO: handle success
+      this.$router.push('/account/login')
     }
   }
 }
