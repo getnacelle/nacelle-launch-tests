@@ -26,13 +26,17 @@ We want a simple solution to handling customer accounts that doesn't involve mai
 │       ├── CREATE
 │       └── DELETE
 ├── Login Page
-│   └── CREATE                          # create customerAccessToken w/ email and password
+│   └── customerAccessToken
+│       └── CREATE                      # create customerAccessToken w/ email and password
 ├── Register Page
-│   └── CREATE                          # create customer account w/ email and password 
+│   └── customer
+│       └── CREATE                      # create customer account w/ email and password 
 ├── Recover Password Page
-│   └── CREATE                          # sends password recovery email to customer
+│   └── resetToken
+│       └── CREATE                      # sends password recovery email to customer
 └── Reset Password Page
-    └── UPDATE                          # updates customer password with resetToken from recovery email
+    └── customer
+        └── UPDATE                      # updates customer password with resetToken from recovery email
 ```
 
 ### Prerequisites
