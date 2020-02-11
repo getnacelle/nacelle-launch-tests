@@ -74,20 +74,20 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 > [multipassify](https://github.com/beaucoo/multipassify)
 
 ### Code Additions
-| Dir | Description |
-| ------ | ------ |
-| [gql/*][DirGQL] | exports GraphQl queries and related utility functions. |
-| [middleware/*][DirMID] | SPA style route guards. Included on certain pages |
-| [pages/account/*][DirPG] | Account Page Templates |
-| [store/account.js][DirST] | Account related Actions and Mutations | [static/account-head.js][DirAH] | On page load guard clause for better UX
-| [static/reset-head.js][DirRH] | On page load guard clause for better UX |
+| Dir                           | Description                                            |
+| ----------------------------- | ------------------------------------------------------ |
+| [gql/*][DirGQL]               | exports GraphQl queries and related utility functions. |
+| [middleware/*][DirMID]        | SPA style route guards. Included on certain pages      |
+| [pages/account/*][DirPG]      | Account Page Templates                                 |
+| [store/account.js][DirST]     | Account related Actions and Mutations                  | [static/account-head.js][DirAH] | On page load guard clause for better UX |
+| [static/reset-head.js][DirRH] | On page load guard clause for better UX                |
 
 ### File Modifications
-| File | Description |
-| ------ | ------ |
-| [layouts/default.vue][FiLD] | add read token action to created hook |
+| File                                            | Description                                          |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| [layouts/default.vue][FiLD]                     | add read token action to created hook                |
 | [components/CartFlyoutCheckoutButton.vue][FiCC] | intercept checkout url and modify with custom domain |
-|
+| [store/index.js][FiSI]                          | retrieve customer access token if present in cookie  |
 
 
 
@@ -99,3 +99,5 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
    [DirRH]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/reset-head.js>
    [FiLD]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue>
    [FiCC]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue>
+   [FiSI]: <https://github.com/getnacelle/nacelle-launch-tests/blob/master/nuxt-shopify-accounts/store/index.js>
+   
