@@ -62,9 +62,9 @@ SHOPIFY_GRAPHQL_TOKEN="789bfb8d1376a93439b27953b60ac357"
 SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 ```
 
-2. We'll need to expose these to various parts of our application through our `nuxt.config.js`:
+Note that the `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
 
-Note that `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
+2. We'll need to expose these to various parts of our application through our `nuxt.config.js`:
 
 ```js
 {
