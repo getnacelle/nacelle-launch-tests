@@ -25,6 +25,12 @@
         </ul>
       </form>
 
+      <!-- Social Login -->
+      <oxi-social-login
+        :shopify-domain="$nacelle.myshopifyDomain"
+        shopify-account-page="http://localhost:3000/account/"
+      />
+
       <nuxt-link
         :to="`/account/recover`"
         class="breadcrumb"
@@ -44,8 +50,12 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import axios from 'axios'
+import OxiSocialLogin from '~/components/OxiSocialLogin.vue'
 export default {
   middleware: 'notAuthenticated',
+  components: {
+    OxiSocialLogin
+  },
   data () {
     return {
       form: {
