@@ -34,12 +34,13 @@ export default {
   },
   created() {
     this.$nacelle.setSpace()
+  },
+  mounted() {
     // Accounts Modifications
     // Get, read, validate, and renew accessToken from cookies.
     const accessToken = this.$cookies.get('customerAccessToken')
     this.$store.dispatch('account/readCustomerAccessToken', { accessToken })
-  },
-  mounted() {
+
     if (this.$refs.header) {
       this.headerHeight = this.$refs.header.$el.clientHeight
     }
