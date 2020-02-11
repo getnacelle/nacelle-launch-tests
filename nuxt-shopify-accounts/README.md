@@ -99,7 +99,7 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 ### File Modifications
 | File | Description |
 | ------ | ------ |
-| [layouts/default.vue][FiLD] | add read token action to created hook |
+| [layouts/default.vue][FiLD] | add read token action to mounted hook |
 | [components/CartFlyoutCheckoutButton.vue][FiCC] | intercept checkout url and modify with custom domain |
 | [nuxt.config.js][FiNC] | add nuxt-universal-cookie module and environment variable additions |
 
