@@ -321,6 +321,77 @@ export const GET_CUSTOMER_ADDRESSES = `query getCustomer($customerAccessToken: S
   }
 }`
 
+export const CUSTOMER_ADDRESS_CREATE = `mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+  customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+    customerAddress {
+      address1
+      address2
+      city
+      company
+      country
+      countryCodeV2
+      firstName
+      formatted
+      formattedArea
+      id
+      lastName
+      latitude
+      longitude
+      name
+      phone
+      province
+      provinceCode
+      zip
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}`
+
+export const CUSTOMER_ADDRESS_UPDATE = `mutation customerAddressUpdate($customerAccessToken: String!, $id: ID!, $address: MailingAddressInput!) {
+  customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $id, address: $address) {
+    customerAddress {
+      address1
+      address2
+      city
+      company
+      country
+      countryCodeV2
+      firstName
+      formatted
+      formattedArea
+      id
+      lastName
+      latitude
+      longitude
+      name
+      phone
+      province
+      provinceCode
+      zip
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}`
+
+export const CUSTOMER_ADDRESS_DELETE = `mutation customerAddressDelete($id: ID!, $customerAccessToken: String!) {
+  customerAddressDelete(id: $id, customerAccessToken: $customerAccessToken) {
+    customerUserErrors {
+      code
+      field
+      message
+    }
+    deletedCustomerAddressId
+  }
+}`
+
 export const CUSTOMER_CREATE = `mutation customerCreate($input: CustomerCreateInput!) {
   customerCreate(input: $input) {
     customer {
