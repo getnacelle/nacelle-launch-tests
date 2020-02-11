@@ -69,9 +69,10 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 }
 ```
 3. Only two dependencies need to be installed:
-* `npm install cookie-universal-nuxt multipassify`
+* `npm install cookie-universal-nuxt multipassify countrycitystatejson`
 > [cookie-universal-nuxt](https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt)
 > [multipassify](https://github.com/beaucoo/multipassify)
+> [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
 ### Code Additions
 | Dir | Description |
@@ -89,6 +90,29 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 | [components/CartFlyoutCheckoutButton.vue][FiCC] | intercept checkout url and modify with custom domain |
 |
 
+
+### Shopify Email Notifications
+1. Password Recover and Reset
+    * During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
+    * We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
+    * The url path will appear like:
+        * `/account/reset?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
+
+        versus:
+        * `/account/reset/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
+
+    ```liquid
+    {% comment %}
+      Edit Customer Account Reset (/admin/email_templates/customer_account_reset/edit)
+      ----
+
+      Old tag:
+      <a href="{{ customer.reset_password_url }}" class="button__text">Reset your password</a>
+    {% endcomment %}
+
+    {% assign url_parts = customer.reset_password_url  | split: '/' %}
+    <a href="http://domain.com/account/reset?id={{url_parts[5]}}&token={{url_parts[6]}}">Reset your password</a>
+    ```
 
 
    [DirGQL]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/gql>

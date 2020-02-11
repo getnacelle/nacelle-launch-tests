@@ -41,7 +41,7 @@
           <li v-for="(item, index) in defaultAddress.formatted" :key="index" >{{ item }}</li>
         </ul>
 
-        <button class="button">View Addresses ({{ addresses.length }})</button>
+        <nuxt-link class="button" to="/account/addresses"> Addresses ({{ addresses.length }})</nuxt-link>
       </div>
     </section>
   </div>
