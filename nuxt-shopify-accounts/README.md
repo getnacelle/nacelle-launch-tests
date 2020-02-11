@@ -74,21 +74,34 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 > [multipassify](https://github.com/beaucoo/multipassify)
 > [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
+4. Cookie Universal Nuxt requires an update to `nuxt.config.json`. Add to modules array.
+```js
+{
+  modules: [
+    ...,
+    'cookie-universal-nuxt',
+  ]
+}
+```
+
 ### Code Additions
 | Dir | Description |
 | ------ | ------ |
 | [gql/*][DirGQL] | exports GraphQl queries and related utility functions. |
 | [middleware/*][DirMID] | SPA style route guards. Included on certain pages |
 | [pages/account/*][DirPG] | Account Page Templates |
-| [store/account.js][DirST] | Account related Actions and Mutations | [static/account-head.js][DirAH] | On page load guard clause for better UX
+| [store/account.js][DirST] | Account related Actions and Mutations |
+| [static/account-head.js][DirAH] | On page load guard clause for better UX |
 | [static/reset-head.js][DirRH] | On page load guard clause for better UX |
+| [components/AddressItem.vue][DirAI] | Component for AddressItem |
+| [components/AddressForm.vue][DirAF] | Component for AddressForm reusable with update and create actions |
 
 ### File Modifications
 | File | Description |
 | ------ | ------ |
 | [layouts/default.vue][FiLD] | add read token action to created hook |
 | [components/CartFlyoutCheckoutButton.vue][FiCC] | intercept checkout url and modify with custom domain |
-|
+| [nuxt.config.js][FiNC] | add nuxt-universal-cookie module and environment variable additions |
 
 
 ### Shopify Email Notifications
@@ -121,5 +134,8 @@ SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
    [DirST]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js>
    [DirAH]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js>
    [DirRH]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/reset-head.js>
+   [DirAI]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressItem.vue>
+   [DirAF]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressForm.vue>
    [FiLD]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue>
    [FiCC]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue>
+   [FiNC]: <https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/nuxt.config.js>
