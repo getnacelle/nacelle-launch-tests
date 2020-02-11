@@ -12,6 +12,9 @@ import {
   GET_CUSTOMER_ORDERS,
   GET_CUSTOMER_DEFAULT_ADDRESS,
   GET_CUSTOMER_ADDRESSES,
+  CUSTOMER_ADDRESS_CREATE,
+  CUSTOMER_ADDRESS_UPDATE,
+  CUSTOMER_ADDRESS_DELETE,
   transformEdges,
   transformOrders
 } from '../gql'
@@ -47,35 +50,55 @@ export const state = () => ({
 })
 
 export const mutations = {
-  setErrors(state, userErrors) {
+  setErrors (state, userErrors) {
     state.userErrors = userErrors || []
   },
-  setCustomer(state, customer) {
+  setCustomer (state, customer) {
     state.customer = customer
   },
-  setCustomerAccessToken(state, customerAccessToken) {
+  setCustomerAccessToken (state, customerAccessToken) {
     state.customerAccessToken = customerAccessToken
   },
-  setOrders(state, orders) {
+  setOrders (state, orders) {
     state.orders = orders
   },
-  setDefaultAddress(state, defaultAddress) {
+  setDefaultAddress (state, defaultAddress) {
     state.defaultAddress = defaultAddress
   },
-  setAddresses(state, addresses) {
+  setAddresses (state, addresses) {
     state.addresses = addresses
+  },
+  addAddress (state, address) {
+    state.addresses = [address].concat(state.addresses)
+  },
+  removeAddress (state, addressId) {
+    // addressId is already decoded from Shopify response
+    const id = addressId.split('?')[0]
+    state.addresses = state.addresses.filter(item => atob(item.id).split('?')[0] !== id)
+  },
+  setAddress (state, address) {
+    const addressId = atob(address.id).split('?')[0]
+
+    state.addresses = state.addresses.map((item) => {
+      const itemId = atob(item.id).split('?')[0]
+      if (itemId === addressId) {
+        return item = address
+      } else {
+        return item
+      }
+    })
   }
 }
 
 export const actions = {
-  async readCustomerAccessToken({ dispatch, commit }, { accessToken }) {
+  async readCustomerAccessToken ({ dispatch, commit }, { accessToken }) {
     if (accessToken) { 
       commit('setCustomerAccessToken', { accessToken, expiresAt: null })
       dispatch('renewCustomerAccessToken', accessToken)
     }
   },
 
-  async renewCustomerAccessToken({ commit, dispatch }, payload) {
+  async renewCustomerAccessToken ({ commit, dispatch }, payload) {
     try {
       const variables = { customerAccessToken: payload }
       const query = CUSTOMER_ACCESS_TOKEN_RENEW
@@ -99,7 +122,7 @@ export const actions = {
     }
   },
 
-  async getCustomer({ state, commit, dispatch }) {
+  async getCustomer ({ state, commit, dispatch }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER
@@ -114,7 +137,7 @@ export const actions = {
     }
   },
 
-  async multipassLogin({ state, commit, dispatch }) {
+  async multipassLogin ({ state, commit, dispatch }) {
     // TODO: figure out remote ip
     if (process.browser) {
       const { host, protocol } = window.location
@@ -152,7 +175,7 @@ export const actions = {
     }
   },
 
-  async logout({ state, dispatch, commit, rootState }) {
+  async logout ({ state, dispatch, commit, rootState }) {
     const accessToken = (state.customerAccessToken && state.customerAccessToken.accessToken) || getCookie('customerAccessToken')
     const variables = { customerAccessToken: accessToken }
     const query = CUSTOMER_ACCESS_TOKEN_DELETE
@@ -166,7 +189,7 @@ export const actions = {
     commit('setErrors', userErrors)
   },
 
-  async fetchOrders({ state, dispatch, commit, rootState }, payload) {
+  async fetchOrders ({ state, dispatch, commit, rootState }, payload) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_ORDERS
@@ -181,7 +204,7 @@ export const actions = {
     }
   },
 
-  async fetchDefaultAddress({ state, dispatch, commit, rootState }, payload) {
+  async fetchDefaultAddress ({ state, dispatch, commit, rootState }, payload) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_DEFAULT_ADDRESS
@@ -196,7 +219,7 @@ export const actions = {
     }
   },
 
-  async fetchAddresses({ state, dispatch, commit, rootState }, payload) {
+  async fetchAddresses ({ state, dispatch, commit, rootState }, payload) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_ADDRESSES
@@ -206,6 +229,73 @@ export const actions = {
         commit('setAddresses', transformEdges(customer.addresses))
       }
       commit('setErrors', userErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async createAddress ({ state, dispatch, commit, rootState }, { address }) {
+    try {
+      const variables = {
+        customerAccessToken: state.customerAccessToken.accessToken,
+        address
+      }
+      const query = CUSTOMER_ADDRESS_CREATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customerAddress, customerUserErrors } = data.customerAddressCreate
+      if (customerAddress) {
+        commit('addAddress', customerAddress)
+      }
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async updateAddress ({ state, dispatch, commit, rootState }, { address, id }) {
+    try {
+      const variables = {
+        customerAccessToken: state.customerAccessToken.accessToken,
+        address,
+        id
+      }
+      const query = CUSTOMER_ADDRESS_UPDATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customerAddress, customerUserErrors } = data.customerAddressUpdate
+      if (customerAddress) {
+        commit('setAddress', customerAddress)
+      }
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async deleteAddress ({ state, dispatch, commit, rootState }, { id }) {
+    try {
+      const variables = {
+        customerAccessToken: state.customerAccessToken.accessToken,
+        id
+      }
+      const query = CUSTOMER_ADDRESS_DELETE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { deletedCustomerAddressId, customerUserErrors } = data.customerAddressDelete
+      if (deletedCustomerAddressId) {
+        commit('removeAddress', deletedCustomerAddressId)
+      }
+      commit('setErrors', customerUserErrors)
     } catch (error) {
       throw error
     }
@@ -247,7 +337,6 @@ export const actions = {
 
   async reset ({ state, commit, dispatch }, { password, resetToken, customerId }) {
     try {
-      
       const id = Buffer.from(`gid://shopify/Customer/${customerId}`).toString('base64')
       const variables = { id: id, input: { password, resetToken } }
       const query = CUSTOMER_RESET
