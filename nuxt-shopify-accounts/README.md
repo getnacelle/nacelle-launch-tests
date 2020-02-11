@@ -88,11 +88,11 @@ Note that `SHOPIFY_GRAPHQL_TOKEN` if your store's Storefront API Token.
 
 - `npm install cookie-universal-nuxt multipassify countrycitystatejson`
 
-> [cookie-universal-nuxt](https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt)
+For more information about these dependencies, check out their repositories:
 
-> [multipassify](https://github.com/beaucoo/multipassify)
-
-> [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
+- [cookie-universal-nuxt](https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt)
+- [multipassify](https://github.com/beaucoo/multipassify)
+- [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
 4. Cookie Universal Nuxt requires an update to `nuxt.config.json`. Add to modules array.
 
@@ -158,6 +158,8 @@ Note that `SHOPIFY_GRAPHQL_TOKEN` if your store's Storefront API Token.
 [dirst]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js
 [dirah]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js
 [dirrh]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/reset-head.js
+[dirai]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressItem.vue
+[diraf]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressForm.vue
 [fild]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue
 [ficc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue
 [finc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/nuxt.config.js
