@@ -46,6 +46,7 @@ const sameSite = 'strict'
 const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
 export const state = () => ({
+  modalVisible: false,
   customer: null,
   customerAccessToken: null,
   orders: [],
@@ -92,7 +93,16 @@ export const mutations = {
         return item
       }
     })
-  }
+  },
+  closeModal (state) {
+    state.modalVisible = false
+  },
+  showModal (state) {
+    state.modalVisible = true
+  },
+  toggleAccount (state) {
+    state.modalVisible = !state.modalVisible
+  },
 }
 
 export const actions = {

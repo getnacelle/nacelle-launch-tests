@@ -25,6 +25,7 @@
         </div>
         <search-box class="is-hidden-mobile" />
         <main-nav-cart />
+        <main-nav-account />
       </div>
     </div>
 
@@ -70,17 +71,23 @@
 
     <!-- Cart Flyout -->
     <cart />
+    <!-- Account Modal -->
+    <account />
   </div>
 </template>
 
 <script>
 import MainNavCart from '~/components/MainNavCart'
+import MainNavAccount from '~/components/MainNavAccount'
 import MainNavBurger from '~/components/MainNavBurger'
 import SearchBox from '~/components/SearchBox'
 import Cart from '~/components/Cart'
+import Account from '~/components/Account'
 import { mapState, mapMutations, mapGetters } from 'vuex'
 export default {
   components:{
+    Account,
+    MainNavAccount,
     Cart,
     MainNavCart,
     MainNavBurger,
