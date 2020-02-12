@@ -38,6 +38,11 @@ const accountClient = axios.create({
   }
 })
 
+// Either true or false, indicating if the cookie transmission requires a secure protocol (https).
+const secure = process.env.NODE_ENV === 'development' ? false : true
+// The strict mode witholds the cookie from any kind of cross-site usage (including inbound links from external sites).
+const sameSite = 'strict'
+
 const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
 export const state = () => ({
@@ -108,7 +113,7 @@ export const actions = {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);
         expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires })
+        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
         commit('setCustomerAccessToken', customerAccessToken)
       } else {
         // access token does not exist
@@ -164,7 +169,7 @@ export const actions = {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);
         expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires })
+        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
         await commit('setCustomerAccessToken', customerAccessToken)
         await dispatch('getCustomer')
         return await dispatch('multipassLogin') 
