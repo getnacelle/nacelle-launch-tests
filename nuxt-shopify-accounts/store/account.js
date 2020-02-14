@@ -38,9 +38,15 @@ const accountClient = axios.create({
   }
 })
 
+// Either true or false, indicating if the cookie transmission requires a secure protocol (https).
+const secure = process.env.NODE_ENV === 'development' ? false : true
+// The strict mode witholds the cookie from any kind of cross-site usage (including inbound links from external sites).
+const sameSite = 'strict'
+
 const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
 export const state = () => ({
+  modalVisible: false,
   customer: null,
   customerAccessToken: null,
   orders: [],
@@ -87,7 +93,16 @@ export const mutations = {
         return item
       }
     })
-  }
+  },
+  closeModal (state) {
+    state.modalVisible = false
+  },
+  showModal (state) {
+    state.modalVisible = true
+  },
+  toggleAccount (state) {
+    state.modalVisible = !state.modalVisible
+  },
 }
 
 export const actions = {
@@ -108,7 +123,7 @@ export const actions = {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);
         expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires })
+        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
         commit('setCustomerAccessToken', customerAccessToken)
       } else {
         // access token does not exist
@@ -164,7 +179,7 @@ export const actions = {
         const { accessToken, expiresAt } = customerAccessToken
         let expires = new Date(expiresAt);
         expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires })
+        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
         await commit('setCustomerAccessToken', customerAccessToken)
         await dispatch('getCustomer')
         return await dispatch('multipassLogin') 
@@ -321,7 +336,7 @@ export const actions = {
   // https://community.shopify.com/c/Shopify-APIs-SDKs/Reset-Password-Token-in-Notification-Email/td-p/367455
   async recover ({ state, commit, dispatch }, { email }) {
     try {
-      const variables = { input: { email } }
+      const variables = { email }
       const query = CUSTOMER_RECOVER
       const response = await accountClient.post(null, { query, variables })
       const { data, errors } = response.data
