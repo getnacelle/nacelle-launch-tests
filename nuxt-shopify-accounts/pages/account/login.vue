@@ -25,11 +25,10 @@
         </ul>
       </form>
 
+      <br>
       <!-- Social Login -->
-      <oxi-social-login
-        :shopify-domain="$nacelle.myshopifyDomain"
-        shopify-account-page="http://localhost:3000/account/"
-      />
+      <nacelle-passport baseUrl="http://localhost:3333"/>
+
 
       <nuxt-link
         :to="`/account/recover`"
@@ -49,12 +48,11 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import axios from 'axios'
-import OxiSocialLogin from '~/components/OxiSocialLogin.vue'
+import NacellePassport from '~/components/NacellePassport.vue'
 export default {
   middleware: 'notAuthenticated',
   components: {
-    OxiSocialLogin
+    NacellePassport
   },
   data () {
     return {
@@ -64,10 +62,10 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted () {
   },
   computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors']),
+    ...mapState('account', ['customerAccessToken', 'userErrors'])
   },
   methods: {
     ...mapActions('account', ['login', 'checkoutCustomerAssociate']),
@@ -78,7 +76,7 @@ export default {
       if (response.multipassUrl) {
         window.location.href = response.multipassUrl
       }
-    }
+    },
   }
 }
 </script>
