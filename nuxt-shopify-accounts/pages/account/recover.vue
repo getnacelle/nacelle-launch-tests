@@ -16,7 +16,7 @@
         <input type="hidden" name="utf8" value="✓">
         <input type="hidden" name="return_url" value="/account">
         <input type="text" name="customer[email]" placeholder="email" autocomplete="email" v-model="form.email" />
-        <button class="button">Create</button>
+        <button class="button">Recover</button>
 
         <ul v-if="userErrors.length">
           <li>Error:</li>

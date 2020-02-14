@@ -336,7 +336,7 @@ export const actions = {
   // https://community.shopify.com/c/Shopify-APIs-SDKs/Reset-Password-Token-in-Notification-Email/td-p/367455
   async recover ({ state, commit, dispatch }, { email }) {
     try {
-      const variables = { input: { email } }
+      const variables = { email }
       const query = CUSTOMER_RECOVER
       const response = await accountClient.post(null, { query, variables })
       const { data, errors } = response.data
