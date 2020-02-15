@@ -9,6 +9,7 @@ import {
   CUSTOMER_RECOVER,
   CUSTOMER_RESET,
   GET_CUSTOMER,
+  CUSTOMER_UPDATE,
   GET_CUSTOMER_ORDERS,
   GET_CUSTOMER_DEFAULT_ADDRESS,
   GET_CUSTOMER_ADDRESSES,
@@ -45,7 +46,16 @@ const sameSite = 'strict'
 
 const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
+const removeEmpty = obj => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([k, v]) => v != null && v != '')
+      .map(([k, v]) => (typeof v === "object" ? [k, removeEmpty(v)] : [k, v]))
+  );
+}
+
 export const state = () => ({
+  modalView: '',
   modalVisible: false,
   customer: null,
   customerAccessToken: null,
@@ -56,6 +66,10 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setModalView (state, view) {
+    // Assumes view components are prefixed with account ie. AccountLogin => account-login
+    state.modalView = `account-${view}`
+  },
   setErrors (state, userErrors) {
     state.userErrors = userErrors || []
   },
@@ -106,6 +120,20 @@ export const mutations = {
 }
 
 export const actions = {
+  async updateCustomerAccessToken ({ commit }, customerAccessToken) {
+    const { accessToken, expiresAt } = customerAccessToken
+    let expires = new Date(expiresAt);
+    expires.setHours(expires.getHours());
+    setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
+    commit('setCustomerAccessToken', customerAccessToken)
+  },
+
+  async removeCustomerAccessToken ({ commit }, payload) {
+    removeCookie('customerAccessToken')
+    commit('setCustomerAccessToken', null)
+    commit('setCustomer', null)
+  },
+
   async readCustomerAccessToken ({ dispatch, commit }, { accessToken }) {
     if (accessToken) { 
       commit('setCustomerAccessToken', { accessToken, expiresAt: null })
@@ -120,16 +148,10 @@ export const actions = {
       const response = await accountClient.post(null, { query, variables })
       const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenRenew
       if (customerAccessToken && customerAccessToken.accessToken) {
-        const { accessToken, expiresAt } = customerAccessToken
-        let expires = new Date(expiresAt);
-        expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
-        commit('setCustomerAccessToken', customerAccessToken)
+        dispatch('updateCustomerAccessToken', customerAccessToken)
       } else {
         // access token does not exist
-        removeCookie('customerAccessToken')
-        commit('setCustomerAccessToken', null)
-        commit('setCustomer', null)
+        dispatch('removeCustomerAccessToken')
       }
       commit('setErrors', userErrors)
     } catch (error) {
@@ -137,7 +159,7 @@ export const actions = {
     }
   },
 
-  async getCustomer ({ state, commit, dispatch }) {
+  async fetchCustomer ({ state, commit, dispatch }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER
@@ -147,6 +169,31 @@ export const actions = {
         commit('setCustomer', customer)
       }
       commit('setErrors', userErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async updateCustomer ({ state, dispatch, commit, rootState }, payload) {
+    try {
+      const variables = {
+        customerAccessToken: state.customerAccessToken.accessToken,
+        customer: removeEmpty(payload.customer),
+      }
+      const query = CUSTOMER_UPDATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customer, customerAccessToken, customerUserErrors } = data.customerUpdate
+      if (customer) {
+        commit('setCustomer', customer)
+      }
+      if (customerAccessToken) {
+        dispatch('updateCustomerAccessToken', customerAccessToken)
+      }
+      commit('setErrors', customerUserErrors)
     } catch (error) {
       throw error
     }
@@ -176,12 +223,8 @@ export const actions = {
       const { customerAccessToken, userErrors } = response.data.data.customerAccessTokenCreate
 
       if (customerAccessToken) {
-        const { accessToken, expiresAt } = customerAccessToken
-        let expires = new Date(expiresAt);
-        expires.setHours(expires.getHours());
-        setCookie('customerAccessToken', accessToken, { expires, secure, sameSite })
-        await commit('setCustomerAccessToken', customerAccessToken)
-        await dispatch('getCustomer')
+        await dispatch('updateCustomerAccessToken', customerAccessToken)
+        await dispatch('fetchCustomer')
         return await dispatch('multipassLogin') 
       }
       commit('setErrors', userErrors)
@@ -197,9 +240,7 @@ export const actions = {
     const response = await accountClient.post(null, { query, variables })
     const { deletedAccessToken, deletedCustomerAccessTokenId, userErrors } = response.data.data.customerAccessTokenDelete
     if (deletedAccessToken) {
-      removeCookie('customerAccessToken')
-      commit('setCustomerAccessToken', null)
-      commit('setCustomer', null)
+      dispatch('removeCustomerAccessToken')
     }
     commit('setErrors', userErrors)
   },
