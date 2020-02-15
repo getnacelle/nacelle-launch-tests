@@ -4,26 +4,10 @@
       <div class="modal-wrapper" @click.self="closeModal">
         <div class="modal-container">
 
-          <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
-          </div>
-
           <div class="modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <component :is="modalView" />
           </div>
 
-          <div class="modal-footer">
-            <slot name="footer">
-              default footer
-              <button class="modal-default-button" @click="closeModal">
-                OK
-              </button>
-            </slot>
-          </div>
         </div>
       </div>
     </div>
@@ -31,13 +15,50 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import AccountLogin from '~/components/AccountLogin'
+import AccountRecover from '~/components/AccountRecover'
+import AccountRegister from '~/components/AccountRegister'
+import AccountDashboard from '~/components/AccountDashboard'
+import AccountInformation from '~/components/AccountInformation'
+import AccountAddresses from '~/components/AccountAddresses'
+import AccountOrders from '~/components/AccountOrders'
 export default {
+  components: {
+    AccountLogin,
+    AccountRecover,
+    AccountRegister,
+    AccountDashboard,
+    AccountInformation,
+    AccountAddresses,
+    AccountOrders
+  },
+  data () {
+    return {
+
+    }
+  },
+  mounted () {
+    if (this.customerAccessToken) {
+      this.setModalView('dashboard')
+    } else {
+      this.setModalView('login')
+    }
+  },
+  watch: {
+    customerAccessToken (value) {
+      if (value) {
+        this.setModalView('dashboard')
+      } else {
+        this.setModalView('login')
+      }
+    }
+  },
   computed: {
-    ...mapState('account', ['modalVisible']),
+    ...mapState('account', ['customerAccessToken', 'modalVisible', 'modalView']),
   },
   methods: {
-    ...mapMutations('account', ['closeModal', 'openModal']),
+    ...mapMutations('account', ['closeModal', 'openModal', 'setModalView']),
   }
 }
 </script>
@@ -61,7 +82,9 @@ export default {
 }
 
 .modal-container {
-  width: 300px;
+  min-width: 300px;
+  width: 80%;
+  max-width: 600px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -105,5 +128,12 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.account-dashboard {
+  display: inline-flex;
+}
+.dashboard-main {
+  // flex: 80%;
 }
 </style>>

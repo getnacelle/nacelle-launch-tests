@@ -80,6 +80,32 @@ export const GET_CUSTOMER = `query getCustomer($customerAccessToken: String!) {
   }
 }`
 
+export const CUSTOMER_UPDATE = `mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+  customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+    customer {
+      id
+      email
+      acceptsMarketing
+      createdAt
+      updatedAt
+      displayName
+      lastName
+      firstName
+      phone
+      tags
+    }
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}`
+
 export const GET_CUSTOMER_ORDERS = `query getCustomer($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) {
     orders (first: 25) {
