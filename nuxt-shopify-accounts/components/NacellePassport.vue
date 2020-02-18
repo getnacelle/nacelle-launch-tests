@@ -11,8 +11,6 @@ import axios from 'axios'
 export default {
     data () {
     return {
-      // baseUrl: 'https://oejfd1v1ej.execute-api.us-east-1.amazonaws.com/dev',
-      baseUrl: 'https://dash-dev-caleb.ngrok.io',
       facebook: {
         url: '/',
         text: 'Login with Facebook'
@@ -23,15 +21,20 @@ export default {
       }
     }
   },
+  async created () {
+    this.endpoint = process.env.NODE_ENV === `development`
+    ? `/.netlify/functions`
+    : `/api`;
+  },
   async mounted () {
     this.facebook.url = this.authUrl('facebook')
     this.google.url = this.authUrl('google')
 
-    const email = await this.$cookies.get('ncl_email')
-    const strategy = await this.$cookies.get('ncl_strategy')
-    if (strategy && email) {
+    const ncl = await this.$cookies.get('ncl')
+    if (ncl) {
       try {
-        const response = await axios.get(`${this.baseUrl}/auth/status`, { withCredentials: true })
+        const { email, jwt, strategy } = ncl
+        const response = await axios.get(`${this.endpoint}/auth/status`, { withCredentials: true })
         this[strategy].text = this[strategy].text.replace('Login', 'Logged')
         this[strategy].url = '#'
       }
@@ -45,7 +48,7 @@ export default {
   methods: {
     authUrl (strategy) {
       if (process.browser) {
-        return `${this.baseUrl}/auth/${strategy}?returnTo=${encodeURIComponent(window.location.href)}`
+        return `${this.endpoint}/auth/${strategy}?returnTo=${encodeURIComponent(window.location.href)}`
       } else {
         return '/'
       }
