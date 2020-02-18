@@ -7,7 +7,7 @@
     <section class="section section-login">
       <login-form />
       <!-- Social Login -->
-      <nacelle-passport baseUrl="http://localhost:3333"/>
+      <nacelle-passport :myshopifyDomain="$nacelle.myshopifyDomain"/>
       <nuxt-link
         :to="`/account/recover`"
         class="breadcrumb"

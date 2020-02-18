@@ -9,15 +9,10 @@
 <script>
 import axios from 'axios'
 export default {
-    props: {
-      // For Development Purposes Only
-      baseUrl: {
-        type: String,
-        defualt: 'https://passport.nacellestaging.com'
-      }
-    },
     data () {
     return {
+      // baseUrl: 'https://oejfd1v1ej.execute-api.us-east-1.amazonaws.com/dev',
+      baseUrl: 'https://dash-dev-caleb.ngrok.io',
       facebook: {
         url: '/',
         text: 'Login with Facebook'
