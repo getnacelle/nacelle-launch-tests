@@ -1,5 +1,20 @@
 require('../utils/passport')
-const { COOKIE_SECURE } = require('../utils/secrets')
+const Multipassify = require('multipassify')
+const {
+  COOKIE_SECURE,
+  SHOPIFY_MULTIPASS_SECRET,
+  MYSHOPIFY_DOMAIN
+ } = require('../utils/secrets')
+
+const multipassify = new Multipassify(SHOPIFY_MULTIPASS_SECRET);
+
+const multipassLogin = (customer, return_to) => {
+  const customerData = {
+    ...customer,
+    return_to
+  }
+  return multipassify.generateUrl(customerData, MYSHOPIFY_DOMAIN)
+}
 
 const handleCallback = (req, res) => {
   try {
@@ -10,9 +25,10 @@ const handleCallback = (req, res) => {
     
     const { returnTo } = JSON.parse(Buffer.from(state, 'base64').toString())
     if (typeof returnTo === 'string') {
+      const multipassUrl = multipassLogin(req.user, returnTo)
       res
         .cookie('ncl', JSON.stringify(req.user), { secure: COOKIE_SECURE })
-        .redirect(returnTo);
+        .redirect(multipassUrl);
     } else {
       throw new Error('Invalid returnTo url')
     }
