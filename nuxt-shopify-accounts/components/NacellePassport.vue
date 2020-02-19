@@ -33,10 +33,14 @@ export default {
     const ncl = await this.$cookies.get('ncl')
     if (ncl) {
       try {
-        const { email, jwt, strategy } = ncl
+        const { email, jwt, strategy, accessToken, expiresAt } = ncl
         const response = await axios.get(`${this.endpoint}/auth/status`, { withCredentials: true })
         this[strategy].text = this[strategy].text.replace('Login', 'Logged')
         this[strategy].url = '#'
+        if (accessToken) {
+          await this.$store.dispatch('account/renewCustomerAccessToken', accessToken)
+          this.$router.push('/account')
+        }
       }
       catch (error) {
         console.error('error', error)

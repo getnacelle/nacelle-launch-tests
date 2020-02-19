@@ -130,6 +130,7 @@ export const actions = {
 
   async removeCustomerAccessToken ({ commit }, payload) {
     removeCookie('customerAccessToken')
+    removeCookie('ncl')
     commit('setCustomerAccessToken', null)
     commit('setCustomer', null)
   },

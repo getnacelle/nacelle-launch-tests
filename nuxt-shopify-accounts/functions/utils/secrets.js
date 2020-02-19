@@ -17,6 +17,7 @@ exports.COOKIE_SECURE = ENVIRONMENT !== 'dev';
 exports.BASE_URL = process.env.BASE_URL
 exports.SHOPIFY_MULTIPASS_SECRET = process.env.SHOPIFY_MULTIPASS_SECRET
 exports.MYSHOPIFY_DOMAIN = process.env.MYSHOPIFY_DOMAIN
+exports.SHOPIFY_GRAPHQL_TOKEN = process.env.SHOPIFY_GRAPHQL_TOKEN
 
 // Netlify Functions specific
 exports.ENDPOINT = ENVIRONMENT === 'dev'
