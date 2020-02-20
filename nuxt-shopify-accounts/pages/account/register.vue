@@ -25,7 +25,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import RegisterForm from '~/components/RegisterForm'
+import RegisterForm from '~/components/account/RegisterForm'
 export default {
   components: {
     RegisterForm

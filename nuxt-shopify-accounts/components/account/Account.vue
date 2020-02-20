@@ -16,13 +16,13 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import AccountLogin from '~/components/AccountLogin'
-import AccountRecover from '~/components/AccountRecover'
-import AccountRegister from '~/components/AccountRegister'
-import AccountDashboard from '~/components/AccountDashboard'
-import AccountInformation from '~/components/AccountInformation'
-import AccountAddresses from '~/components/AccountAddresses'
-import AccountOrders from '~/components/AccountOrders'
+import AccountLogin from '~/components/account/AccountLogin'
+import AccountRecover from '~/components/account/AccountRecover'
+import AccountRegister from '~/components/account/AccountRegister'
+import AccountDashboard from '~/components/account/AccountDashboard'
+import AccountInformation from '~/components/account/AccountInformation'
+import AccountAddresses from '~/components/account/AccountAddresses'
+import AccountOrders from '~/components/account/AccountOrders'
 export default {
   components: {
     AccountLogin,

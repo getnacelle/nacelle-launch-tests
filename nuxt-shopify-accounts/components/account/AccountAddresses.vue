@@ -3,20 +3,20 @@
     <account-navigation />
     <div class="dashboard-main">
       <section>
-        <h2>My Orders</h2>
-        <orders />
+        <h2>Address Book</h2>
+        <addresses />
       </section>
     </div>
   </div>
 </template>
 
 <script>
-import AccountNavigation from '~/components/AccountNavigation'
-import Orders from '~/components/Orders'
+import AccountNavigation from '~/components/account/AccountNavigation'
+import Addresses from '~/components/account/Addresses'
 export default {
   components: {
     AccountNavigation,
-    Orders,
+    Addresses,
   },
 }
 </script>

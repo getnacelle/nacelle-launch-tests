@@ -6,6 +6,8 @@
 
     <section class="section section-login">
       <login-form />
+      <!-- Social Login -->
+      <nacelle-passport :myshopifyDomain="$nacelle.myshopifyDomain"/>
       <nuxt-link
         :to="`/account/recover`"
         class="breadcrumb"
@@ -24,20 +26,22 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import LoginForm from '~/components/LoginForm'
+import NacellePassport from '~/components/account/NacellePassport'
+import LoginForm from '~/components/account/LoginForm'
 export default {
   middleware: 'notAuthenticated',
   components: {
+    NacellePassport,
     LoginForm
   },
   data () {
     return {
     }
   },
-  mounted() {
+  async mounted () {
   },
   computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors']),
+    ...mapState('account', ['customerAccessToken', 'userErrors'])
   },
   methods: {
   }

@@ -19,7 +19,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import RecoverForm from '~/components/RecoverForm'
+import RecoverForm from '~/components/account/RecoverForm'
 export default {
   middleware: 'notAuthenticated',
   components: {

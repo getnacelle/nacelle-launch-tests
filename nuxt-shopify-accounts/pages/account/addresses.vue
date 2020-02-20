@@ -33,8 +33,8 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import AddressItem from '~/components/AddressItem'
-import AddressForm from '~/components/AddressForm'
+import AddressItem from '~/components/account/AddressItem'
+import AddressForm from '~/components/account/AddressForm'
 export default {
   middleware: 'authenticated',
   data () {

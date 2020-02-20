@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import AccountLink from '~/components/AccountLink'
+import AccountLink from '~/components/account/AccountLink'
 export default {
   components: {
     AccountLink

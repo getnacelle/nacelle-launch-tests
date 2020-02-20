@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import AccountNavigation from '~/components/AccountNavigation'
-import CustomerForm from '~/components/CustomerForm'
+import AccountNavigation from '~/components/account/AccountNavigation'
+import CustomerForm from '~/components/account/CustomerForm'
 export default {
   components: {
     AccountNavigation,

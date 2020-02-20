@@ -14,7 +14,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import AddressItem from '~/components/AddressItem'
+import AddressItem from '~/components/account/AddressItem'
 export default {
   components: {
     AddressItem,

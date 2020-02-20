@@ -38,7 +38,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import Orders from '~/components/Orders'
+import Orders from '~/components/account/Orders'
 export default {
   middleware: "authenticated",
   components: {
