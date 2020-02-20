@@ -30,7 +30,7 @@ import {
 } from 'es-cookie';
 
 const accountClient = axios.create({
-  baseURL: `https://${process.env.myshopifyDomain}/api/2020-01/graphql`,
+  baseURL: `https://${process.env.myshopifyDomain}/api/2020-04/graphql`,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
