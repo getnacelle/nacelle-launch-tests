@@ -182,13 +182,19 @@ functions
 └── auth.js                        # Root level files represent lambdas and export a handler function
 ```
 
+#### Social App Setup
+1. In order to use Facebook authentication with `passport-facebook`, you must first create an app at [Facebook Developers](https://developers.facebook.com/). When created, an app is assigned an App ID and App Secret. Your application must also implement a redirect URL, to which Facebook will redirect users after they have approved access for your application. (ie. `https://<your-domain>/api/auth/facebook/callback`)
+    - Note facebook assumes to whitelist a localhost callback, so explicitely adding one is not necessary while the app status is set to "In Development"
+
+2. Before using `passport-google-oauth20`, you must register an application with Google. If you have not already done so, a new project can be created in the [Google Developers Console](https://console.developers.google.com/). Your application will be issued a client ID and client secret, which need to be provided to the strategy. You will also need to configure a redirect URI which matches the route in your application. (ie. `https://<your-domain>/api/auth/google/callback` )
+    - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)
 
 #### Setup
-1. Netlify's CLI will help us during development.
+1. [Netlify's CLI](https://github.com/netlify/cli) will help us during development.
     - `npm install netlify-cli -D`
 2. Other dependencies we'll need include:
     - `npm install body-parser cookie-parser express jsonwebtoken passport passport-facebook passport-google-oauth20 passport-jwt serverless-http winston`
-    - These dependencies can be checkout out at their respective github repos:
+    - These dependencies can be checked out at their respective github repos:
         - [body-parser](https://github.com/expressjs/body-parser)
         - [cookie-parser](https://github.com/expressjs/cookie-parser)
         - [express](https://github.com/expressjs/express)
@@ -210,7 +216,7 @@ GOOGLE_CLIENT_ID="123423453456.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="123423453456"
 ```
 
-4. I've also added a script to our `package.json` that utilizes netlify-cli to serve both frontend and backend projects (by default nuxt is served at port 3000, lambdas are served at port 34567, and both are proxied at port 8888 which will be the best place to work from.)
+4. I've also added a script to our `package.json` that utilizes `netlify-cli` to serve both frontend and backend projects (by default nuxt is served at port 3000, lambdas are served at port 34567, and both are proxied at port 8888 which will be the best place to work from.)
     - `"serve": "NODE_ENV=dev netlify dev"`
 
 🚧 **Known Issues** 🚧
