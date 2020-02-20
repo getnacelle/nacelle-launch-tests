@@ -19,7 +19,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import AddressForm from '~/components/AddressForm'
+import AddressForm from '~/components/account/AddressForm'
 export default {
   props: ['address', 'showDelete'],
   data () {

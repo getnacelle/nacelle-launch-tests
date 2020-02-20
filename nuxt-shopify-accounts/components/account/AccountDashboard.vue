@@ -20,10 +20,10 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import AccountNavigation from '~/components/AccountNavigation'
-import Customer from '~/components/Customer'
-import Addresses from '~/components/Addresses'
-import Orders from '~/components/Orders'
+import AccountNavigation from '~/components/account/AccountNavigation'
+import Customer from '~/components/account/Customer'
+import Addresses from '~/components/account/Addresses'
+import Orders from '~/components/account/Orders'
 export default {
   components: {
     AccountNavigation,

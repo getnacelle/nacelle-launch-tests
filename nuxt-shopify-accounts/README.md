@@ -115,8 +115,8 @@ For more information about these dependencies, check out their repositories:
 | [store/account.js][dirst]           | Account related Actions and Mutations                             |
 | [static/account-head.js][dirah]     | On page load guard clause for better UX                           |
 | [static/reset-head.js][dirrh]       | On page load guard clause for better UX                           |
-| [components/AddressItem.vue][dirai] | Component for AddressItem                                         |
-| [components/AddressForm.vue][diraf] | Component for AddressForm reusable with update and create actions |
+| [components/account/*][dirac] | Account components                                  |
+
 
 ### File Modifications
 
@@ -152,14 +152,81 @@ For more information about these dependencies, check out their repositories:
 <a href="http://domain.com/account/reset?id={{url_parts[5]}}&token={{url_parts[6]}}">Reset your password</a>
 ```
 
+### Social Login
+We will need a backend service to handle some of these actions. Because we are deployed on Netlify, we are using [Netlify Functions](https://www.netlify.com/products/functions/) which are essientially built ontop of AWS Lambda.
+
+One lambda will be served:
+- `auth.j`
+Five routes will be exposed: 
+- `auth/google`
+- `auth/google/callback`
+- `auth/facebook`
+- `auth/facebook/callback`
+- `auth/status`
+
+This will live in the `functions` directory.
+
+```tree
+netlify.toml                       # a config file that helps netlify build and deploy
+functions
+├── app
+│   ├── app.js                     # exports instance of App class which is an express app
+│   └── routes.js                  # declares and exports routes that will accessible to frontend.
+├── controllers
+│   └── auth.controller.js         # a set of functions that handles payloads, state, callbacks, etc.
+├── utils
+│   ├── logger.js                  # a custom logger
+│   ├── passport.js                # handles our auth strategies
+│   └── secrets.js                 # A secrets store that exposes environment variables to our app
+└── auth.js                        # Root level files represent lambdas and export a handler function
+```
+
+
+#### Setup
+1. Netlify's CLI will help us during development.
+    - `npm install netlify-cli -D`
+2. Other dependencies we'll need include:
+    - `npm install body-parser cookie-parser express jsonwebtoken passport passport-facebook passport-google-oauth20 passport-jwt serverless-http winston`
+    - These dependencies can be checkout out at their respective github repos:
+        - [body-parser](https://github.com/expressjs/body-parser)
+        - [cookie-parser](https://github.com/expressjs/cookie-parser)
+        - [express](https://github.com/expressjs/express)
+        - [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
+        - [passport](https://github.com/jaredhanson/passport)
+        - [passport-facebook](https://github.com/jaredhanson/passport-facebook)
+        - [passport-google-oauth20](https://github.com/jaredhanson/passport-google-oauth20)
+        - [passport-jwt](https://github.com/jaredhanson/passport-jwt)
+        - [serverless-http](https://github.com/dougmoscrop/serverless-http)
+        - [winston](https://github.com/winstonjs/winston)
+3. add a few new items to our `.env` file:
+
+```sh
+BASE_URL="http://localhost:8888"
+NACELLE_PASSPORT_SECRET="makeitso"
+FACEBOOK_APP_ID="123423453456"
+FACEBOOK_APP_SECRET="123423453456"
+GOOGLE_CLIENT_ID="123423453456.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="123423453456"
+```
+
+4. I've also added a script to our `package.json` that utilizes netlify-cli to serve both frontend and backend projects (by default nuxt is served at port 3000, lambdas are served at port 34567, and both are proxied at port 8888 which will be the best place to work from.)
+    - `"serve": "NODE_ENV=dev netlify dev"`
+
+🚧 **Known Issues** 🚧
+- The Netlify CLI can be a bit buggy sometimes, especially when hotreloading. Sometimes the sockets hangup during the proxying process. It can cause the nuxt project to run on port 3000 in the background.
+    - This is only an issue during development.
+    - To clean this up run:
+        - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
+        - `kill -9 12583` this will stop the process from running.
+
+
 [dirgql]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/gql
 [dirmid]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/middleware
 [dirpg]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/pages/account
 [dirst]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js
 [dirah]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js
 [dirrh]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/reset-head.js
-[dirai]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressItem.vue
-[diraf]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/AddressForm.vue
+[dirac]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/accounts
 [fild]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue
 [ficc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue
 [finc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/nuxt.config.js

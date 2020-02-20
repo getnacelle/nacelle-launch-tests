@@ -26,8 +26,8 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import NacellePassport from '~/components/NacellePassport'
-import LoginForm from '~/components/LoginForm'
+import NacellePassport from '~/components/account/NacellePassport'
+import LoginForm from '~/components/account/LoginForm'
 export default {
   middleware: 'notAuthenticated',
   components: {

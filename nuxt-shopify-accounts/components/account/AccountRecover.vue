@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import RecoverForm from '~/components/RecoverForm'
-import AccountLink from '~/components/AccountLink'
+import RecoverForm from '~/components/account/RecoverForm'
+import AccountLink from '~/components/account/AccountLink'
 export default {
   components: {
     RecoverForm,

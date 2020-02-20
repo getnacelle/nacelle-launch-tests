@@ -5,18 +5,18 @@
       <account-link text="Sign up" view="register" />
     </div>
 
-    <register-form />
-
+    <login-form />
+    <account-link text="Forgot your password?" view="recover" />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import RegisterForm from '~/components/RegisterForm'
-import AccountLink from '~/components/AccountLink'
+import LoginForm from '~/components/account/LoginForm'
+import AccountLink from '~/components/account/AccountLink'
 export default {
   components: {
-    RegisterForm,
+    LoginForm,
     AccountLink
   }
 }

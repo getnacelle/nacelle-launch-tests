@@ -78,11 +78,11 @@
 
 <script>
 import MainNavCart from '~/components/MainNavCart'
-import MainNavAccount from '~/components/MainNavAccount'
 import MainNavBurger from '~/components/MainNavBurger'
 import SearchBox from '~/components/SearchBox'
 import Cart from '~/components/Cart'
-import Account from '~/components/Account'
+import MainNavAccount from '~/components/account/MainNavAccount'
+import Account from '~/components/account/Account'
 import { mapState, mapMutations, mapGetters } from 'vuex'
 export default {
   components:{
