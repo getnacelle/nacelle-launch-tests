@@ -157,6 +157,7 @@ We will need a backend service to handle some of these actions. Because we are d
 
 One lambda will be served:
 - `auth.j`
+
 Five routes will be exposed: 
 - `auth/google`
 - `auth/google/callback`
