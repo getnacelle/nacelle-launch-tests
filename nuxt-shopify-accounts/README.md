@@ -8,6 +8,8 @@
 
 We want a simple solution to handling customer accounts that doesn't involve maintaining code in Shopify's Theme. This example should give us all of the basic account functionality that we need.
 
+If you want to have a better understanding of the queries and mutations that we are utlizing, check out the `.insomnia` directory and play around with the api directly. You'll just need to download [The Insomnia API client](https://insomnia.rest/) and [downloaded the walkthrough as a collection][inco]
+
 ##### Account Page Actions:
 
 **example structure:**
@@ -238,3 +240,4 @@ GOOGLE_CLIENT_SECRET="123423453456"
 [ficc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue
 [finc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/nuxt.config.js
 [fisi]: https://github.com/getnacelle/nacelle-launch-tests/blob/master/nuxt-shopify-accounts/store/index.js
+[inco]: https://github.com/getnacelle/nacelle-launch-tests/blob/master/nuxt-shopify-accounts/.insomnia/Insomnia_2020-02-20.json
