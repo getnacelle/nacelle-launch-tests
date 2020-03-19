@@ -20,6 +20,7 @@
           :address="address"
           :key="index"
           :showDelete="addresses.length > 1"
+          :isDefaultAddress="isDefault(address.id, defaultAddress.id)"
         />
       </ul>
       <div v-else><h5>You don't have any addresses yet.</h5></div>
@@ -70,6 +71,13 @@ export default {
   methods: {
     toggleEdit () {
       this.isEditing = !this.isEditing
+    },
+    decodeBase64AddressId(encodedId) {
+      const decodedId = Buffer.from(encodedId, 'base64').toString('ascii')
+      return decodedId.split('gid://shopify/MailingAddress/')[1].split('?')[0]
+    },
+    isDefault (id, defaultId) {
+      return this.decodeBase64AddressId(id) === this.decodeBase64AddressId(defaultId)
     }
   }
 }

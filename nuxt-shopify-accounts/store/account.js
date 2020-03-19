@@ -12,6 +12,7 @@ import {
   CUSTOMER_UPDATE,
   GET_CUSTOMER_ORDERS,
   GET_CUSTOMER_DEFAULT_ADDRESS,
+  CUSTOMER_DEFAULT_ADDRESS_UPDATE,
   GET_CUSTOMER_ADDRESSES,
   CUSTOMER_ADDRESS_CREATE,
   CUSTOMER_ADDRESS_UPDATE,
@@ -306,6 +307,7 @@ export const actions = {
       const { customerAddress, customerUserErrors } = data.customerAddressCreate
       if (customerAddress) {
         commit('addAddress', customerAddress)
+        return customerAddress
       }
       commit('setErrors', customerUserErrors)
     } catch (error) {
@@ -329,6 +331,29 @@ export const actions = {
       const { customerAddress, customerUserErrors } = data.customerAddressUpdate
       if (customerAddress) {
         commit('setAddress', customerAddress)
+        return customerAddress
+      }
+      commit('setErrors', customerUserErrors)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async updateDefaultAddress ({ state, commit }, { addressId }) {
+    try {
+      const variables = {
+        customerAccessToken: state.customerAccessToken.accessToken,
+        addressId
+      }
+      const query = CUSTOMER_DEFAULT_ADDRESS_UPDATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customer, customerUserErrors } = data.customerDefaultAddressUpdate
+      if (customer) {
+        commit('setDefaultAddress', customer.defaultAddress)
       }
       commit('setErrors', customerUserErrors)
     } catch (error) {

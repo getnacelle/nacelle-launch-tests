@@ -421,6 +421,39 @@ export const CUSTOMER_ADDRESS_UPDATE = `mutation customerAddressUpdate($customer
   }
 }`
 
+export const CUSTOMER_DEFAULT_ADDRESS_UPDATE = `mutation customerDefaultAddressUpdate($customerAccessToken: String!, $addressId: ID!) {
+  customerDefaultAddressUpdate(customerAccessToken: $customerAccessToken, addressId: $addressId) {
+    customer {
+      id
+      defaultAddress {
+        address1
+        address2
+        city
+        company
+        country
+        countryCodeV2
+        firstName
+        formatted
+        formattedArea
+        id
+        lastName
+        latitude
+        longitude
+        name
+        phone
+        province
+        provinceCode
+        zip
+      }
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}`
+
 export const CUSTOMER_ADDRESS_DELETE = `mutation customerAddressDelete($id: ID!, $customerAccessToken: String!) {
   customerAddressDelete(id: $id, customerAccessToken: $customerAccessToken) {
     customerUserErrors {

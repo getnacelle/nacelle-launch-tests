@@ -62,8 +62,8 @@
     </div>
 
     <div class="text-center">
-      <!-- <input type="checkbox" id="address_default_address_3026220941371" name="address[default]" value="1">
-      <label for="address_default_address_3026220941371">Set as default address</label> -->
+      <input type="checkbox" :id="`AddressDefaultAddress_${id}`" name="address[default]" v-model="defaultAddressChecked">
+      <label :for="`AddressDefaultAddress_${id}`">Set as default address</label>
 
       <div><input type="submit" class="button" @click.prevent="submitForm" value="Save"></div>
     </div>
@@ -77,6 +77,10 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 const countryHandler = require('countrycitystatejson')
 export default {
   props: {
+    isDefaultAddress: {
+      type: Boolean,
+      default: false
+    },
     address: {
       type: Object,
       default: () => {
@@ -103,6 +107,7 @@ export default {
   data () {
     return {
       ...this.address,
+      defaultAddressChecked: this.isDefaultAddress,
       countries: countryHandler.getCountries(),
       countryObject: {}
     }
@@ -124,9 +129,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions('account', ['updateAddress', 'createAddress']),
+    ...mapActions('account', ['updateAddress', 'createAddress', 'updateDefaultAddress']),
     async submitForm () {
-      await this[`${this.action}Address`]({
+      const response = await this[`${this.action}Address`]({
         id: this.id,
         address: {
           address1: this.address1,
@@ -141,6 +146,13 @@ export default {
           zip: this.zip
         }
       })
+
+      // Update customer's defaultAddress if true
+      if (this.defaultAddressChecked) {
+        await this.updateDefaultAddress({
+          addressId: response.id
+        })
+      }
 
       this.$router.push('/account')
     }

@@ -10,7 +10,7 @@
       <button v-if="showDelete" class="button" @click.prevent="deleteAddress({ id: address.id })">Delete</button>
     </div>
     <div v-if="isEditing" class="edit-form">
-      <address-form :address="address" action="update" />
+      <address-form :address="address" action="update" :isDefaultAddress="isDefaultAddress" />
     </div>
     <br>
     <br>
@@ -21,7 +21,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import AddressForm from '~/components/account/AddressForm'
 export default {
-  props: ['address', 'showDelete'],
+  props: ['address', 'showDelete', 'isDefaultAddress'],
   data () {
     return {
       isEditing: false
