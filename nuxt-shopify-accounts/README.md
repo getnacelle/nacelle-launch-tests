@@ -194,9 +194,12 @@ functions
 #### Setup
 1. [Netlify's CLI](https://github.com/netlify/cli) will help us during development.
     - `npm install netlify-cli -D`
-2. Other dependencies we'll need include:
+2. Add a package.json to our `/functions` directory
+    -  `cd functions && npm init`
+3. Other dependencies we'll need include for our functions directory:
     - `npm install body-parser cookie-parser express jsonwebtoken passport passport-facebook passport-google-oauth20 passport-jwt serverless-http winston`
     - These dependencies can be checked out at their respective github repos:
+        - [axios](https://github.com/axios/axios)
         - [body-parser](https://github.com/expressjs/body-parser)
         - [cookie-parser](https://github.com/expressjs/cookie-parser)
         - [express](https://github.com/expressjs/express)
@@ -207,7 +210,7 @@ functions
         - [passport-jwt](https://github.com/jaredhanson/passport-jwt)
         - [serverless-http](https://github.com/dougmoscrop/serverless-http)
         - [winston](https://github.com/winstonjs/winston)
-3. add a few new items to our `.env` file:
+4. add a few new items to our `.env` file:
 
 ```sh
 BASE_URL="http://localhost:8888"
