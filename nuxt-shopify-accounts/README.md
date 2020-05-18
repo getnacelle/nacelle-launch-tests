@@ -151,7 +151,7 @@ For more information about these dependencies, check out their repositories:
   <a href="{{ customer.reset_password_url }}" class="button__text">Reset your password</a>
 {% endcomment %}
 {% assign url_parts = customer.reset_password_url  | split: '/' %}
-<a href="http://domain.com/account/reset?id={{url_parts[5]}}&token={{url_parts[6]}}">Reset your password</a>
+<a href="http://domain.com/account/reset?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Reset your password</a>
 ```
 
 ### Social Login
