@@ -55,6 +55,10 @@ const removeEmpty = obj => {
   );
 }
 
+const decodeId = (encodedId) => {
+  return atob(encodedId).split("?")[0]
+}
+
 export const state = () => ({
   modalView: '',
   modalVisible: false,
@@ -92,21 +96,14 @@ export const mutations = {
   addAddress (state, address) {
     state.addresses = [address].concat(state.addresses)
   },
-  removeAddress (state, addressId) {
+  removeAddress(state, addressId) {
     // addressId is already decoded from Shopify response
-    const id = addressId.split('?')[0]
-    state.addresses = state.addresses.filter(item => atob(item.id).split('?')[0] !== id)
+    const id = addressId.split("?")[0]
+    state.addresses = state.addresses.filter(item => decodeId(item.id) !== id)
   },
-  setAddress (state, address) {
-    const addressId = atob(address.id).split('?')[0]
-
-    state.addresses = state.addresses.map((item) => {
-      const itemId = atob(item.id).split('?')[0]
-      if (itemId === addressId) {
-        return item = address
-      } else {
-        return item
-      }
+  setAddress(state, address) {
+    state.addresses.find((item) => {
+      return decodeId(item.id) === decodeId(address.id)
     })
   },
   closeModal (state) {
