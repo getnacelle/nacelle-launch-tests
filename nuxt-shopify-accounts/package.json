@@ -9,8 +9,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "gen": "node node_modules/@nacelle/nacelle-tools/dist/scripts/npm-run-generate-script.js",
-    "serve": "NODE_ENV=dev netlify dev",
-    "postinstall": "netlify-lambda install"
+    "serve": "NODE_ENV=dev netlify dev"
   },
   "dependencies": {
     "@nacelle/nacelle-nuxt-module": "^3.0.0",
@@ -30,7 +29,6 @@
     "graphql-tag": "^2.10.3",
     "localforage": "^1.7.3",
     "multipassify": "^1.1.0",
-    "netlify-lambda": "^1.6.3",
     "node-fetch": "^2.6.0",
     "node-sass": "^4.12.0",
     "nuxt": "^2.10.2",
