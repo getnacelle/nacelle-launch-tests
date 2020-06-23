@@ -107,17 +107,27 @@ For more information about these dependencies, check out their repositories:
 }
 ```
 
+5. Plugins
+
+- We'll need to add `authOnLoad.js` plugin to `nuxt.config.js:
+```js
+plugins: [
+  { src: '~/plugins/authOnLoad.js', ssr: false }
+],
+```
+
 ### Code Additions
 
 | Dir                                 | Description                                                       |
 | ----------------------------------- | ----------------------------------------------------------------- |
 | [gql/\*][dirgql]                    | exports GraphQl queries and related utility functions.            |
 | [middleware/\*][dirmid]             | SPA style route guards. Included on certain pages                 |
+| [plugins/authOnLoad.js][dirmid]     | Router on ready plugin for auth middleware                        |
 | [pages/account/\*][dirpg]           | Account Page Templates                                            |
 | [store/account.js][dirst]           | Account related Actions and Mutations                             |
 | [static/account-head.js][dirah]     | On page load guard clause for better UX                           |
 | [static/reset-head.js][dirrh]       | On page load guard clause for better UX                           |
-| [components/account/*][dirac] | Account components                                  |
+| [components/account/*][dirac]       | Account components                                                |
 
 
 ### File Modifications
