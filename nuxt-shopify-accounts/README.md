@@ -161,7 +161,30 @@ plugins: [
   <a href="{{ customer.reset_password_url }}" class="button__text">Reset your password</a>
 {% endcomment %}
 {% assign url_parts = customer.reset_password_url  | split: '/' %}
-<a href="http://domain.com/account/reset?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Reset your password</a>
+<a href="http://domain.com/account/activate?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Reset your password</a>
+```
+
+1. Account Activate
+
+   - The merchant can send an account activation email with a link to the storefront to create a password and activate their account. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
+   - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
+   - The url path will appear like:
+
+     - `/account/activate?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
+
+     versus:
+
+     - `/account/activate/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
+
+```liquid
+{% comment %}
+  Edit Customer Account Invite (/admin/email_templates/customer_account_activate/edit)
+  ----
+  Old tag:
+  <a href="{{ customer.account_activation_url }}" class="button__text">Activate Account</a>
+{% endcomment %}
+{% assign url_parts = customer.account_activation_url  | split: '/' %}
+<a href="http://domain.com/account/activate?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Activate Account</a>
 ```
 
 ### Social Login

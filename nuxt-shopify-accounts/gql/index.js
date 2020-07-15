@@ -478,6 +478,32 @@ export const CUSTOMER_CREATE = `mutation customerCreate($input: CustomerCreateIn
   }
 }`
 
+export const CUSTOMER_ACTIVATE = `mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
+  customerActivate(id: $id, input: $input) {
+    customer {
+      id
+      email
+      acceptsMarketing
+      createdAt
+      updatedAt
+      displayName
+      lastName
+      firstName
+      phone
+      tags
+    }
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}`
+
 export const CUSTOMER_RECOVER = `mutation customerRecover($email: String!) {
   customerRecover(email: $email) {
     customerUserErrors {
@@ -493,6 +519,14 @@ export const CUSTOMER_RESET = `mutation customerReset($id: ID!, $input: Customer
     customer {
       id
       email
+      acceptsMarketing
+      createdAt
+      updatedAt
+      displayName
+      lastName
+      firstName
+      phone
+      tags
     }
     customerAccessToken {
       accessToken

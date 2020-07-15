@@ -6,6 +6,7 @@ import {
   CUSTOMER_ACCESS_TOKEN_RENEW,
   CUSTOMER_ACCESS_TOKEN_DELETE,
   CUSTOMER_CREATE,
+  CUSTOMER_ACTIVATE,
   CUSTOMER_RECOVER,
   CUSTOMER_RESET,
   GET_CUSTOMER,
@@ -126,7 +127,7 @@ export const actions = {
     commit('setCustomerAccessToken', customerAccessToken)
   },
 
-  async removeCustomerAccessToken ({ commit }, payload) {
+  async removeCustomerAccessToken ({ commit }) {
     removeCookie('customerAccessToken')
     removeCookie('ncl')
     commit('setCustomerAccessToken', null)
@@ -158,7 +159,7 @@ export const actions = {
     }
   },
 
-  async fetchCustomer ({ state, commit, dispatch }) {
+  async fetchCustomer ({ state, commit }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER
@@ -173,7 +174,7 @@ export const actions = {
     }
   },
 
-  async updateCustomer ({ state, dispatch, commit, rootState }, payload) {
+  async updateCustomer ({ state, dispatch, commit }, payload) {
     try {
       const variables = {
         customerAccessToken: state.customerAccessToken.accessToken,
@@ -198,7 +199,7 @@ export const actions = {
     }
   },
 
-  async multipassLogin ({ state, commit, dispatch }) {
+  async multipassLogin ({ state }) {
     // TODO: figure out remote ip
     if (process.browser) {
       const { host, protocol } = window.location
@@ -214,7 +215,7 @@ export const actions = {
     }
   },
 
-  async login ({ state, commit, dispatch }, { email, password }) {
+  async login ({ commit, dispatch }, { email, password }) {
     try {
       const variables = { input: { email, password } }
       const query = CUSTOMER_ACCESS_TOKEN_CREATE
@@ -232,7 +233,7 @@ export const actions = {
     }
   },
 
-  async logout ({ state, dispatch, commit, rootState }) {
+  async logout ({ state, dispatch, commit }) {
     const accessToken = (state.customerAccessToken && state.customerAccessToken.accessToken) || getCookie('customerAccessToken')
     const variables = { customerAccessToken: accessToken }
     const query = CUSTOMER_ACCESS_TOKEN_DELETE
@@ -244,7 +245,7 @@ export const actions = {
     commit('setErrors', userErrors)
   },
 
-  async fetchOrders ({ state, dispatch, commit, rootState }, payload) {
+  async fetchOrders ({ state, commit }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_ORDERS
@@ -259,7 +260,7 @@ export const actions = {
     }
   },
 
-  async fetchDefaultAddress ({ state, dispatch, commit, rootState }, payload) {
+  async fetchDefaultAddress ({ state, commit }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_DEFAULT_ADDRESS
@@ -274,7 +275,7 @@ export const actions = {
     }
   },
 
-  async fetchAddresses ({ state, dispatch, commit, rootState }, payload) {
+  async fetchAddresses ({ state, commit }) {
     try {
       const variables = { customerAccessToken: state.customerAccessToken.accessToken }
       const query = GET_CUSTOMER_ADDRESSES
@@ -289,7 +290,7 @@ export const actions = {
     }
   },
 
-  async createAddress ({ state, dispatch, commit, rootState }, { address }) {
+  async createAddress ({ state, commit }, { address }) {
     try {
       const variables = {
         customerAccessToken: state.customerAccessToken.accessToken,
@@ -312,7 +313,7 @@ export const actions = {
     }
   },
 
-  async updateAddress ({ state, dispatch, commit, rootState }, { address, id }) {
+  async updateAddress ({ state, commit }, { address, id }) {
     try {
       const variables = {
         customerAccessToken: state.customerAccessToken.accessToken,
@@ -358,7 +359,7 @@ export const actions = {
     }
   },
 
-  async deleteAddress ({ state, dispatch, commit, rootState }, { id }) {
+  async deleteAddress ({ state, commit }, { id }) {
     try {
       const variables = {
         customerAccessToken: state.customerAccessToken.accessToken,
@@ -380,7 +381,7 @@ export const actions = {
     }
   },
 
-  async register ({ state, commit, dispatch }, { firstName, lastName, email, password }) {
+  async register ({ commit }, { firstName, lastName, email, password }) {
     try {
       const variables = { input: { firstName, lastName, email, password } }
       const query = CUSTOMER_CREATE
@@ -398,7 +399,7 @@ export const actions = {
 
   // will need to adjust notifications:
   // https://community.shopify.com/c/Shopify-APIs-SDKs/Reset-Password-Token-in-Notification-Email/td-p/367455
-  async recover ({ state, commit, dispatch }, { email }) {
+  async recover ({ commit }, { email }) {
     try {
       const variables = { email }
       const query = CUSTOMER_RECOVER
@@ -414,7 +415,7 @@ export const actions = {
     }
   },
 
-  async reset ({ state, commit, dispatch }, { password, resetToken, customerId }) {
+  async reset ({ commit, dispatch }, { password, resetToken, customerId }) {
     try {
       const id = Buffer.from(`gid://shopify/Customer/${customerId}`).toString('base64')
       const variables = { id: id, input: { password, resetToken } }
@@ -425,8 +426,34 @@ export const actions = {
         throw new Error(JSON.stringify(errors))
       }
       const { customer, customerAccessToken, customerUserErrors } = data.customerReset
-      // TODO: Login w/ multipass
       commit('setErrors', customerUserErrors)
+      if (customer && customerAccessToken) {
+        await commit('setCustomer', customer)
+        await dispatch("updateCustomerAccessToken", customerAccessToken)
+        return await dispatch("multipassLogin")
+      }
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async activate({ commit, dispatch }, { password, activateToken, customerId }) {
+    try {
+      const id = Buffer.from(`gid://shopify/Customer/${customerId}`).toString('base64')
+      const variables = { id: id, input: { password, activateToken } }
+      const query = CUSTOMER_ACTIVATE
+      const response = await accountClient.post(null, { query, variables })
+      const { data, errors } = response.data
+      if (errors && errors.length) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const { customer, customerAccessToken, customerUserErrors } = data.customerActivate
+      commit("setErrors", customerUserErrors)
+      if (customer && customerAccessToken) {
+        await commit('setCustomer', customer)
+        await dispatch("updateCustomerAccessToken", customerAccessToken)
+        return await dispatch("multipassLogin")
+      }
     } catch (error) {
       throw error
     }
