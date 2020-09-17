@@ -313,6 +313,15 @@ export const state = () => ({
 
           await dispatch('saveCheckoutUrl', url)
 
+          // revalidate customer login with multipass
+          if (rootState.account.customer && rootState.account.customerAccessToken) {
+            const payload = { returnTo: url }
+            const response = await dispatch("account/multipassLogin", payload, { root: true })
+            if (response.multipassUrl) {
+              url = response.multipassUrl
+            }
+          }
+
           window.location = url
         }
       },

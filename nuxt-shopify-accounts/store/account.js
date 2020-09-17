@@ -199,7 +199,7 @@ export const actions = {
     }
   },
 
-  async multipassLogin ({ state }) {
+  async multipassLogin ({ state }, payload) {
     // TODO: figure out remote ip
     if (process.browser) {
       const { host, protocol } = window.location
@@ -207,7 +207,7 @@ export const actions = {
       const customerData = {
         ...state.customer,
         // remote_ip: req.ip,
-        return_to: `${protocol}//${host}/account`
+        return_to: payload && payload.returnTo || `${protocol}//${host}/account`
       }
       return {
         multipassUrl: multipassify.generateUrl(customerData, process.env.myshopifyDomain)
