@@ -126,7 +126,7 @@ plugins: [
 | [pages/account/\*][dirpg]           | Account Page Templates                                            |
 | [store/account.js][dirst]           | Account related Actions and Mutations                             |
 | [static/account-head.js][dirah]     | On page load guard clause for better UX                           |
-| [static/reset-head.js][dirrh]       | On page load guard clause for better UX                           |
+| [static/email-referrer-head-check.js][dirrh]       | On page load guard clause for better UX when being redirected from emails                          |
 | [components/account/*][dirac]       | Account components                                                |
 
 
@@ -270,7 +270,7 @@ GOOGLE_CLIENT_SECRET="123423453456"
 [dirpg]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/pages/account
 [dirst]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js
 [dirah]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js
-[dirrh]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/reset-head.js
+[dirrh]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/email-referrer-head-check.js
 [dirac]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/accounts
 [fild]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue
 [ficc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue
