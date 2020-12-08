@@ -58,6 +58,9 @@ export async function getStaticProps({ params, locale }) {
     });
   } catch (_err) {
     page = {};
+    console.info(
+      `No page found with handle: '${params.handle}' on collection PLP`
+    );
   }
 
   return {

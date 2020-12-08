@@ -32,13 +32,17 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const articles = await $nacelle.data.blogPage({
-    handle: params.blogHandle,
-    paginate: true,
-    itemsPerPage: 6
-  });
+  try {
+    const articles = await $nacelle.data.blogPage({
+      handle: params.blogHandle,
+      paginate: true,
+      itemsPerPage: 6
+    });
 
-  return {
-    props: { articles } // will be passed to the page component as props
-  };
+    return {
+      props: { articles } // will be passed to the page component as props
+    };
+  } catch (err) {
+    throw new Error(err);
+  }
 }
