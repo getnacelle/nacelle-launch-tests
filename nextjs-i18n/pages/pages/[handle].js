@@ -16,7 +16,7 @@ export async function getStaticPaths() {
         const { handle } = page;
         return { params: { handle } };
       }),
-      fallback: false // See the "fallback" section below
+      fallback: true
     };
   } catch (err) {
     console.error(`Error fetching page:\n${err}`);

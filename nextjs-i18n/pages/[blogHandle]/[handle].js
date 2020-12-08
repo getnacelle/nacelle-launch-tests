@@ -1,29 +1,27 @@
-import React from 'react'
-import $nacelle from 'services/nacelle.js'
+import React from 'react';
+import $nacelle from 'services/nacelle.js';
 
 const Blog = ({ articles }) => {
   return <pre>{JSON.stringify(articles)}</pre>;
 };
 
-export default Blog
+export default Blog;
 
 export async function getStaticPaths() {
   try {
-    const allContent = await $nacelle.data.allContent()
-    const blogs = allContent.filter(entry => entry.type === "blog")
+    const allContent = await $nacelle.data.allContent();
+    const blogs = allContent.filter((entry) => entry.type === 'blog');
     return {
-      paths: blogs.flatMap(
-        blog => blog.articleLists[0].handles.map(
-          handle => {
-            return { params: { blogHandle: blog.handle, handle }}
-          }
-        )
+      paths: blogs.flatMap((blog) =>
+        blog.articleLists[0].handles.map((handle) => {
+          return { params: { blogHandle: blog.handle, handle } };
+        })
       ),
-      fallback: false // See the "fallback" section below
+      fallback: true
     };
-  } catch(err) {
-    console.error(`Error fetching blogs & articles:\n${err}`)
-  }  
+  } catch (err) {
+    console.error(`Error fetching blogs & articles:\n${err}`);
+  }
 }
 
 export async function getStaticProps({ params }) {
@@ -32,8 +30,8 @@ export async function getStaticProps({ params }) {
     paginate: true,
     itemsPerPage: 6
   });
-  
+
   return {
-    props: { articles }, // will be passed to the page component as props
-  }
+    props: { articles } // will be passed to the page component as props
+  };
 }

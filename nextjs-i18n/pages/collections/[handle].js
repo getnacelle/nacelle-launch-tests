@@ -6,12 +6,12 @@ import ContentSections from 'components/ContentSections';
 import ProductGallery from 'components/ProductGallery';
 
 const Collection = ({ collection, page }) => {
-  const products = useCollection(collection);
+  const products = collection ? useCollection(collection) : null;
 
   return (
     <Fragment>
       {page && <ContentSections sections={page.sections} />}
-      <ProductGallery products={products} />
+      {products?.length && <ProductGallery products={products} />}
     </Fragment>
   );
 };
@@ -26,7 +26,7 @@ export async function getStaticPaths() {
         const { handle } = collection;
         return { params: { handle } };
       }),
-      fallback: false
+      fallback: true
     };
   } catch (err) {
     console.error(`Error fetching collections on collection PLP:\n${err}`);
@@ -49,8 +49,8 @@ export async function getStaticProps({ params, locale }) {
       handle: params.handle,
       locale
     });
-  } catch (err) {
-    console.warn(`Can't find page with handle '${params.handle}'`);
+  } catch (_err) {
+    page = {};
   }
 
   return {

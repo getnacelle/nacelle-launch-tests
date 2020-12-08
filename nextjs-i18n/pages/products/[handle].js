@@ -54,7 +54,7 @@ export async function getStaticPaths() {
       paths: products.map((product) => ({
         params: { handle: product.handle }
       })),
-      fallback: false
+      fallback: true
     };
   } catch (err) {
     throw new Error(`Error fetching products on homepage:\n${err}`);
