@@ -1,24 +1,27 @@
-import { useState, useEffect } from 'react'
-import $nacelle from 'services/nacelle.js'
+import { useState, useEffect } from 'react';
+import $nacelle from 'services/nacelle.js';
 
-export default function useCollection(collection, list = "default") {
-  const [products, setProducts] = useState([])
-  const handles = collection
-    .productLists
-    .find(listEntry => listEntry.slug === list)
-    .handles
+export default function useCollection(collection, list = 'default') {
+  const [products, setProducts] = useState([]);
+  const handles = collection.productLists.find(
+    (listEntry) => listEntry.slug === list
+  )?.handles;
 
   useEffect(() => {
     const fetchCollectionProducts = async () => {
       try {
-        const products = await $nacelle.data.products({ handles })
-        setProducts(products)
+        if (handles) {
+          const products = await $nacelle.data.products({ handles });
+          setProducts(products);
+        }
       } catch {
-        console.warn(`Collection not found with handle: '${collection.handle}'`)
+        console.warn(
+          `Collection not found with handle: '${collection.handle}'`
+        );
       }
-    }
-    fetchCollectionProducts()
-  }, [handles, collection])
+    };
+    fetchCollectionProducts();
+  }, [handles, collection]);
 
-  return products
+  return products;
 }
