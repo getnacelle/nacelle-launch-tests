@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { useRouter } from 'next/router';
 
 import $nacelle from 'services/nacelle.js';
 import useCollection from 'hooks/useCollection';
@@ -6,7 +7,13 @@ import ContentSections from 'components/ContentSections';
 import ProductGallery from 'components/ProductGallery';
 
 const Collection = ({ collection, page }) => {
-  const products = collection ? useCollection(collection) : null;
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
+  const products = useCollection(collection);
 
   return (
     <Fragment>

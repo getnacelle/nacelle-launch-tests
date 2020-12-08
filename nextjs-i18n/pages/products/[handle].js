@@ -1,10 +1,17 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 import $nacelle from 'services/nacelle';
 import ProductCard from 'components/ProductCard';
 import * as styles from 'styles/pages.styles';
 
 const ProductDetail = ({ product }) => {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div css={styles.layout}>
       <ProductCard
@@ -52,17 +59,21 @@ export async function getStaticPaths() {
     const products = await $nacelle.data.allProducts();
     return {
       paths: products.map((product) => ({
-        params: { handle: product.handle }
+        params: { handle: product?.handle }
       })),
       fallback: true
     };
   } catch (err) {
-    throw new Error(`Error fetching products on homepage:\n${err}`);
+    throw new Error(`Error fetching products on PDP:\n${err.message}`);
   }
 }
 
 export async function getStaticProps({ params }) {
-  const product = await $nacelle.data.product({ handle: params.handle });
+  try {
+    const product = await $nacelle.data.product({ handle: params?.handle });
 
-  return { props: { product } };
+    return { props: { product } };
+  } catch (err) {
+    throw new Error(`Error fetching products on PDP:\n${err.message}`);
+  }
 }

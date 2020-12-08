@@ -10,10 +10,8 @@ export default function useCollection(collection, list = 'default') {
   useEffect(() => {
     const fetchCollectionProducts = async () => {
       try {
-        if (handles) {
-          const products = await $nacelle.data.products({ handles });
-          setProducts(products);
-        }
+        const products = await $nacelle.data.products({ handles });
+        setProducts(products);
       } catch {
         console.warn(
           `Collection not found with handle: '${collection.handle}'`

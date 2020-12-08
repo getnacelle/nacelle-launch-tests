@@ -1,7 +1,14 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import $nacelle from 'services/nacelle.js';
 
 const Blog = ({ articles }) => {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
   return <pre>{JSON.stringify(articles)}</pre>;
 };
 
