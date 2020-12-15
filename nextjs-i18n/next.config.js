@@ -6,18 +6,16 @@ module.exports = {
   i18n: {
     // These are all the locales you want to support in
     // your application
-    locales: ['en-US', 'es-AR'],
+    locales: JSON.parse(process.env.LOCALES), // ['en-US', 'es-US']
+
     // This is the default locale you want to be used when visiting
     // a non-locale prefixed path e.g. `/hello`
-    defaultLocale: 'en-US',
+    defaultLocale: process.env.DEFAULT_LOCALE, // 'en-US'
+
     domains: [
       {
-        domain: 'example.com',
-        defaultLocale: 'en-US'
-      },
-      {
-        domain: 'example.es',
-        defaultLocale: 'es-AR'
+        domain: process.env.VERCEL_DOMAIN, // 'thinx.com'
+        defaultLocale: process.env.DEFAULT_LOCALE // 'en-US'
       }
     ]
   }
