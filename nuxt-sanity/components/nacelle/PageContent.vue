@@ -83,6 +83,16 @@ export default {
           )
         }
 
+        if (source === 'sanity') {
+          return sections.map((section, index) => {
+            return {
+              contentType: section.contentType,
+              data: section,
+              id: index
+            }
+          })
+        }
+
         return sections
       }
 

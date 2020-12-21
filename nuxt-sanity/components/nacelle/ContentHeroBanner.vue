@@ -2,25 +2,12 @@
   <section :class="bannerClasses">
     <slot
       name="background"
-      :mobileBackgroundImgUrl="mobileBackgroundImgUrl"
-      :backgroundImgUrl="backgroundImgUrl"
+      :mobileBackgroundImage="mobileBackgroundImage"
+      :imageUrl="imageUrl"
       :backgroundAltTag="backgroundAltTag"
     >
       <picture class="hero-background" ref="hero-img-card">
-        <source
-          v-if="cloudinaryCanAutoFormat"
-          media="(max-width: 768px)"
-          :srcset="
-            optimizeSource({
-              url: mobileSrc,
-              format: 'auto',
-              width: 768,
-              crop: mobileCrop
-            })
-          "
-          @error="fallback"
-        />
-        <source
+        <!-- <source
           v-if="reformat"
           media="(max-width: 768px)"
           :srcset="
@@ -49,24 +36,11 @@
           @error="fallback"
         />
         <source
-          v-if="cloudinaryCanAutoFormat"
-          media="(min-width: 769px) and (max-width: 1023px)"
-          :srcset="
-            optimizeSource({
-              url: backgroundImgUrl,
-              format: 'auto',
-              width: 1023,
-              crop: mobileCrop
-            })
-          "
-          @error="fallback"
-        />
-        <source
           v-if="reformat"
           media="(min-width: 769px) and (max-width: 1023px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'webp',
               width: 1023,
               crop: mobileCrop
@@ -79,7 +53,7 @@
           media="(min-width: 769px) and (max-width: 1023px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'pjpg',
               width: 1023,
               crop: mobileCrop
@@ -88,23 +62,11 @@
           type="image/jpeg"
         />
         <source
-          v-if="cloudinaryCanAutoFormat"
-          media="(min-width: 1023px) and (max-width: 1215px)"
-          :srcset="
-            optimizeSource({
-              url: backgroundImgUrl,
-              format: 'auto',
-              width: 1215
-            })
-          "
-          @error="fallback"
-        />
-        <source
           v-if="reformat"
           media="(min-width: 1023px) and (max-width: 1215px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'webp',
               width: 1215
             })
@@ -116,7 +78,7 @@
           media="(min-width: 1023px) and (max-width: 1215px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'pjpg',
               width: 1215
             })
@@ -124,23 +86,11 @@
           type="image/jpeg"
         />
         <source
-          v-if="cloudinaryCanAutoFormat"
-          media="(min-width: 1216px) and (max-width: 1407px)"
-          :srcset="
-            optimizeSource({
-              url: backgroundImgUrl,
-              format: 'auto',
-              width: 1407
-            })
-          "
-          @error="fallback"
-        />
-        <source
           v-if="reformat"
           media="(min-width: 1216px) and (max-width: 1407px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'webp',
               width: 1407
             })
@@ -152,7 +102,7 @@
           media="(min-width: 1216px) and (max-width: 1407px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'pjpg',
               width: 1407
             })
@@ -160,23 +110,11 @@
           type="image/jpeg"
         />
         <source
-          v-if="cloudinaryCanAutoFormat"
-          media="(min-width: 1408px)"
-          :srcset="
-            optimizeSource({
-              url: backgroundImgUrl,
-              format: 'auto',
-              width: 1408
-            })
-          "
-          @error="fallback"
-        />
-        <source
           v-if="reformat"
           media="(min-width: 1408px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'webp',
               width: 1408
             })
@@ -188,15 +126,27 @@
           media="(min-width: 1408px)"
           :srcset="
             optimizeSource({
-              url: backgroundImgUrl,
+              url: imageUrl,
               format: 'pjpg',
               width: 1408
             })
           "
+          type="image/jpeg"
+        /> -->
+        <source
+          v-if="reformat"
+          media="(max-width: 768px)"
+          :srcset="mobileSrc"
+          type="image/jpeg"
+        />
+        <source
+          v-if="reformat"
+          media="(min-width: 769px)"
+          :srcset="imageUrl"
           type="image/jpeg"
         />
         <img
-          :src="backgroundImgUrl"
+          :src="imageUrl"
           :alt="backgroundAltTag"
           @error="fallback"
         />
@@ -213,9 +163,7 @@
           >
             <h1
               class="title"
-              :style="
-                textColor && textColor.length > 0 ? `color: ${textColor}` : ''
-              "
+
             >
               {{ title }}
             </h1>
@@ -251,6 +199,7 @@ import CtaButton from '~/components/nacelle/CtaButton'
 import imageOptimize from '~/mixins/imageOptimize'
 
 export default {
+  mixins: [imageOptimize],
   components: {
     CtaButton
   },
@@ -259,35 +208,7 @@ export default {
       type: String,
       default: 'center'
     },
-    size: {
-      type: String,
-      default: 'medium'
-    },
-    mobileFullHeight: {
-      type: Boolean,
-      default: false
-    },
-    mobileCrop: {
-      type: Boolean,
-      default: true
-    },
-    backgroundImgUrl: {
-      type: String,
-      default: ''
-    },
-    mobileBackgroundImgUrl: {
-      type: String,
-      default: ''
-    },
     backgroundAltTag: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    subtitle: {
       type: String,
       default: ''
     },
@@ -303,7 +224,35 @@ export default {
       type: Function,
       default: () => {}
     },
+    featuredMedia: {
+      type: Object,
+      default: () => {}
+    },
+    mobileBackgroundImage: {
+      type: Object,
+      default: () => {}
+    },
+    mobileCrop: {
+      type: Boolean,
+      default: true
+    },
+    mobileFullHeight: {
+      type: Boolean,
+      default: false
+    },
+    size: {
+      type: String,
+      default: 'medium'
+    },
+    subtitle: {
+      type: String,
+      default: ''
+    },
     textColor: {
+      type: String,
+      default: ''
+    },
+    title: {
       type: String,
       default: ''
     }
@@ -311,7 +260,7 @@ export default {
   data() {
     return {
       imageOptions: {
-        url: this.backgroundImgUrl,
+        url: this.imageUrl,
         containerRef: 'hero-img-card'
       }
     }
@@ -324,20 +273,42 @@ export default {
 
       return `hero nacelle is-${this.size} is-align-${this.alignment} ${mobileHeightClass}`
     },
+    imageUrl() {
+      return this.featuredMedia
+        ? this.parseSanityImageRef(this.featuredMedia.asset._ref)
+        : ''
+    },
     mobileSrc() {
-      return this.mobileBackgroundImgUrl || this.backgroundImgUrl
+      return this.mobileBackgroundImage
+        ? this.parseSanityImageRef(this.mobileBackgroundImage.asset._ref)
+        : this.imageUrl
     },
     fallbackImage() {
-      return this.backgroundImgUrl
+      return this.imageUrl
     }
   },
-  mixins: [imageOptimize]
+  methods: {
+    parseSanityImageRef(imageRef) {
+      const cdnBase = 'https://cdn.sanity.io/images/'
+      const sanitySpaceId = process.env.sanitySpaceId
+      const sanityDataset = process.env.sanityDataset
+      const imageId = imageRef.slice(6, -4)
+      const format = "jpg"
+      return `${cdnBase}/${sanitySpaceId}/${sanityDataset}/${imageId}.${format}?auto=format`
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+h1{
+  color:white;
+  font-size: 48pt !important;
+  text-transform: uppercase;
+}
 .hero {
   position: relative;
+  margin-bottom: 2rem;
 
   &.is-mobile-fullheight {
     @media screen and (max-width: 768px) {
@@ -352,11 +323,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-
+  background-color: black;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity: .5;
   }
 }
 

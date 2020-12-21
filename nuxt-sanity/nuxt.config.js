@@ -44,6 +44,8 @@ export default {
   env: {
     nacelleSpaceID: process.env.NACELLE_SPACE_ID,
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
+    sanitySpaceId: process.env.SANITY_SPACE_ID,
+    sanityDataset: process.env.SANITY_DATASET,
     buildMode: process.env.BUILD_MODE
   },
 
