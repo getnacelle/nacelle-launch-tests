@@ -3,7 +3,7 @@
     <slot
       name="background"
       :mobileBackgroundImage="mobileBackgroundImage"
-      :imageUrl="imageUrl"
+      :backgroundImgUrl="backgroundImgUrl"
       :backgroundAltTag="backgroundAltTag"
     >
       <picture class="hero-background" ref="hero-img-card">
@@ -40,7 +40,7 @@
           media="(min-width: 769px) and (max-width: 1023px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'webp',
               width: 1023,
               crop: mobileCrop
@@ -53,7 +53,7 @@
           media="(min-width: 769px) and (max-width: 1023px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'pjpg',
               width: 1023,
               crop: mobileCrop
@@ -66,7 +66,7 @@
           media="(min-width: 1023px) and (max-width: 1215px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'webp',
               width: 1215
             })
@@ -78,7 +78,7 @@
           media="(min-width: 1023px) and (max-width: 1215px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'pjpg',
               width: 1215
             })
@@ -90,7 +90,7 @@
           media="(min-width: 1216px) and (max-width: 1407px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'webp',
               width: 1407
             })
@@ -102,7 +102,7 @@
           media="(min-width: 1216px) and (max-width: 1407px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'pjpg',
               width: 1407
             })
@@ -114,7 +114,7 @@
           media="(min-width: 1408px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'webp',
               width: 1408
             })
@@ -126,7 +126,7 @@
           media="(min-width: 1408px)"
           :srcset="
             optimizeSource({
-              url: imageUrl,
+              url: backgroundImgUrl,
               format: 'pjpg',
               width: 1408
             })
@@ -134,7 +134,7 @@
           type="image/jpeg"
         />
         <img
-          :src="imageUrl"
+          :src="backgroundImgUrl"
           :alt="backgroundAltTag"
           @error="fallback"
         />
@@ -211,7 +211,7 @@ export default {
       type: String,
       default: ''
     },
-    imageUrl: {
+    backgroundImgUrl: {
       type: String,
       default: ''
     },
@@ -247,7 +247,7 @@ export default {
   data() {
     return {
       imageOptions: {
-        url: this.imageUrl,
+        url: this.backgroundImgUrl,
         containerRef: 'hero-img-card'
       }
     }
@@ -261,10 +261,10 @@ export default {
       return `hero nacelle is-${this.size} is-align-${this.alignment} ${mobileHeightClass}`
     },
     mobileSrc() {
-      return this.mobileBackgroundImage || this.imageUrl
+      return this.mobileBackgroundImage || this.backgroundImgUrl
     },
     fallbackImage() {
-      return this.imageUrl
+      return this.backgroundImgUrl
     }
   },
   mixins: [imageOptimize]

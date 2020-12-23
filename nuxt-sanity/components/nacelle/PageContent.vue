@@ -155,7 +155,7 @@ export default {
           ctaHandler,
           ctaText,
           ctaUrl,
-          imageUrl: featuredMedia.asset.url,
+          backgroundImgUrl: featuredMedia.asset.url,
           mobileFullHeight,
           size,
           title,
