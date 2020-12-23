@@ -133,7 +133,6 @@ export default {
         ctaUrl,
         featuredMedia,
         handle,
-        image,
         mobileBackgroundImage,
         mobileFullHeight,
         size,
@@ -143,7 +142,7 @@ export default {
       } = section
 
       const ctaHandler = () => {
-        this.$router.push(fields.ctaUrl)
+        this.$router.push(ctaUrl)
       }
 
       return {
