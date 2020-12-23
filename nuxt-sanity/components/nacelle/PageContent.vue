@@ -133,7 +133,7 @@ export default {
         ctaUrl,
         featuredMedia,
         handle,
-        mobileBackgroundImage,
+        mobileBackgroundImgUrl,
         mobileFullHeight,
         size,
         subtitle,
@@ -161,7 +161,7 @@ export default {
           title,
           subtitle,
           textColor,
-          mobileBackgroundImage: mobileBackgroundImage.asset.url
+          mobileBackgroundImgUrl: mobileBackgroundImgUrl.asset.url
         }
       }
     },

@@ -2,7 +2,7 @@
   <section :class="bannerClasses">
     <slot
       name="background"
-      :mobileBackgroundImage="mobileBackgroundImage"
+      :mobileBackgroundImgUrl="mobileBackgroundImgUrl"
       :backgroundImgUrl="backgroundImgUrl"
       :backgroundAltTag="backgroundAltTag"
     >
@@ -215,7 +215,7 @@ export default {
       type: String,
       default: ''
     },
-    mobileBackgroundImage: {
+    mobileBackgroundImgUrl: {
       type: String,
       default: ''
     },
@@ -261,7 +261,7 @@ export default {
       return `hero nacelle is-${this.size} is-align-${this.alignment} ${mobileHeightClass}`
     },
     mobileSrc() {
-      return this.mobileBackgroundImage || this.backgroundImgUrl
+      return this.mobileBackgroundImgUrl || this.backgroundImgUrl
     },
     fallbackImage() {
       return this.backgroundImgUrl
