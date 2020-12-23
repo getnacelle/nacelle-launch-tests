@@ -7,7 +7,7 @@
       :backgroundAltTag="backgroundAltTag"
     >
       <picture class="hero-background" ref="hero-img-card">
-        <!-- <source
+        <source
           v-if="reformat"
           media="(max-width: 768px)"
           :srcset="
@@ -131,18 +131,6 @@
               width: 1408
             })
           "
-          type="image/jpeg"
-        /> -->
-        <source
-          v-if="reformat"
-          media="(max-width: 768px)"
-          :srcset="mobileSrc"
-          type="image/jpeg"
-        />
-        <source
-          v-if="reformat"
-          media="(min-width: 769px)"
-          :srcset="imageUrl"
           type="image/jpeg"
         />
         <img
@@ -199,7 +187,6 @@ import CtaButton from '~/components/nacelle/CtaButton'
 import imageOptimize from '~/mixins/imageOptimize'
 
 export default {
-  mixins: [imageOptimize],
   components: {
     CtaButton
   },
@@ -212,6 +199,10 @@ export default {
       type: String,
       default: ''
     },
+    ctaHandler: {
+      type: Function,
+      default: () => {}
+    },
     ctaText: {
       type: String,
       default: ''
@@ -220,17 +211,13 @@ export default {
       type: String,
       default: ''
     },
-    ctaHandler: {
-      type: Function,
-      default: () => {}
-    },
-    featuredMedia: {
-      type: Object,
-      default: () => {}
+    imageUrl: {
+      type: String,
+      default: ''
     },
     mobileBackgroundImage: {
-      type: Object,
-      default: () => {}
+      type: String,
+      default: ''
     },
     mobileCrop: {
       type: Boolean,
@@ -273,30 +260,14 @@ export default {
 
       return `hero nacelle is-${this.size} is-align-${this.alignment} ${mobileHeightClass}`
     },
-    imageUrl() {
-      return this.featuredMedia
-        ? this.parseSanityImageRef(this.featuredMedia.asset._ref)
-        : ''
-    },
     mobileSrc() {
-      return this.mobileBackgroundImage
-        ? this.parseSanityImageRef(this.mobileBackgroundImage.asset._ref)
-        : this.imageUrl
+      return this.mobileBackgroundImage || this.imageUrl
     },
     fallbackImage() {
       return this.imageUrl
     }
   },
-  methods: {
-    parseSanityImageRef(imageRef) {
-      const cdnBase = 'https://cdn.sanity.io/images/'
-      const sanitySpaceId = process.env.sanitySpaceId
-      const sanityDataset = process.env.sanityDataset
-      const imageId = imageRef.slice(6, -4)
-      const format = "jpg"
-      return `${cdnBase}/${sanitySpaceId}/${sanityDataset}/${imageId}.${format}?auto=format`
-    }
-  }
+  mixins: [imageOptimize]
 }
 </script>
 

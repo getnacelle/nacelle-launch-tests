@@ -84,13 +84,7 @@ export default {
         }
 
         if (source === 'sanity') {
-          return sections.map((section, index) => {
-            return {
-              contentType: section.contentType,
-              data: section,
-              id: index
-            }
-          })
+          return sections.map(this.mapSanitySection)
         }
 
         return sections
@@ -129,6 +123,48 @@ export default {
       }
 
       return documentToHtmlString(content, options)
+    },
+    mapSanitySection(section) {
+      const {
+        alignment,
+        backgroundAltTag,
+        contentType,
+        ctaText,
+        ctaUrl,
+        featuredMedia,
+        handle,
+        image,
+        mobileBackgroundImage,
+        mobileFullHeight,
+        size,
+        subtitle,
+        title,
+        textColor
+      } = section
+
+      const ctaHandler = () => {
+        this.$router.push(fields.ctaUrl)
+      }
+
+      return {
+        contentType,
+        handle: handle.current,
+        id: section._id,
+        data: {
+          alignment,
+          backgroundAltTag,
+          ctaHandler,
+          ctaText,
+          ctaUrl,
+          imageUrl: featuredMedia.asset.url,
+          mobileFullHeight,
+          size,
+          title,
+          subtitle,
+          textColor,
+          mobileBackgroundImage: mobileBackgroundImage.asset.url
+        }
+      }
     },
     reduceShopifySections (sections) {
       return sections.reduce((sections, section, index) => {
