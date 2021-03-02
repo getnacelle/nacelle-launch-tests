@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-const countryHandler = require('countrycitystatejson')
+import { mapState, mapActions } from 'vuex'
+
 export default {
   data () {
     return {

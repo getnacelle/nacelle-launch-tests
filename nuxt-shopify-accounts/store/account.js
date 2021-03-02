@@ -1,5 +1,4 @@
 import axios from 'axios'
-import Multipassify from 'multipassify';
 
 import {
   CUSTOMER_ACCESS_TOKEN_CREATE,
@@ -45,8 +44,6 @@ const accountClient = axios.create({
 const secure = process.env.NODE_ENV === 'development' ? false : true
 // The strict mode witholds the cookie from any kind of cross-site usage (including inbound links from external sites).
 const sameSite = 'strict'
-
-const multipassify = new Multipassify(process.env.shopifyMultipassSecret);
 
 const removeEmpty = obj => {
   return Object.fromEntries(
@@ -116,6 +113,12 @@ export const mutations = {
   toggleAccount (state) {
     state.modalVisible = !state.modalVisible
   },
+  setCountries(state, countries) {
+    state.countries = countries
+  },
+  setProvinces(state, provinces) {
+    state.provinces = provinces
+  }
 }
 
 export const actions = {
@@ -199,18 +202,39 @@ export const actions = {
     }
   },
 
-  async multipassLogin ({ state }, payload) {
+  async multipassLogin({ state, commit, dispatch }, payload) {
     // TODO: figure out remote ip
-    if (process.browser) {
+    if (process.client || process.browser) {
       const { host, protocol } = window.location
       // multipass login
       const customerData = {
         ...state.customer,
         // remote_ip: req.ip,
-        return_to: payload && payload.returnTo || `${protocol}//${host}/account`
+        return_to:
+          (payload && payload.returnTo) || `${protocol}//${host}/account`
       }
-      return {
-        multipassUrl: multipassify.generateUrl(customerData, process.env.myshopifyDomain)
+
+      if (process.env.NETLIFY) {
+        try {
+          const multipassifyResponse = await axios.post(
+            `${endpoint}/multipassify`,
+            {
+              myshopifyDomain: process.env.myshopifyDomain,
+              multipassSecret: process.env.shopifyMultipassSecret,
+              customerData
+            }
+          )
+
+          return {
+            multipassUrl: multipassifyResponse.data
+          }
+        } catch (err) {
+          console.warn(`Error while fetching Multipass URL:\n${err}`)
+        }
+      } else {
+        console.warn(
+          "Cannot get Multipass URL when not deployed on Netlify unless running `npm run dev:netlify`"
+        )
       }
     }
   },
@@ -458,4 +482,36 @@ export const actions = {
       throw error
     }
   },
+
+  async fetchCountries({ state, commit }) {
+    if (!state.countries.length) {
+      try {
+        if (serverlessCheck('countries')) {
+          const countryResponse = await axios.post(`${endpoint}/countries`)
+          if (countryResponse) {
+            commit('addCountries', countryResponse.data)
+          }
+        }
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
+    }
+  },
+
+  async fetchProvince({ state, commit }, { countryShortName }) {
+    try {
+      if (serverlessCheck('provinces')) {
+        const provinceResponse = await axios.post(`${endpoint}/provinces`, {
+          countryShortName
+        })
+        if (provinceResponse) {
+          commit('setProvinces', provinceResponse.data)
+        }
+      }
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
 }
