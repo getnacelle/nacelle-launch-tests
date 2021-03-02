@@ -97,3 +97,4 @@ netlify-lambda-build
 
 # Local Netlify folder
 .netlify
+.vercel
