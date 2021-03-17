@@ -1,35 +1,41 @@
 <template>
-  <li class="address">
+  <div>
     <p>
-      <span>{{ address.name }}</span><br>
-      <span v-for="(item, itemIndex) in address.formatted" :key="itemIndex">{{item}}<br></span>
+      <span>{{ address.name }}</span
+      ><br />
+      <span v-for="(item, itemIndex) in address.formatted" :key="itemIndex"
+        >{{ item }}<br
+      /></span>
     </p>
-    <br>
+    <br />
     <div class="button-wrapper">
-      <button class="button" @click.prevent="toggleEdit" >{{ isEditing ? 'Cancel' : 'Edit' }}</button>
-      <button v-if="showDelete" class="button" @click.prevent="deleteAddress({ id: address.id })">Delete</button>
+      <button class="button" @click.prevent="toggleEdit">
+        {{ isEditing ? 'Cancel' : 'Edit' }}
+      </button>
+      <button
+        v-if="showDelete"
+        class="button"
+        @click.prevent="deleteAddress({ id: address.id })"
+      >
+        Delete
+      </button>
     </div>
     <div v-if="isEditing" class="edit-form">
-      <address-form :address="address" action="update" :isDefaultAddress="isDefaultAddress" />
+      <address-form
+        :address="address"
+        action="update"
+        :is-default-address="isDefaultAddress"
+      />
     </div>
-    <br>
-    <br>
-  </li>
+    <br />
+    <br />
+  </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import AddressForm from '~/components/account/AddressForm'
+import { mapActions } from 'vuex'
+
 export default {
-  props: ['address', 'showDelete', 'isDefaultAddress'],
-  data () {
-    return {
-      isEditing: false
-    }
-  },
-  components: {
-    AddressForm
-  },
   filters: {
     formatAddress(value) {
       const addressString = `
@@ -43,14 +49,30 @@ export default {
       return addressString
     }
   },
+  props: {
+    address: {
+      type: Object,
+      required: true
+    },
+    showDelete: {
+      type: Boolean,
+      default: true
+    },
+    isDefaultAddress: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      isEditing: false
+    }
+  },
   methods: {
     ...mapActions('account', ['deleteAddress']),
-    toggleEdit () {
+    toggleEdit() {
       this.isEditing = !this.isEditing
     }
   }
 }
 </script>
-
-<style scoped>
-</style>

@@ -9,14 +9,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import AccountNavigation from '~/components/account/AccountNavigation'
-import Orders from '~/components/account/Orders'
-export default {
-  components: {
-    AccountNavigation,
-    Orders,
-  },
-}
-</script>

@@ -1,52 +1,24 @@
 <template>
-  <div class="page page-login">
-    <section class="section section-header">
-      <h1>Login</h1>
-    </section>
+  <account-layout>
+    <h1>Login</h1>
+    <login-form />
+    <!-- Social Login -->
+    <!-- <nacelle-passport
+      :myshopify-domain="$nacelle.myshopifyDomain"
+      title="or Log in via"
+    /> -->
 
-    <section class="section section-login">
-      <login-form />
-      <!-- Social Login -->
-      <nacelle-passport :myshopifyDomain="$nacelle.myshopifyDomain"/>
-      <nuxt-link
-        :to="`/account/recover`"
-        class="breadcrumb"
-      >
-        Forgot your password?
-      </nuxt-link>
-      <nuxt-link
-        :to="`/account/register`"
-        class="breadcrumb"
-      >
-        Create Account
-      </nuxt-link>
-    </section>
-  </div>
+    <div class="my-4">
+      <nuxt-link :to="`/account/register#form`"> Create account </nuxt-link>
+    </div>
+  </account-layout>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import NacellePassport from '~/components/account/NacellePassport'
-import LoginForm from '~/components/account/LoginForm'
 export default {
   middleware: 'notAuthenticated',
-  components: {
-    NacellePassport,
-    LoginForm
-  },
-  data () {
-    return {
-    }
-  },
-  async mounted () {
-  },
-  computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors'])
-  },
-  methods: {
+  asyncData({ store }) {
+    store.commit('account/setErrors', [])
   }
 }
 </script>
-
-<style scoped>
-</style>

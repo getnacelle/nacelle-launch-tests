@@ -11,11 +11,12 @@ import Multipassify from 'multipassify'
  */
 export default function (req, res) {
   try {
-    const { MYSHOPIFY_DOMAIN, SHOPIFY_MULTIPASS_SECRET } = process.env
     const { customerData } = JSON.parse(req.body)
-
-    const multipassify = new Multipassify(SHOPIFY_MULTIPASS_SECRET)
-    const url = multipassify.generateUrl(customerData, MYSHOPIFY_DOMAIN)
+    const multipassify = new Multipassify(process.env.SHOPIFY_MULTIPASS_SECRET)
+    const url = multipassify.generateUrl(
+      customerData,
+      process.env.MYSHOPIFY_DOMAIN
+    )
 
     res.status(200).send(url)
   } catch (err) {

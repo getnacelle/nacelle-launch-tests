@@ -1,43 +1,14 @@
 <template>
-  <div class="page page-recover">
-    <section class="section section-header">
-      <h1>Reset Your Password</h1>
-    </section>
-
-    <section class="section section-recover">
-      <recover-form />
-
-      <nuxt-link
-        :to="`/account/login`"
-        class="breadcrumb"
-      >
-        Login
-      </nuxt-link>
-    </section>
-  </div>
+  <account-layout>
+    <recover-form />
+  </account-layout>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import RecoverForm from '~/components/account/RecoverForm'
 export default {
   middleware: 'notAuthenticated',
-  components: {
-    RecoverForm
-  },
-  data () {
-    return {
-    }
-  },
-  mounted() {
-  },
-  computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors']),
-  },
-  methods: {
+  asyncData({ store }) {
+    store.commit('account/setErrors', [])
   }
 }
 </script>
-
-<style scoped>
-</style>

@@ -8,25 +8,24 @@ import countrycitystatejson from 'countrycitystatejson'
  * @param {Object} res - HTTP response object (see https://vercel.com/docs/runtimes#official-runtimes/node-js/node-js-request-and-response-objects/node-js-helpers)
  */
 export default function (req, res) {
+  const { countryShortName } = req.body
   try {
-    const body = JSON.parse(req.body);
-
-    if (!body || !body.countryShortName) {
+    if (!countryShortName) {
       res
         .status(400)
         .send(
           `'countryShortName' is required in the POST body by /api/get-provinces`
-        );
+        )
     }
 
     res
       .status(200)
-      .send(countrycitystatejson.getStatesByShort(body.countryShortName));
+      .send(countrycitystatejson.getStatesByShort(countryShortName))
   } catch (err) {
     res
       .status(500)
       .send(
         `Could not find states or provinces for country with name ${countryShortName} in countries database: ${err.message}`
-      );
+      )
   }
 }

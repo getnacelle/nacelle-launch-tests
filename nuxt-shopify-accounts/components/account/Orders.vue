@@ -15,10 +15,11 @@
               :href="order.statusUrl"
               class="button"
               :aria-label="`Order number ${order.name}`"
-            >{{ order.name }}</a>
+              >{{ order.name }}</a
+            >
           </th>
           <td data-label="Date">
-            <time :datetime="order.processedAt">{{ order.processedAt | formatDate }}</time>
+            <time :datetime="order.processedAt">{{ order.processedAt }}</time>
           </td>
           <td data-label="Total">{{ order.totalPriceV2.amount }}</td>
         </tr>
@@ -32,47 +33,11 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState } from 'vuex'
+
 export default {
-  filters: {
-    formatDate(value) {
-      const MM = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ];
-      const DD = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ];
-      const date = new Date(value);
-      const year = date.getFullYear();
-      const month = MM[date.getMonth()];
-      const day = date.getDate();
-      const dayOfWeek = DD[date.getDay()];
-      return `${dayOfWeek}, ${month} ${day}, ${year}`;
-    }
-  },
   computed: {
-    ...mapState("account", [
-      "customerAccessToken",
-      "userErrors",
-      "orders",
-    ]),
-  },
+    ...mapState('account', ['orders'])
+  }
 }
 </script>

@@ -1,13 +1,11 @@
+// import generateRoutes from './nacelle-routing/generateRoutes'
+
 require('dotenv').config()
 
-import path from 'path'
-import fs from 'fs-extra'
-
 export default {
-  mode: process.env.BUILD_MODE,
-  /*
-   ** Headers of the page
-   */
+  target: 'static',
+
+  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: process.env.npm_package_name || '',
     meta: [
@@ -19,86 +17,96 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      {
-        rel: 'stylesheet',
-        type: 'text/css',
-        href: `//dmf8x4ovgacxs.cloudfront.net/${process.env.NACELLE_SPACE_ID}/styles.css`
-      }
-    ],
-    script: [
-      {
-        src:
-          'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver'
-      }
-    ]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#fff' },
 
-  /*
-   ** Global CSS
-   */
-  css: [
-    // '@nacelle/nacelle-vue-components/dist/base-styles.css',
-    '@/assets/global.css'
+  // Global CSS: https://go.nuxtjs.dev/config-css
+  css: ['@/assets/global.scss'],
+
+  // Auto import components: https://go.nuxtjs.dev/config-components
+  components: [
+    '~/components/account',
+    '~/components/nacelle',
+    '~/components/nacelle/image'
   ],
 
   env: {
-    nacelleSpaceID: process.env.NACELLE_SPACE_ID,
-    nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
-    buildMode: process.env.BUILD_MODE,
-    shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    serverlessEndpoint: process.env.SERVERLESS_ENDPOINT,
+    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN
+    // shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET
   },
 
-  modules: [
-    '@nuxtjs/pwa',
-    '@nuxtjs/dotenv',
-    '@nacelle/nacelle-nuxt-module',
-    '@nuxtjs/sitemap',
-    '@nuxtjs/axios',
-    'vue-currency-filter/nuxt',
-    'cookie-universal-nuxt',
-  ],
+  // Add environment variables to either `publicRuntimeConfig` (exposed to client)
+  // or to `privateRuntimeConfig`
+  // https://nuxtjs.org/blog/moving-from-nuxtjs-dotenv-to-runtime-config/#introducing-the-nuxtjs-runtime-config
+  publicRuntimeConfig: {
+    API_PORT: process.env.API_PORT,
+    contentAssetStorage: process.env.CONTENT_ASSET_STORAGE || '',
+    nacelleId: process.env.NACELLE_SPACE_ID,
+    nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
+    nacelleEndpoint: 'https://hailfrequency.com/v2/graphql'
+  },
 
-  plugins: [
-    { src: '~/plugins/authOnLoad.js', ssr: false }
-  ],
-
-  sitemap: {
-    gzip: true,
-    async routes() {
-      const staticDir = path.resolve(__dirname, './static/data')
-      const routes = fs.readJsonSync(`${staticDir}/routes.json`)
-      const routesOnly = routes.map(route => route.route) // .concat(['/account','/account/login'])
-      
-      return routesOnly
+  // PWA module configuration: https://go.nuxtjs.dev/pwa
+  pwa: {
+    manifest: {
+      lang: 'en'
     }
   },
 
+  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
+  buildModules: ['@nuxtjs/eslint-module', 'nuxt-purgecss', '@nuxtjs/dotenv'],
+
+  // Modules: https://go.nuxtjs.dev/config-modules
+  modules: ['@nuxtjs/pwa', 'cookie-universal-nuxt', '~/modules/nacelle'],
+
+  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  plugins: [
+    { src: '~/plugins/nuxt-client-init.js', ssr: false },
+    { src: '~/plugins/authOnLoad.js', ssr: false }
+  ],
+
+  /*
+   ** Nacelle Configuration
+   * https://docs.getnacelle.com/nuxt/nuxt-config.html
+   */
   nacelle: {
     spaceID: process.env.NACELLE_SPACE_ID,
     token: process.env.NACELLE_GRAPHQL_TOKEN,
-    gaID: process.env.NACELLE_GA_ID,
-    fbID: process.env.NACELLE_FB_ID,
-    skipPrefetch: process.env.SKIP_PREFETCH === 'true',
-    customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
+
+    // If you wish to set the Nacelle GraphQL endpoint to something other than the
+    // default.
+    // customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN
   },
 
   generate: {
-    workers: 4,
-    concurrency: 4
+    crawler: false,
+    concurrency: 25
+    // async routes() {
+    //   return await generateRoutes()
+    // }
   },
 
+  // Customize the progress-bar color
+  loading: { color: '#fff' },
+
+  vue: {
+    config: {
+      devtools: true
+    }
+  },
+
+  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config) {
+      config.node = {
+        Buffer: false
+      }
+    },
     postcss: {
       preset: {
         features: {
@@ -118,7 +126,6 @@ export default {
         trimCustomFragments: true,
         useShortDoctype: true
       }
-    },
-    transpile: ['@nacelle/nacelle-tools']
+    }
   }
 }

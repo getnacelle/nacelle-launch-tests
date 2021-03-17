@@ -1,16 +1,16 @@
 # Accounts
 
-###### Utilizing Shopify Storefront API and Multipass
+Utilizing Shopify Storefront API and Multipass
 
 ---
 
-### Summary
+## Summary
 
 We want a simple solution to handling customer accounts that doesn't involve maintaining code in Shopify's Theme. This example should give us all of the basic account functionality that we need.
 
 If you want to have a better understanding of the queries and mutations that we are utlizing, check out the `.insomnia` directory and play around with the api directly. You'll just need to download [The Insomnia API client](https://insomnia.rest/) and [downloaded the walkthrough as a collection][inco]
 
-##### Account Page Actions:
+## Account Page Actions
 
 **example structure:**
 
@@ -46,14 +46,14 @@ If you want to have a better understanding of the queries and mutations that we 
         └── UPDATE                      # updates customer password with resetToken from recovery email
 ```
 
-### Prerequisites
+## Prerequisites
 
 - Must be on the [Shopify Plus](https://www.shopify.com/plus/enterprise-ecommerce) plan and have [Multipass](https://help.shopify.com/en/api/reference/plus/multipass) enabled.
 - You'll need your store's:
   - Storefront API token
   - Multipass secret
 
-### Setup
+## Setup
 
 1. add a few items to our `.env` file:
 
@@ -109,14 +109,15 @@ For more information about these dependencies, check out their repositories:
 
 5. Plugins
 
-- We'll need to add `authOnLoad.js` plugin to `nuxt.config.js:
+We'll need to add `authOnLoad.js` plugin to `nuxt.config.js:
+
 ```js
 plugins: [
   { src: '~/plugins/authOnLoad.js', ssr: false }
 ],
 ```
 
-### Code Additions
+## Code Additions
 
 | Dir                                 | Description                                                       |
 | ----------------------------------- | ----------------------------------------------------------------- |
@@ -129,29 +130,27 @@ plugins: [
 | [static/email-referrer-head-check.js][dirrh]       | On page load guard clause for better UX when being redirected from emails                          |
 | [components/account/*][dirac]       | Account components                                                |
 
-
-### File Modifications
+## File Modifications
 
 | File                                            | Description                                                         |
 | ----------------------------------------------- | ------------------------------------------------------------------- |
 | [layouts/default.vue][fild]                     | add read token action to mounted hook                               |
 | [components/CartFlyoutCheckoutButton.vue][ficc] | intercept checkout url and modify with custom domain                |
 | [nuxt.config.js][finc]                          | add nuxt-universal-cookie module and environment variable additions |
-| [store/index.js][fisi]                          | retrieve customer access token if present in cookie                 |
 
-### Shopify Email Notifications
+## Shopify Email Notifications
 
 1. Password Recover and Reset
 
-   - During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
-   - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
-   - The url path will appear like:
+    - During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
+    - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
+    - The url path will appear like:
 
-     - `/account/reset?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
+      - `/account/reset?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
 
-     versus:
+      versus:
 
-     - `/account/reset/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
+      - `/account/reset/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
 
 ```liquid
 {% comment %}
@@ -187,13 +186,15 @@ plugins: [
 <a href="http://domain.com/account/activate?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Activate Account</a>
 ```
 
-### Social Login
+## Social Login
 We will need a backend service to handle some of these actions. Because we are deployed on Netlify, we are using [Netlify Functions](https://www.netlify.com/products/functions/) which are essientially built ontop of AWS Lambda.
 
 One lambda will be served:
-- `auth.j`
 
-Five routes will be exposed: 
+- `auth.js`
+
+Five routes will be exposed:
+
 - `auth/google`
 - `auth/google/callback`
 - `auth/facebook`
@@ -217,19 +218,23 @@ functions
 └── auth.js                        # Root level files represent lambdas and export a handler function
 ```
 
-#### Social App Setup
+## Social App Setup
+
 1. In order to use Facebook authentication with `passport-facebook`, you must first create an app at [Facebook Developers](https://developers.facebook.com/). When created, an app is assigned an App ID and App Secret. Your application must also implement a redirect URL, to which Facebook will redirect users after they have approved access for your application. (ie. `https://<your-domain>/api/auth/facebook/callback`)
     - Note facebook assumes to whitelist a localhost callback, so explicitely adding one is not necessary while the app status is set to "In Development"
 
 2. Before using `passport-google-oauth20`, you must register an application with Google. If you have not already done so, a new project can be created in the [Google Developers Console](https://console.developers.google.com/). Your application will be issued a client ID and client secret, which need to be provided to the strategy. You will also need to configure a redirect URI which matches the route in your application. (ie. `https://<your-domain>/api/auth/google/callback` )
     - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)
 
-#### Setup
+## Serverless Setup
+
+### Netlify
+
 1. [Netlify's CLI](https://github.com/netlify/cli) will help us during development.
-    - `npm install netlify-cli -D`
+    - `npm install netlify-cli -g`
 2. Add a package.json to our `/functions` directory
-    -  `cd functions && npm init`
-3. Other dependencies we'll need include for our functions directory:
+    - `cd functions && npm init`
+3. Other dependencies we'll need to include for our functions directory:
     - `npm install body-parser cookie-parser express jsonwebtoken passport passport-facebook passport-google-oauth20 passport-jwt serverless-http winston`
     - These dependencies can be checked out at their respective github repos:
         - [axios](https://github.com/axios/axios)
@@ -258,11 +263,17 @@ GOOGLE_CLIENT_SECRET="123423453456"
     - `"serve": "NODE_ENV=dev netlify dev"`
 
 🚧 **Known Issues** 🚧
+
 - The Netlify CLI can be a bit buggy sometimes, especially when hotreloading. Sometimes the sockets hangup during the proxying process. It can cause the nuxt project to run on port 3000 in the background.
-    - This is only an issue during development.
-    - To clean this up run:
-        - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
-        - `kill -9 12583` this will stop the process from running.
+  - This is only an issue during development.
+  - To clean this up run:
+    - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
+    - `kill -9 12583` this will stop the process from running.
+
+#### Vercel
+
+
+
 
 
 [dirgql]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/gql

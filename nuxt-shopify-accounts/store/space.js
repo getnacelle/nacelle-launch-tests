@@ -56,15 +56,17 @@ export const getters = {
 
     return {}
   },
+
   getMetatag: (state) => (tag) => {
     if (state.metafields) {
-      return state.metafields.find(field => (
-        field.namespace === 'metatag' && field.key === tag
-      ))
+      return state.metafields.find(
+        (field) => field.namespace === 'metatag' && field.key === tag
+      )
     }
 
     return {}
   },
+
   getMetaNamespace: (state) => (namespace) => {
     if (state.metafields) {
       return state.metafields.reduce((obj, metafield) => {
@@ -78,11 +80,12 @@ export const getters = {
 
     return {}
   },
+
   getMetafield: (state) => (namespace, key) => {
     if (state.metafields) {
-      const metafield = state.metafields.find(field => (
-        field.namespace === namespace && field.key === key
-      ))
+      const metafield = state.metafields.find(
+        (field) => field.namespace === namespace && field.key === key
+      )
 
       if (metafield) {
         return metafield.value
@@ -91,20 +94,27 @@ export const getters = {
 
     return undefined
   },
-  getLinks: (state) => handle => {
-    if (state.linklists) {
-      const linklist = state.linklists.find(
-        linklist => linklist.handle === handle
-      )
 
-      if (linklist) {
-        return linklist.links
-      }
-
+  getLinks: (state) => (handle) => {
+    if (!state.linklists) {
       return []
     }
 
-    return []
+    const linklist = state.linklists.find((l) => l.handle === handle)
+
+    return linklist ? linklist.links : []
+  },
+
+  getLocalizedLinks: (state, getters, rootState) => (handle) => {
+    const locale =
+      rootState.user.locale && rootState.user.locale.locale
+        ? rootState.user.locale.locale.toLowerCase()
+        : ''
+    const appendLocale = locale.length && locale !== 'en-US'.toLowerCase()
+    const localizedHandle = appendLocale ? `${handle}-${locale}` : handle
+    const localizedLinks = getters.getLinks(localizedHandle)
+
+    return localizedLinks.length ? localizedLinks : getters.getLinks(handle)
   }
 }
 
@@ -135,7 +145,6 @@ export const actions = {
     }
   }
 }
-
 
 export default {
   namespaced: true,

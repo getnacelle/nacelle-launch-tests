@@ -8,12 +8,15 @@ export const mutations = {
   openModal(state) {
     state.modalOpen = true
   },
+
   closeModal(state) {
     state.modalOpen = false
   },
+
   setModalContext(state, payload) {
     state.modalContext = payload
   },
+
   setModalData(state, payload) {
     state.modalData = payload
   }

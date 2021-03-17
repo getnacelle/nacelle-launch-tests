@@ -1,104 +1,99 @@
 <template>
-  <div class="page page-addresses">
-    <section class="section section-header">
-      <h1>Addresses <span class="logout-link"><nuxt-link to="/account">Return to Account Details</nuxt-link></span></h1>
-      <ul v-if="userErrors.length">
-        <li>Error:</li>
-        <li class="error" v-for="(error, index) in userErrors" :key="index">{{ error.message }}</li>
-      </ul>
+  <account-layout>
+    <h1>Your Addresses</h1>
+    <account-navigation />
+    <div>
+      <button
+        :name="`${isEditing ? 'Cancel' : 'Add New Address'}`"
+        class="button"
+        @click.prevent="toggleEdit"
+      >
+        {{ isEditing ? 'Cancel' : 'Add New Address' }}
+      </button>
+    </div>
 
-      <button class="button" @click.prevent="toggleEdit" >{{ isEditing ? 'Cancel' : 'Add A New Address' }}</button>
-      <div v-if="isEditing" class="create-form">
-        <address-form action="create" />
-      </div>
-    </section>
+    <div>
+      <template v-if="!addressesLoaded"> loading </template>
+      <template v-else-if="addresses.length">
+        <template v-if="isEditing">
+          <address-form
+            :is-editing.sync="isEditing"
+            action="create"
+            @submitted="toggleEdit"
+          />
+        </template>
 
-    <section v-if="addresses.length" class="section section-addresses">
-      <ul v-if="addresses.length">
-        <address-item
-          v-for="(address, index) in addresses"
-          :address="address"
-          :key="index"
-          :showDelete="addresses.length > 1"
-          :isDefaultAddress="isDefault(address.id, defaultAddress.id)"
-        />
-      </ul>
-      <div v-else><h5>You don't have any addresses yet.</h5></div>
-    </section>
-
-    <section class="section section-account">
-
-    </section>
-  </div>
+        <template v-else>
+          <form-errors v-if="userErrors.length" :errors="userErrors" />
+          <div>
+            <div v-if="addresses.length">
+              <address-item
+                v-for="(address, index) in addresses"
+                :key="index"
+                :address="address"
+                :show-delete="addresses.length > 1"
+                :is-default="isDefaultAddress(address)"
+              />
+            </div>
+          </div>
+        </template>
+      </template>
+      <section v-else>
+        <address-form action="create" @submitted="toggleEdit" />
+      </section>
+    </div>
+  </account-layout>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import AddressItem from '~/components/account/AddressItem'
-import AddressForm from '~/components/account/AddressForm'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   middleware: 'authenticated',
-  data () {
-    return {
-      isEditing: false
-    }
+  asyncData({ store }) {
+    store.commit('account/setErrors', [])
   },
-  components: {
-    AddressItem,
-    AddressForm
+  data() {
+    return {
+      isEditing: false,
+      addressesLoaded: false
+    }
   },
   head: {
-    script: [
-      { src: '/account-head.js' },
-    ]
+    script: [{ src: '/account-head.js' }]
   },
-  async mounted () {
-    if (this.customerAccessToken) {
-      this.$store.dispatch('account/fetchDefaultAddress')
-      this.$store.dispatch('account/fetchAddresses')
-    }
+  computed: {
+    ...mapState('account', [
+      'customerAccessToken',
+      'userErrors',
+      'defaultAddress',
+      'addresses'
+    ])
   },
   watch: {
-    customerAccessToken (val) {
+    customerAccessToken(val) {
       if (val === null) {
         this.$router.push('/')
       }
-    },
+    }
   },
-  computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors', 'defaultAddress', 'addresses']),
+  async mounted() {
+    this.addressesLoaded = false
+    const accessToken = this.$cookies.get('customerAccessToken')
+    await this.readCustomerAccessToken({ accessToken })
+    if (this.customerAccessToken) {
+      await this.$store.dispatch('account/fetchAddresses')
+    }
+    this.addressesLoaded = true
   },
   methods: {
-    toggleEdit () {
+    ...mapActions('account', ['readCustomerAccessToken']),
+    toggleEdit() {
       this.isEditing = !this.isEditing
     },
-    decodeBase64AddressId(encodedId) {
-      const decodedId = Buffer.from(encodedId, 'base64').toString('ascii')
-      return decodedId.split('gid://shopify/MailingAddress/')[1].split('?')[0]
-    },
-    isDefault (id, defaultId) {
-      return this.decodeBase64AddressId(id) === this.decodeBase64AddressId(defaultId)
+    isDefaultAddress(address) {
+      return address && address.id === this.defaultAddress.id
     }
   }
 }
 </script>
-
-<style scoped>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  th, td {
-    text-align: left;
-    border: 1px solid #e8e9eb;
-    padding: 10px 14px;
-  }
-  .logout-link {
-    margin: 0 10px;
-    font-size: 9px;
-  }
-  .error {
-    color: #8f1212
-  }
-</style>
