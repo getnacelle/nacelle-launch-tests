@@ -2,14 +2,6 @@
   <transition name="slide">
     <div v-if="cartVisible" class="flyout">
       <cart-flyout-header @close="handleClose" />
-      <div class="cart-items">
-        <cart-item
-          v-for="item in lineItems"
-          :key="item.variant.id"
-          :item="item"
-        ></cart-item>
-      </div>
-      <cart-flyout-subtotal />
       <cart-flyout-checkout-button />
     </div>
   </transition>
