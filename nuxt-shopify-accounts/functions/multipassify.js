@@ -9,25 +9,24 @@ const Multipassify = require('multipassify')
  * @param {Object} event.body.customerData.return_to - the URL that the customer should be directed to after login
  * @param {Object} context - https://docs.netlify.com/functions/build-with-javascript/#synchronous-function-format
  */
-exports.handler = async function (event, _context) {
+exports.handler = function (event, _context) {
   try {
-    const { MYSHOPIFY_DOMAIN, SHOPIFY_MULTIPASS_SECRET } = process.env;
-    const { customerData } = JSON.parse(event.body);
-    const multipassify = new Multipassify(SHOPIFY_MULTIPASS_SECRET);
+    const { customerData } = JSON.parse(event.body)
+    const multipassify = new Multipassify(process.env.SHOPIFY_MULTIPASS_SECRET)
     const multipassUrl = multipassify.generateUrl(
       customerData,
-      MYSHOPIFY_DOMAIN
-    );
+      process.env.MYSHOPIFY_DOMAIN
+    )
 
     return {
       statusCode: 200,
       body: multipassUrl,
       headers: { 'content-type': 'text/html' }
-    };
+    }
   } catch (err) {
     return {
       statusCode: 500,
       body: `Could not generate Multipass URL: ${err.message}`
-    };
+    }
   }
-};
+}
