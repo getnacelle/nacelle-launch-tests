@@ -24,11 +24,7 @@ export default {
   css: ['@/assets/global.scss'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: [
-    '~/components/account',
-    '~/components/nacelle',
-    '~/components/nacelle/image'
-  ],
+  components: ['~/components/account', '~/components/nacelle'],
 
   env: {
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,

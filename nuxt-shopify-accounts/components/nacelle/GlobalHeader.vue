@@ -10,7 +10,7 @@
 
       <div class="main-nav-right">
         <div class="main-nav-menu">
-          <nuxt-link
+          <!-- <nuxt-link
             v-for="(link, index) in mainMenu"
             :key="index"
             :to="link.to"
@@ -18,7 +18,7 @@
             class="main-nav-item"
           >
             {{ link.title }}
-          </nuxt-link>
+          </nuxt-link> -->
         </div>
 
         <!-- Accounts Login -->
@@ -53,14 +53,10 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   computed: {
-    ...mapState('space', ['id', 'name', 'linklists']),
-    ...mapGetters('space', ['getLocalizedLinks']),
-    mainMenu() {
-      return this.getLocalizedLinks('main-menu')
-    }
+    ...mapState('space', ['id', 'name'])
   }
 }
 </script>
