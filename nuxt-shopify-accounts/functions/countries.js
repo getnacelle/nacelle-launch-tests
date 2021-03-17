@@ -8,7 +8,6 @@ const countrycitystatejson = require('countrycitystatejson')
 exports.handler = function (_event, _context) {
   try {
     const countries = countrycitystatejson.getCountries()
-    console.log(JSON.stringify(countries))
 
     return {
       statusCode: 200,

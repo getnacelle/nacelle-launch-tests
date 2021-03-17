@@ -5,9 +5,9 @@
 //    transactionID: "the-transaction-id",
 //  }
 
-const axios = require("axios")
+const axios = require('axios')
 
-exports.handler = async function(event, context, callback) {
+exports.handler = async function (event, context, callback) {
   const { orderID, transactionID } = JSON.parse(event.body)
 
   const endpoint = `https://${process.env.MYSHOPIFY_DOMAIN}/admin/api/2020-04/orders/${orderID}/transactions/${transactionID}.json`
@@ -15,8 +15,8 @@ exports.handler = async function(event, context, callback) {
   try {
     const response = await axios.get(endpoint, {
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": process.env.SHOPIFY_REST_TOKEN
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_REST_TOKEN
       }
     })
 

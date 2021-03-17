@@ -2,14 +2,14 @@
 //
 //  { customerID: "the-customer's-base64-encoded-id" }
 
-const axios = require("axios")
+const axios = require('axios')
 
-exports.handler = async function(event, context, callback) {
+exports.handler = async function (event, context, callback) {
   const { customerID } = JSON.parse(event.body)
 
-  const id = Buffer.from(customerID, "base64")
-    .toString("binary")
-    .split("gid://shopify/Customer/")
+  const id = Buffer.from(customerID, 'base64')
+    .toString('binary')
+    .split('gid://shopify/Customer/')
     .pop()
 
   const endpoint = `https://${process.env.MYSHOPIFY_DOMAIN}/admin/api/2020-04/customers/${id}/orders.json`
@@ -17,8 +17,8 @@ exports.handler = async function(event, context, callback) {
   try {
     const response = await axios.get(endpoint, {
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": process.env.SHOPIFY_REST_TOKEN
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_REST_TOKEN
       }
     })
 

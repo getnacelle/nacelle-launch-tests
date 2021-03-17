@@ -282,7 +282,6 @@ export const actions = {
           body
         })
         const multipassUrl = await response.text()
-        console.log('multipassLogin', multipassUrl)
         return { multipassUrl }
       } catch (error) {
         console.warn(`Error while fetching Multipass URL:\n${error}`)
@@ -302,7 +301,6 @@ export const actions = {
         userErrors
       } = response.data.customerAccessTokenCreate
 
-      console.log('login', customerAccessToken)
       if (customerAccessToken) {
         await dispatch('updateCustomerAccessToken', customerAccessToken)
         await dispatch('fetchCustomer')
