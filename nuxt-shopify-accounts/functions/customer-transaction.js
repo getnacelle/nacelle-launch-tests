@@ -23,6 +23,7 @@ exports.handler = async function (event, context, callback) {
     const body = JSON.stringify(response.data.transaction)
     return {
       statusCode: 200,
+      headers: { 'content-type': 'application/json' },
       body
     }
   } catch (error) {
