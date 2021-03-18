@@ -29,8 +29,7 @@ export default {
   env: {
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     serverlessEndpoint: process.env.SERVERLESS_ENDPOINT,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN
-    // shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
   },
 
   // Add environment variables to either `publicRuntimeConfig` (exposed to client)
@@ -70,13 +69,13 @@ export default {
   nacelle: {
     spaceID: process.env.NACELLE_SPACE_ID,
     token: process.env.NACELLE_GRAPHQL_TOKEN,
-
-    // If you wish to set the Nacelle GraphQL endpoint to something other than the
-    // default.
-    // customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN
+
+    // Rather than use the same Storefront Access Token
+    // that's provided to the Nacelle Dashboard, please create
+    // a new Shopify Private App with only `unauthenticated_read_product_listings` scope
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
   },
 
   generate: {

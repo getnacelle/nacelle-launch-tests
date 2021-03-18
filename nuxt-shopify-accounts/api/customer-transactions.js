@@ -5,7 +5,7 @@
 const axios = require('axios')
 
 module.exports = async (req, res) => {
-  const { orderID } = req.body
+  const { orderID } = JSON.parse(req.body)
 
   const endpoint = `https://${process.env.MYSHOPIFY_DOMAIN}/admin/api/2020-04/orders/${orderID}/transactions.json`
 
@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
     const response = await axios.get(endpoint, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': process.env.SHOPIFY_REST_TOKEN
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_PASSWORD
       }
     })
 

@@ -5,7 +5,7 @@
 const axios = require('axios')
 
 module.exports = async (req, res) => {
-  const { customerID } = req.body
+  const { customerID } = JSON.parse(req.body)
 
   const id = Buffer.from(customerID, 'base64')
     .toString('binary')
@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     const response = await axios.get(endpoint, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': process.env.SHOPIFY_REST_TOKEN
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_PASSWORD
       }
     })
 
