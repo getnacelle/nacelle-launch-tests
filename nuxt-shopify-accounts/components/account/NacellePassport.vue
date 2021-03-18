@@ -1,15 +1,15 @@
 <template>
   <div>
-    <a :href="facebook.url" class="button loginLink">{{ facebook.text }}</a>
-    <br>
-    <a :href="google.url" class="button loginLink">{{ google.text }}</a>
+    <a :href="facebook.url" class="button">{{ facebook.text }}</a>
+    <br />
+    <a :href="google.url" class="button">{{ google.text }}</a>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 export default {
-    data () {
+  data() {
     return {
       facebook: {
         url: '/',
@@ -21,28 +21,32 @@ export default {
       }
     }
   },
-  async created () {
-    this.endpoint = process.env.NODE_ENV === `development`
-    ? `/.netlify/functions`
-    : `/api`;
+  created() {
+    this.endpoint =
+      process.env.NODE_ENV === `development` ? `/.netlify/functions` : `/api`
   },
-  async mounted () {
+  async mounted() {
     this.facebook.url = this.authUrl('facebook')
     this.google.url = this.authUrl('google')
 
     const ncl = await this.$cookies.get('ncl')
     if (ncl) {
       try {
+        // eslint-disable-next-line no-unused-vars
         const { email, jwt, strategy, accessToken, expiresAt } = ncl
-        const response = await axios.get(`${this.endpoint}/auth/status`, { withCredentials: true })
+        await axios.get(`${this.endpoint}/auth/status`, {
+          withCredentials: true
+        })
         this[strategy].text = this[strategy].text.replace('Login', 'Logged')
         this[strategy].url = '#'
         if (accessToken) {
-          await this.$store.dispatch('account/renewCustomerAccessToken', accessToken)
+          await this.$store.dispatch(
+            'account/renewCustomerAccessToken',
+            accessToken
+          )
           this.$router.push('/account')
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error('error', error)
         this.$cookies.remove('ncl_email')
         this.$cookies.remove('ncl_strategy')
@@ -50,9 +54,11 @@ export default {
     }
   },
   methods: {
-    authUrl (strategy) {
+    authUrl(strategy) {
       if (process.browser) {
-        return `${this.endpoint}/auth/${strategy}?returnTo=${encodeURIComponent(window.location.href)}`
+        return `${this.endpoint}/auth/${strategy}?returnTo=${encodeURIComponent(
+          window.location.href
+        )}`
       } else {
         return '/'
       }

@@ -1,49 +1,17 @@
 <template>
-  <div class="page page-register">
-    <section class="section section-header">
-      <h1>Register</h1>
-    </section>
-
-    <section class="section section-register">
-      <register-form />
-
-      <nuxt-link
-        :to="`/account/recover`"
-        class="breadcrumb"
-      >
-        Forgot your password?
-      </nuxt-link>
-      <nuxt-link
-        :to="`/account/login`"
-        class="breadcrumb"
-      >
-        Login
-      </nuxt-link>
-    </section>
-  </div>
+  <account-layout>
+    <h1>Create Account</h1>
+    <register-form />
+  </account-layout>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import RegisterForm from '~/components/account/RegisterForm'
 export default {
-  components: {
-    RegisterForm
-  },
   middleware: 'notAuthenticated',
-  data () {
-    return {
-    }
-  },
-  mounted() {
-  },
-  computed: {
-    ...mapState('account', ['customerAccessToken', 'userErrors']),
-  },
-  methods: {
+  asyncData({ store }) {
+    store.commit('account/setErrors', [])
   }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

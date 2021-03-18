@@ -1,16 +1,16 @@
 # Accounts
 
-###### Utilizing Shopify Storefront API and Multipass
+Utilizing Shopify Storefront API and Multipass
 
 ---
 
-### Summary
+## Summary
 
 We want a simple solution to handling customer accounts that doesn't involve maintaining code in Shopify's Theme. This example should give us all of the basic account functionality that we need.
 
 If you want to have a better understanding of the queries and mutations that we are utlizing, check out the `.insomnia` directory and play around with the api directly. You'll just need to download [The Insomnia API client](https://insomnia.rest/) and [downloaded the walkthrough as a collection][inco]
 
-##### Account Page Actions:
+## Account Page Actions
 
 **example structure:**
 
@@ -46,27 +46,27 @@ If you want to have a better understanding of the queries and mutations that we 
         └── UPDATE                      # updates customer password with resetToken from recovery email
 ```
 
-### Prerequisites
+## Prerequisites
 
 - Must be on the [Shopify Plus](https://www.shopify.com/plus/enterprise-ecommerce) plan and have [Multipass](https://help.shopify.com/en/api/reference/plus/multipass) enabled.
 - You'll need your store's:
   - Storefront API token
   - Multipass secret
 
-### Setup
+## Setup
 
 1. add a few items to our `.env` file:
 
 ```sh
 SHOPIFY_MULTIPASS_SECRET="15b40af008bfad7b5dfbf36c389abf70"
 MYSHOPIFY_DOMAIN="nacelle-accounts.myshopify.com"
-SHOPIFY_GRAPHQL_TOKEN="789bfb8d1376a93439b27953b60ac357"
+SHOPIFY_STOREFRONT_ACCESS_TOKEN="789bfb8d1376a93439b27953b60ac357"
 SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 ```
 
 2. We'll need to expose these to various parts of our application through our `nuxt.config.js`:
 
-Note that `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
+Note that `SHOPIFY_STOREFRONT_ACCESS_TOKEN` is your store's Storefront API Token.
 
 ```js
 {
@@ -74,27 +74,25 @@ Note that `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
    ...,
     shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   },
   nacelle: {
     ...,
     customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   }
 }
 ```
 
 3. The following three dependencies need to be installed:
 
-- `npm install cookie-universal-nuxt multipassify countrycitystatejson`
+- `npm install cookie-universal-nuxt`
 
 For more information about these dependencies, check out their repositories:
 
 - [cookie-universal-nuxt](https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt)
-- [multipassify](https://github.com/beaucoo/multipassify)
-- [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
 4. Cookie Universal Nuxt requires an update to `nuxt.config.json`. Add to modules array.
 
@@ -109,39 +107,72 @@ For more information about these dependencies, check out their repositories:
 
 5. Plugins
 
-- We'll need to add `authOnLoad.js` plugin to `nuxt.config.js:
+We'll need to add `authOnLoad.js` plugin to `nuxt.config.js:
+
 ```js
 plugins: [
   { src: '~/plugins/authOnLoad.js', ssr: false }
 ],
 ```
 
-### Code Additions
+## Serverless Functions
 
-| Dir                                 | Description                                                       |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| [gql/\*][dirgql]                    | exports GraphQl queries and related utility functions.            |
-| [middleware/\*][dirmid]             | SPA style route guards. Included on certain pages                 |
-| [plugins/authOnLoad.js][dirmid]     | Router on ready plugin for auth middleware                        |
-| [pages/account/\*][dirpg]           | Account Page Templates                                            |
-| [store/account.js][dirst]           | Account related Actions and Mutations                             |
-| [static/account-head.js][dirah]     | On page load guard clause for better UX                           |
-| [static/email-referrer-head-check.js][dirrh]       | On page load guard clause for better UX when being redirected from emails                          |
-| [components/account/*][dirac]       | Account components                                                |
+To use Multipass and the address form for account pages this project relies on two packages:
 
+- [multipassify](https://github.com/beaucoo/multipassify)
+- [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
-### File Modifications
+Both of these packages are _large_ and can add a lot to your client bundle, so using them only in serverless functions keeps the client a little more lightweight. But if you want another reason, it also keeps your Multipass secret outside of client code.
+
+This project includes two different folders for serverless functions:
+
+- Vercel in [api/\*](./api)
+- Netlify [functions/\*](./functions)
+
+Those folder names are useful conventions for using serverless with these different platforms. Both of those folders use shared code in ./accounts related to making use of account data.
+
+Specify your serverless endpoint in your .env, for example:
+
+```bash
+SERVERLESS_ENDPOINT='/api'
+```
+
+ℹ️ NOTE: For a Netlify configuration, it's convenient to use a [netlify.toml](./netlify.toml) to redirect the requests to the `/functions` to point to `/api`.
+
+When testing your serverless functions locally make sure to use the respective platform's CLI ([Vercel CLI](https://vercel.com/docs/cli), [Netlify CLI](https://github.com/netlify/cli)). NPM scripts for running the project with these CLI's are provided in the `package.json`.
+
+### 🚧 **Known Issues** 🚧
+
+- The Netlify CLI can be a bit buggy sometimes, especially when hotreloading. Sometimes the sockets hangup during the proxying process. It can cause the nuxt project to run on port 3000 in the background.
+  - This is only an issue during development.
+  - To clean this up run:
+    - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
+    - `kill -9 12583` this will stop the process from running.
+
+## Other Code Additions
+
+| Dir                                          | Description                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| [components/account/\*][dirac]               | Account components                                                        |
+| [gql/\*][dirgql]                             | exports GraphQl queries and related utility functions.                    |
+| [middleware/\*][dirmid]                      | SPA style route guards. Included on certain pages                         |
+| [pages/account/\*][dirpg]                    | Account Page Templates                                                    |
+| [plugins/authOnLoad.js][dirmid]              | Router on ready plugin for auth middleware                                |
+| [static/account-head.js][dirah]              | On page load guard clause for better UX                                   |
+| [static/email-referrer-head-check.js][dirrh] | On page load guard clause for better UX when being redirected from emails |
+| [store/account.js][dirst]                    | Account related Actions and Mutations                                     |
+
+## File Modifications
 
 | File                                            | Description                                                         |
 | ----------------------------------------------- | ------------------------------------------------------------------- |
-| [layouts/default.vue][fild]                     | add read token action to mounted hook                               |
 | [components/CartFlyoutCheckoutButton.vue][ficc] | intercept checkout url and modify with custom domain                |
+| [layouts/default.vue][fild]                     | add read token action to mounted hook                               |
 | [nuxt.config.js][finc]                          | add nuxt-universal-cookie module and environment variable additions |
-| [store/index.js][fisi]                          | retrieve customer access token if present in cookie                 |
 
-### Shopify Email Notifications
+## Shopify Email Notifications
 
-1. Password Recover and Reset
+1. Password Recovery and Reset
 
    - During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
    - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
@@ -187,24 +218,29 @@ plugins: [
 <a href="http://domain.com/account/activate?id={{url_parts[5]}}&token={{url_parts[6]}}" class="button__text">Activate Account</a>
 ```
 
-### Social Login
-We will need a backend service to handle some of these actions. Because we are deployed on Netlify, we are using [Netlify Functions](https://www.netlify.com/products/functions/) which are essientially built ontop of AWS Lambda.
+## Social Login
 
-One lambda will be served:
-- `auth.j`
+If you want to add OAuth-style social login you will also need some additional pieces.
+However, if you don't need social login for your store, then the pieces mentioned below can be removed.
 
-Five routes will be exposed: 
+We will need a backend service to handle some of these actions -- again here is where serverless saves the day.
+
+One serverless function will be served:
+
+- `auth.js`
+
+Five routes will be exposed:
+
 - `auth/google`
 - `auth/google/callback`
 - `auth/facebook`
 - `auth/facebook/callback`
 - `auth/status`
 
-This will live in the `functions` directory.
+This are provided in the `accounts` directory.
 
 ```tree
-netlify.toml                       # a config file that helps netlify build and deploy
-functions
+accounts
 ├── app
 │   ├── app.js                     # exports instance of App class which is an express app
 │   └── routes.js                  # declares and exports routes that will accessible to frontend.
@@ -217,33 +253,7 @@ functions
 └── auth.js                        # Root level files represent lambdas and export a handler function
 ```
 
-#### Social App Setup
-1. In order to use Facebook authentication with `passport-facebook`, you must first create an app at [Facebook Developers](https://developers.facebook.com/). When created, an app is assigned an App ID and App Secret. Your application must also implement a redirect URL, to which Facebook will redirect users after they have approved access for your application. (ie. `https://<your-domain>/api/auth/facebook/callback`)
-    - Note facebook assumes to whitelist a localhost callback, so explicitely adding one is not necessary while the app status is set to "In Development"
-
-2. Before using `passport-google-oauth20`, you must register an application with Google. If you have not already done so, a new project can be created in the [Google Developers Console](https://console.developers.google.com/). Your application will be issued a client ID and client secret, which need to be provided to the strategy. You will also need to configure a redirect URI which matches the route in your application. (ie. `https://<your-domain>/api/auth/google/callback` )
-    - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)
-
-#### Setup
-1. [Netlify's CLI](https://github.com/netlify/cli) will help us during development.
-    - `npm install netlify-cli -D`
-2. Add a package.json to our `/functions` directory
-    -  `cd functions && npm init`
-3. Other dependencies we'll need include for our functions directory:
-    - `npm install body-parser cookie-parser express jsonwebtoken passport passport-facebook passport-google-oauth20 passport-jwt serverless-http winston`
-    - These dependencies can be checked out at their respective github repos:
-        - [axios](https://github.com/axios/axios)
-        - [body-parser](https://github.com/expressjs/body-parser)
-        - [cookie-parser](https://github.com/expressjs/cookie-parser)
-        - [express](https://github.com/expressjs/express)
-        - [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
-        - [passport](https://github.com/jaredhanson/passport)
-        - [passport-facebook](https://github.com/jaredhanson/passport-facebook)
-        - [passport-google-oauth20](https://github.com/jaredhanson/passport-google-oauth20)
-        - [passport-jwt](https://github.com/jaredhanson/passport-jwt)
-        - [serverless-http](https://github.com/dougmoscrop/serverless-http)
-        - [winston](https://github.com/winstonjs/winston)
-4. add a few new items to our `.env` file:
+### Add a few new items to our `.env` file
 
 ```sh
 BASE_URL="http://localhost:8888"
@@ -254,26 +264,11 @@ GOOGLE_CLIENT_ID="123423453456.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="123423453456"
 ```
 
-4. I've also added a script to our `package.json` that utilizes `netlify-cli` to serve both frontend and backend projects (by default nuxt is served at port 3000, lambdas are served at port 34567, and both are proxied at port 8888 which will be the best place to work from.)
-    - `"serve": "NODE_ENV=dev netlify dev"`
+## Social App Setup
 
-🚧 **Known Issues** 🚧
-- The Netlify CLI can be a bit buggy sometimes, especially when hotreloading. Sometimes the sockets hangup during the proxying process. It can cause the nuxt project to run on port 3000 in the background.
-    - This is only an issue during development.
-    - To clean this up run:
-        - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
-        - `kill -9 12583` this will stop the process from running.
+1. In order to use Facebook authentication with `passport-facebook`, you must first create an app at [Facebook Developers](https://developers.facebook.com/). When created, an app is assigned an App ID and App Secret. Your application must also implement a redirect URL, to which Facebook will redirect users after they have approved access for your application. (ie. `https://<your-domain>/api/auth/facebook/callback`)
 
+   - Note facebook assumes to whitelist a localhost callback, so explicitly adding one is not necessary while the app status is set to "In Development"
 
-[dirgql]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/gql
-[dirmid]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/middleware
-[dirpg]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/pages/account
-[dirst]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js
-[dirah]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js
-[dirrh]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/email-referrer-head-check.js
-[dirac]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/accounts
-[fild]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/layouts/default.vue
-[ficc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/components/CartFlyoutCheckoutButton.vue
-[finc]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/nuxt.config.js
-[fisi]: https://github.com/getnacelle/nacelle-launch-tests/blob/master/nuxt-shopify-accounts/store/index.js
-[inco]: https://github.com/getnacelle/nacelle-launch-tests/blob/master/nuxt-shopify-accounts/.insomnia/Insomnia_2020-02-20.json
+2. Before using `passport-google-oauth20`, you must register an application with Google. If you have not already done so, a new project can be created in the [Google Developers Console](https://console.developers.google.com/). Your application will be issued a client ID and client secret, which need to be provided to the strategy. You will also need to configure a redirect URI which matches the route in your application. (ie. `https://<your-domain>/api/auth/google/callback` )
+   - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)

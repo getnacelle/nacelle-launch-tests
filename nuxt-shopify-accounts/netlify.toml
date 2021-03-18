@@ -1,16 +1,18 @@
 [dev]
-  command = "npm run dev"
-  autoLaunch = false
+autoLaunch = false
+command = "npm run dev"
+port = 3333
 
 [build]
-  command = "npm run generate"
-  functions = "functions"
-  publish = "dist"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+command = "npm run generate"
+functions = "functions"
+publish = "dist"
 
 [[plugins]]
-  package = "@netlify/plugin-functions-install-core"
+package = "@netlify/plugin-functions-install-core"
+
+# Netlify Functions
+[[redirects]]
+from = "/api/*"
+status = 200
+to = "/.netlify/functions/:splat"

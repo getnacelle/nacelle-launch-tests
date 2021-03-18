@@ -1,110 +1,98 @@
 <template>
-  <div class="page page-account">
-    <section class="section section-header">
-      <h1>
-        Account
-        <span class="logout-link">
-          <a @click="logout">logout</a>
-        </span>
-      </h1>
-      <ul v-if="userErrors.length">
-        <li>Error:</li>
-        <li class="error" v-for="(error, index) in userErrors" :key="index">{{ error.message }}</li>
-      </ul>
-    </section>
+  <div>
+    <account-layout>
+      <h1>My Account</h1>
+      <account-navigation />
+    </account-layout>
+    <div class="container">
+      <client-only>
+        <div class="columns">
+          <section class="column is-two-thirds has-text-left">
+            <h2>Order History</h2>
+            <orders />
+          </section>
+          <section class="column is-one-third has-text-left">
+            <div class="px-4">
+              <h2>Account Details</h2>
+              <form-errors v-if="userErrors.length" :errors="userErrors" />
 
-    <section class="section section-orders">
-      <h2>Order History</h2>
-      <orders />
-    </section>
-
-    <section class="section section-account">
-      <h2>Account Details</h2>
-
-      <div v-if="defaultAddress">
-        <ul>
-          <li>{{ defaultAddress.name }}</li>
-          <li v-for="(item, index) in defaultAddress.formatted" :key="index">{{ item }}</li>
-        </ul>
-
-        <nuxt-link class="button" to="/account/addresses">Addresses ({{ addresses.length }})</nuxt-link>
-      </div>
-      <div v-else>
-        <nuxt-link class="button" to="/account/addresses">Add An Address</nuxt-link>
-      </div>
-    </section>
+              <template v-if="addresses && addresses[0]">
+                <address-item :address="addresses[0]" />
+              </template>
+              <div class="mt-4">
+                <nuxt-link to="/account/addresses" class="button is-tertiary">
+                  View Addresses ({{ addresses ? addresses.length : 0 }})
+                </nuxt-link>
+              </div>
+            </div>
+          </section>
+        </div>
+      </client-only>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import Orders from '~/components/account/Orders'
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  middleware: "authenticated",
-  components: {
-    Orders,
-  },
-  data() {
-    return {};
+  middleware: 'authenticated',
+  fetchOnServer: false,
+  asyncData({ store }) {
+    store.commit('account/setErrors', [])
   },
   head: {
-    script: [{ src: "/account-head.js" }]
+    script: [{ src: '/account-head.js' }]
   },
-  async mounted() {
-    if (this.customerAccessToken) {
-      this.$store.dispatch("account/fetchCustomer");
-      this.$store.dispatch("account/fetchOrders");
-      this.$store.dispatch("account/fetchDefaultAddress");
-      this.$store.dispatch("account/fetchAddresses");
-    }
+  computed: {
+    ...mapState('account', [
+      'customerAccessToken',
+      'userErrors',
+      'orders',
+      'defaultAddress',
+      'addresses'
+    ])
   },
   watch: {
-    customerAccessToken: function(val) {
+    customerAccessToken(val) {
       if (val === null) {
-        this.$router.push("/");
+        this.$router.push('/')
       }
     }
   },
-  computed: {
-    ...mapState("account", [
-      "customerAccessToken",
-      "userErrors",
-      "orders",
-      "defaultAddress",
-      "addresses"
-    ]),
-    action() {
-      // Not being used.
-      return `https://${this.$nacelle.myshopifyDomain}/account/logout`;
+  async mounted() {
+    const accessToken =
+      this.$cookies.get('customerAccessToken') || this.customerAccessToken
+
+    await this.readCustomerAccessToken({ accessToken })
+
+    if (accessToken) {
+      await Promise.all([
+        this.fetchCustomer(),
+        this.fetchOrders(),
+        this.fetchAddresses()
+      ])
     }
   },
   methods: {
-    async logout() {
-      await this.$store.dispatch("account/logout");
-      // TODO: logout on shopify utilizing action
-      this.$router.push("/");
-    }
+    ...mapActions('account', [
+      'fetchCustomer',
+      'fetchOrders',
+      'fetchAddresses',
+      'readCustomerAccessToken'
+    ])
   }
-};
+}
 </script>
 
-<style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
+<style lang="scss" scoped>
+$containerMaxWidth: 1200px;
+
+.container {
+  max-width: $containerMaxWidth;
+  min-height: 20vh;
 }
-th,
-td {
-  text-align: left;
-  border: 1px solid #e8e9eb;
-  padding: 10px 14px;
-}
-.logout-link {
-  margin: 0 10px;
-  font-size: 9px;
-}
-.error {
-  color: #8f1212;
+.authenticated-layout.section {
+  min-height: 10vh;
 }
 </style>

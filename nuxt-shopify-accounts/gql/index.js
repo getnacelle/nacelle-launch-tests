@@ -1,10 +1,10 @@
 export const transformEdges = (object, field) => {
   if (field == null) {
-    return object.edges.map(edge => {
+    return object.edges.map((edge) => {
       return edge.node
     })
   } else {
-    return object.edges.map(edge => {
+    return object.edges.map((edge) => {
       return edge.node[field]
     })
   }
@@ -13,7 +13,9 @@ export const transformEdges = (object, field) => {
 export const transformOrder = (order) => {
   const { discountApplications, lineItems, ...rest } = order
   const transformedOrder = {
-    discountApplications: discountApplications ? transformEdges(discountApplications) : [],
+    discountApplications: discountApplications
+      ? transformEdges(discountApplications)
+      : [],
     lineItems: lineItems ? transformEdges(lineItems) : [],
     ...rest
   }
@@ -193,6 +195,7 @@ export const GET_CUSTOMER_ORDERS = `query getCustomer($customerAccessToken: Stri
                   }
                   product {
                     id
+                    title
                   }
                   requiresShipping
                   selectedOptions {
@@ -307,30 +310,30 @@ export const GET_CUSTOMER_ORDERS = `query getCustomer($customerAccessToken: Stri
   }
 }`
 
-export const GET_CUSTOMER_DEFAULT_ADDRESS = `query getCustomer($customerAccessToken: String!) {
-  customer(customerAccessToken: $customerAccessToken) {
-    defaultAddress {
-      address1
-      address2
-      city
-      company
-      country
-      countryCodeV2
-      firstName
-      formatted
-      formattedArea
-      id
-      lastName
-      latitude
-      longitude
-      name
-      phone
-      province
-      provinceCode
-      zip
-    }
-  }
-}`
+// export const GET_CUSTOMER_DEFAULT_ADDRESS = `query getCustomer($customerAccessToken: String!) {
+//   customer(customerAccessToken: $customerAccessToken) {
+//     defaultAddress {
+//       address1
+//       address2
+//       city
+//       company
+//       country
+//       countryCodeV2
+//       firstName
+//       formatted
+//       formattedArea
+//       id
+//       lastName
+//       latitude
+//       longitude
+//       name
+//       phone
+//       province
+//       provinceCode
+//       zip
+//     }
+//   }
+// }`
 
 export const GET_CUSTOMER_ADDRESSES = `query getCustomer($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) {
@@ -357,6 +360,26 @@ export const GET_CUSTOMER_ADDRESSES = `query getCustomer($customerAccessToken: S
           zip
         }
       }
+    }
+    defaultAddress {
+      address1
+      address2
+      city
+      company
+      country
+      countryCodeV2
+      firstName
+      formatted
+      formattedArea
+      id
+      lastName
+      latitude
+      longitude
+      name
+      phone
+      province
+      provinceCode
+      zip
     }
   }
 }`
@@ -421,39 +444,6 @@ export const CUSTOMER_ADDRESS_UPDATE = `mutation customerAddressUpdate($customer
   }
 }`
 
-export const CUSTOMER_DEFAULT_ADDRESS_UPDATE = `mutation customerDefaultAddressUpdate($customerAccessToken: String!, $addressId: ID!) {
-  customerDefaultAddressUpdate(customerAccessToken: $customerAccessToken, addressId: $addressId) {
-    customer {
-      id
-      defaultAddress {
-        address1
-        address2
-        city
-        company
-        country
-        countryCodeV2
-        firstName
-        formatted
-        formattedArea
-        id
-        lastName
-        latitude
-        longitude
-        name
-        phone
-        province
-        provinceCode
-        zip
-      }
-    }
-    customerUserErrors {
-      code
-      field
-      message
-    }
-  }
-}`
-
 export const CUSTOMER_ADDRESS_DELETE = `mutation customerAddressDelete($id: ID!, $customerAccessToken: String!) {
   customerAddressDelete(id: $id, customerAccessToken: $customerAccessToken) {
     customerUserErrors {
@@ -462,6 +452,19 @@ export const CUSTOMER_ADDRESS_DELETE = `mutation customerAddressDelete($id: ID!,
       message
     }
     deletedCustomerAddressId
+  }
+}`
+
+export const CUSTOMER_DEFAULT_ADDRESS_UPDATE = `mutation customerDefaultAddressUpdate($customerAccessToken: String!, $addressId: ID!) {
+  customerDefaultAddressUpdate(customerAccessToken: $customerAccessToken, addressId: $addressId) {
+    customer {
+      id
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
   }
 }`
 
@@ -478,19 +481,10 @@ export const CUSTOMER_CREATE = `mutation customerCreate($input: CustomerCreateIn
   }
 }`
 
-export const CUSTOMER_ACTIVATE = `mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
-  customerActivate(id: $id, input: $input) {
+export const CUSTOMER_ACTIVATE = `mutation customerActivateByUrl($activationUrl: URL!, $password: String!) {
+  customerActivateByUrl(activationUrl: $activationUrl, password: $password) {
     customer {
       id
-      email
-      acceptsMarketing
-      createdAt
-      updatedAt
-      displayName
-      lastName
-      firstName
-      phone
-      tags
     }
     customerAccessToken {
       accessToken
@@ -502,7 +496,8 @@ export const CUSTOMER_ACTIVATE = `mutation customerActivate($id: ID!, $input: Cu
       message
     }
   }
-}`
+}
+`
 
 export const CUSTOMER_RECOVER = `mutation customerRecover($email: String!) {
   customerRecover(email: $email) {
@@ -519,14 +514,6 @@ export const CUSTOMER_RESET = `mutation customerReset($id: ID!, $input: Customer
     customer {
       id
       email
-      acceptsMarketing
-      createdAt
-      updatedAt
-      displayName
-      lastName
-      firstName
-      phone
-      tags
     }
     customerAccessToken {
       accessToken
@@ -539,3 +526,32 @@ export const CUSTOMER_RESET = `mutation customerReset($id: ID!, $input: Customer
     }
   }
 }`
+
+// Queries related to reindexing
+
+export const CLEAR_CONTENT_INDEX = `
+  mutation ClearContentIndex($input: ClearContentIndexInput) {
+    clearContentIndex(input: $input) {
+      count
+      deletedIds
+    }
+  }
+`
+
+export const CLEAR_PRODUCT_INDEX = `
+  mutation ClearProductIndex($input: ClearProductIndexInput) {
+    clearProductIndex(input: $input) {
+      count
+      deletedIds
+    }
+  }
+`
+
+export const CLEAR_COLLECTION_INDEX = `
+  mutation ClearCollectionIndex($input: ClearCollectionIndexInput) {
+    clearCollectionIndex(input: $input) {
+      count
+      deletedIds
+    }
+  }
+`

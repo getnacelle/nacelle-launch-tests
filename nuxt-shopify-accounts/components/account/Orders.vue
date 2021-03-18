@@ -1,10 +1,10 @@
 <template>
   <div>
-    <table v-if="orders.length" class="responsive-table">
+    <table v-if="orders && orders.length">
       <thead>
         <tr>
-          <th scope="col">Order</th>
-          <th scope="col">Date</th>
+          <th scope="col" width="100">Order</th>
+          <th scope="col" width="300">Date</th>
           <th scope="col">Total</th>
         </tr>
       </thead>
@@ -12,19 +12,23 @@
         <tr v-for="order in orders" :key="order.id">
           <th data-label="Order" scope="row">
             <a
-              :href="order.statusUrl"
+              :href="order.order_status_url"
               class="button"
               :aria-label="`Order number ${order.name}`"
-            >{{ order.name }}</a>
+              >{{ order.name }}</a
+            >
           </th>
           <td data-label="Date">
-            <time :datetime="order.processedAt">{{ order.processedAt | formatDate }}</time>
+            <time :datetime="order.processed_at">{{ order.processed_at }}</time>
           </td>
-          <td data-label="Total">{{ order.totalPriceV2.amount }}</td>
+          <td data-label="Total">
+            {{ order.total_price }}
+          </td>
         </tr>
       </tbody>
     </table>
 
+    <div v-else-if="fetchingOrders">Fetching orders...</div>
     <div v-else>
       <h5>You haven't placed any orders yet.</h5>
     </div>
@@ -32,47 +36,11 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState } from 'vuex'
+
 export default {
-  filters: {
-    formatDate(value) {
-      const MM = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ];
-      const DD = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ];
-      const date = new Date(value);
-      const year = date.getFullYear();
-      const month = MM[date.getMonth()];
-      const day = date.getDate();
-      const dayOfWeek = DD[date.getDay()];
-      return `${dayOfWeek}, ${month} ${day}, ${year}`;
-    }
-  },
   computed: {
-    ...mapState("account", [
-      "customerAccessToken",
-      "userErrors",
-      "orders",
-    ]),
-  },
+    ...mapState('account', ['orders', 'fetchingOrders'])
+  }
 }
 </script>
