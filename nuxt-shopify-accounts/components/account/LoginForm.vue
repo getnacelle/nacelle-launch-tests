@@ -48,14 +48,12 @@ export default {
   },
   methods: {
     ...mapActions('account', ['login']),
-    async submitForm() {
+    submitForm() {
       const { email, password } = this.form
 
-      const response = await this.login({ email, password })
-      if (response.multipassUrl) {
-        // window.location.href = response.multipassUrl
+      this.login({ email, password }).then(() =>
         this.$router.replace('/account')
-      }
+      )
     }
   }
 }
