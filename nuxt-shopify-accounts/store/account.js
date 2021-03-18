@@ -56,7 +56,17 @@ async function apiPost(endpoint, { data }) {
   return await fetch(`${serverlessEndpoint}${endpoint}`, {
     method: 'POST',
     body: JSON.stringify(data)
-  }).then((res) => res.json())
+  }).then((res) => {
+    const contentType = res.headers.get('content-type')
+
+    if (contentType.startsWith('text/html')) {
+      return res.text()
+    }
+
+    if (contentType.startsWith('application/json')) {
+      return res.json()
+    }
+  })
 }
 
 export const state = () => ({
@@ -280,11 +290,10 @@ export const actions = {
         return_to: (payload && payload.returnTo) || `${protocol}//${host}`
       }
       try {
-        const response = await fetch(`${serverlessEndpoint}/multipassify`, {
-          method: 'POST',
-          body: { customerData }
-        }).catch((err) => console.error(`error w/multipassify: ${err.message}`))
-        const multipassUrl = await response.text()
+        const multipassUrl = await apiPost('/multipassify', {
+          data: { customerData }
+        })
+
         return { multipassUrl }
       } catch (error) {
         console.warn(`Error while fetching Multipass URL:\n${error}`)
