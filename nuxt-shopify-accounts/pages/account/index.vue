@@ -41,13 +41,6 @@ export default {
   asyncData({ store }) {
     store.commit('account/setErrors', [])
   },
-  async fetch() {
-    if (this.customerAccessToken) {
-      await this.fetchCustomer()
-      await this.fetchOrders()
-      await this.fetchAddresses()
-    }
-  },
   head: {
     script: [{ src: '/account-head.js' }]
   },
@@ -68,10 +61,17 @@ export default {
     }
   },
   async mounted() {
-    const accessToken = this.$cookies.get('customerAccessToken')
+    const accessToken =
+      this.$cookies.get('customerAccessToken') || this.customerAccessToken
+
     await this.readCustomerAccessToken({ accessToken })
-    if (this.customerAccessToken) {
-      await this.$store.dispatch('account/fetchAddresses')
+
+    if (accessToken) {
+      await Promise.all([
+        this.fetchCustomer(),
+        this.fetchOrders(),
+        this.fetchAddresses()
+      ])
     }
   },
   methods: {

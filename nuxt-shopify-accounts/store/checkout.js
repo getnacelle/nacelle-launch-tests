@@ -96,14 +96,6 @@ export const actions = {
       throw new Error(`Checkout Failure:\n\n${checkoutErrors}`)
     }
 
-    // if (rootState.events) {
-    //   dispatch(
-    //     'events/checkoutInit',
-    //     { cart: rootState.cart.lineItems },
-    //     { root: true }
-    //   )
-    // }
-
     commit('setCheckout', checkout)
   },
 
@@ -141,9 +133,18 @@ export const actions = {
     })
   },
 
-  checkoutRedirect({ state }) {
+  async checkoutRedirect({ dispatch, state }) {
     if (process.client) {
-      window.location = state.url
+      const response = await dispatch(
+        'account/multipassLogin',
+        {
+          returnTo: state.url
+        },
+        { root: true }
+      )
+      if (response && response.multipassUrl) {
+        window.location.href = response.multipassUrl
+      }
     }
   }
 }

@@ -12,7 +12,6 @@
       name="utf8"
       value="✓"
     />
-    <h2 class="form-title">{{ formTitle }}</h2>
     <div class="fields">
       <div class="field">
         <label :for="`AddressFirstName_${id}`">First Name</label>
@@ -196,14 +195,6 @@
             @click.prevent="submitForm"
           />
         </div>
-
-        <button
-          name="cancel"
-          class="skip-btn-style link-btn cancel-address"
-          @click.prevent="toggleEdit"
-        >
-          Cancel
-        </button>
       </div>
     </div>
 
@@ -255,9 +246,6 @@ export default {
   computed: {
     ...mapState('account', ['defaultAddress', 'countries', 'provinces']),
 
-    formTitle() {
-      return this.action === 'update' ? 'Edit Address' : 'Add New Address'
-    },
     ctaLabel() {
       return this.action === 'update' ? 'Edit Address' : 'Add New Address'
     },

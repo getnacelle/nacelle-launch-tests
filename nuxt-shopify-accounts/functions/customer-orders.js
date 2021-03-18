@@ -18,7 +18,7 @@ exports.handler = async function (event, context, callback) {
     const response = await axios.get(endpoint, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': process.env.SHOPIFY_REST_TOKEN
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_PASSWORD
       }
     })
 

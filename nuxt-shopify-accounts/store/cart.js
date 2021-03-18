@@ -1,4 +1,4 @@
-import { get, set, del } from 'idb-keyval'
+import { set, del } from 'idb-keyval'
 import { v4 as uuid } from 'uuid'
 
 export const state = () => ({
@@ -112,48 +112,13 @@ export const mutations = {
 }
 
 export const actions = {
-  addLineItem({ state, rootState, commit, dispatch }, payload) {
+  addLineItem({ state, commit, dispatch }, payload) {
     commit('addLineItemMutation', payload)
     dispatch('saveLineItems', state.lineItems)
-
-    // if (rootState.events) {
-    //   dispatch(
-    //     'events/addToCart',
-    //     {
-    //       product: payload,
-    //       cart: state.lineItems
-    //     },
-    //     { root: true }
-    //   )
-    // }
   },
 
-  removeLineItem({ state, rootState, dispatch, commit }, payload) {
-    // if (rootState.events) {
-    //   const lineItem = state.lineItems.find(
-    //     (item) => item.variant.id === payload
-    //   )
-    //   dispatch(
-    //     'events/removeFromCart',
-    //     {
-    //       product: lineItem,
-    //       cart: state.lineItems
-    //     },
-    //     { root: true }
-    //   )
-    // }
-
+  removeLineItem({ state, dispatch, commit }, payload) {
     commit('removeLineItemMutation', payload)
-    dispatch('saveLineItems', state.lineItems)
-  },
-
-  incrementLineItem({ state, commit, dispatch }, payload) {
-    commit('incrementLineItemMutation', payload)
-    dispatch('saveLineItems', state.lineItems)
-  },
-
-  decrementLineItem({ state, commit, dispatch }, payload) {
-    commit('decrementLineItemMutation', payload)
     dispatch('saveLineItems', state.lineItems)
   },
 
@@ -166,9 +131,22 @@ export const actions = {
     commit('setLineItems', [])
   },
 
-  async initializeCart({ commit }) {
-    const lineItems = await get('line-items')
-    commit('setLineItems', lineItems || [])
+  async initializeCart({ commit, dispatch }) {
+    const allProducts = await this.$nacelle.data.allProducts()
+    const product = allProducts.find((product) => product.availableForSale)
+    const lineItem = {
+      image: product.featuredMedia,
+      title: product.title,
+      variant: product.variants[0],
+      quantity: 1,
+      productId: product.id,
+      handle: product.handle,
+      vendor: product.vendor,
+      tags: product.tags,
+      metafields: product.metafields
+    }
+
+    dispatch('addLineItem', lineItem)
     commit('hideCart')
   }
 }

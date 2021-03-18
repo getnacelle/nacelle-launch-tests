@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 import fetch from 'isomorphic-unfetch'
 
 import {
@@ -28,9 +26,9 @@ import {
 // The strict mode withholds the cookie from any kind of cross-site usage (including inbound links from external sites).
 const sameSite = 'strict'
 
-const myshopifyDomain = process.env.myshopifyDomain
-const shopifyToken = process.env.shopifyToken
-const serverlessEndpoint = process.env.serverlessEndpoint
+const myshopifyDomain = process.env.MYSHOPIFY_DOMAIN
+const shopifyToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+const serverlessEndpoint = process.env.SERVERLESS_ENDPOINT
 
 // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
 const secure = process.env.NODE_ENV !== 'development'
@@ -52,6 +50,13 @@ async function accountClientPost(postData) {
     body
   })
   return response.json()
+}
+
+async function apiPost(endpoint, { data }) {
+  return await fetch(`${serverlessEndpoint}${endpoint}`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }).then((res) => res.json())
 }
 
 export const state = () => ({
@@ -272,15 +277,13 @@ export const actions = {
       // multipass login
       const customerData = {
         ...state.customer,
-        return_to:
-          (payload && payload.returnTo) || `${protocol}//${host}/account`
+        return_to: (payload && payload.returnTo) || `${protocol}//${host}`
       }
       try {
-        const body = JSON.stringify(customerData)
         const response = await fetch(`${serverlessEndpoint}/multipassify`, {
           method: 'POST',
-          body
-        })
+          body: { customerData }
+        }).catch((err) => console.error(`error w/multipassify: ${err.message}`))
         const multipassUrl = await response.text()
         return { multipassUrl }
       } catch (error) {
@@ -304,15 +307,14 @@ export const actions = {
       if (customerAccessToken) {
         await dispatch('updateCustomerAccessToken', customerAccessToken)
         await dispatch('fetchCustomer')
-
         commit('setLoginStatus', 'loggedIn')
-        return await dispatch('multipassLogin')
+      } else {
+        commit('setErrors', userErrors)
+        commit('setLoginStatus', 'loggedOut')
       }
-
-      commit('setErrors', userErrors)
-      commit('setLoginStatus', 'loggedOut')
     } catch (error) {
       commit('setLoginStatus', 'loggedOut')
+
       throw error
     }
   },
@@ -337,19 +339,17 @@ export const actions = {
 
   async fetchOrders({ state, dispatch, commit }, payload) {
     try {
+      commit('setFetchingOrders', true)
+
       if (!state.customer || !state.customer.id) {
         await dispatch('fetchCustomer')
       }
 
-      commit('setFetchingOrders', true)
-      const ordersResponse = await axios.post(
-        `${serverlessEndpoint}/customer-orders`,
-        {
-          customerID: state.customer.id
-        }
-      )
-      const orders = ordersResponse.data
-      commit('setOrders', orders)
+      const ordersResponse = await apiPost('/customer-orders', {
+        data: { customerID: state.customer.id }
+      })
+
+      commit('setOrders', ordersResponse)
       commit('setFetchingOrders', false)
     } catch (error) {
       console.error(error)
@@ -364,26 +364,19 @@ export const actions = {
       }
 
       commit('setFetchingOrders', true)
-      const transactionsResponse = await axios.post(
-        `${serverlessEndpoint}/customer-transactions`,
-        {
-          orderID
-        }
-      )
-      const allTransactions = transactionsResponse.data
+      const transactionsResponse = await apiPost('/customer-transactions', {
+        data: { orderID }
+      })
 
-      const transactionIDs = allTransactions.map(
+      const transactionIDs = transactionsResponse.map(
         (transaction) => transaction.id
       )
 
       const transactions = Promise.all(
         transactionIDs.map((transactionID) =>
-          axios
-            .post(`${serverlessEndpoint}/customer-transaction`, {
-              orderID,
-              transactionID
-            })
-            .then((res) => res.data)
+          apiPost('/customer-transaction', {
+            data: { orderID, transactionID }
+          })
         )
       )
 
@@ -612,11 +605,10 @@ export const actions = {
   async fetchCountries({ state, commit }) {
     if (!state.countries.length) {
       try {
-        const countryResponse = await axios.post(
-          `${serverlessEndpoint}/countries`
-        )
+        const countryResponse = await apiPost('/countries')
+
         if (countryResponse) {
-          commit('addCountries', countryResponse.data)
+          commit('addCountries', countryResponse)
         }
       } catch (error) {
         console.error(error)
@@ -627,14 +619,11 @@ export const actions = {
 
   async fetchProvince({ commit }, { countryShortName }) {
     try {
-      const provinceResponse = await axios.post(
-        `${serverlessEndpoint}/provinces`,
-        {
-          countryShortName
-        }
-      )
+      const provinceResponse = await apiPost('/provinces', {
+        data: { countryShortName }
+      })
       if (provinceResponse) {
-        commit('setProvinces', provinceResponse.data)
+        commit('setProvinces', provinceResponse)
       }
     } catch (error) {
       console.error(error)

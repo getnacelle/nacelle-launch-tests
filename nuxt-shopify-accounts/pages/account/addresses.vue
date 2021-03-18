@@ -14,7 +14,7 @@
 
     <div>
       <template v-if="!addressesLoaded"> loading </template>
-      <template v-else-if="addresses.length">
+      <template v-else-if="addresses && Array.isArray(addresses)">
         <template v-if="isEditing">
           <address-form
             :is-editing.sync="isEditing"
