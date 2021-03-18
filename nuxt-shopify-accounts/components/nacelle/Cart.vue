@@ -9,15 +9,11 @@
         <p>
           Price:
           {{
-            new Intl.NumberFormat(
-              typeof window !== 'undefined'
-                ? window.navigator.language
-                : 'en-US',
-              {
-                style: 'currency',
-                currency: item.variant.priceCurrency
-              }
-            ).format(item.variant.price * item.quantity)
+            formatPrice({
+              price: item.variant.price,
+              currency: item.variant.priceCurrency,
+              quantity: item.quantity
+            })
           }}
         </p>
       </article>
@@ -43,6 +39,16 @@ export default {
     ...mapMutations('cart', ['showCart', 'hideCart']),
     handleClose() {
       this.hideCart()
+    },
+    formatPrice({ price, currency, quantity }) {
+      if (process.client) {
+        return new Intl.NumberFormat(window.navigator.language, {
+          style: 'currency',
+          currency
+        }).format(price * quantity)
+      }
+
+      return `${price} ${currency}`
     }
   }
 }
