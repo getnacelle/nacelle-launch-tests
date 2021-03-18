@@ -157,7 +157,7 @@ When testing your serverless functions locally make sure to use the respective p
 | [gql/\*][dirgql]                             | exports GraphQl queries and related utility functions.                    |
 | [middleware/\*][dirmid]                      | SPA style route guards. Included on certain pages                         |
 | [pages/account/\*][dirpg]                    | Account Page Templates                                                    |
-| [plugins/authOnLoad.js][dirmid]              | Router on ready plugin for auth middleware                                |
+| [plugins/authOnLoad.js][dirplu]              | Router on ready plugin for auth middleware                                |
 | [static/account-head.js][dirah]              | On page load guard clause for better UX                                   |
 | [static/email-referrer-head-check.js][dirrh] | On page load guard clause for better UX when being redirected from emails |
 | [store/account.js][dirst]                    | Account related Actions and Mutations                                     |
@@ -275,6 +275,7 @@ GOOGLE_CLIENT_SECRET="123423453456"
 
 [dirgql]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/gql
 [dirmid]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/middleware
+[dirplu]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/plugins/authOnLoad.js
 [dirpg]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/pages/account
 [dirst]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/store/account.js
 [dirah]: https://github.com/getnacelle/nacelle-launch-tests/tree/master/nuxt-shopify-accounts/static/account-head.js
