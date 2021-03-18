@@ -1,4 +1,4 @@
-import { keys, del } from 'idb-keyval'
+import { get, set, keys, del, clear as idbClear } from 'idb-keyval'
 
 export const state = () => ({
   collectionLimit: 12,
@@ -18,6 +18,16 @@ export const mutations = {
 
 export const actions = {
   async nuxtClientInit(ctx, context) {
+    const projectId = await get('project-id').then(
+      (id) => id && window.atob(id)
+    )
+
+    if (projectId && projectId !== this.$nacelle.client.id) {
+      await idbClear()
+    }
+
+    set('project-id', window.btoa(this.$nacelle.client.id))
+
     await this.$nacelle.nacelleNuxtServerInit(ctx, context)
   },
   async nuxtServerInit(ctx, context) {
