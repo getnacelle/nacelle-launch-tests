@@ -1,10 +1,8 @@
 <template>
-  <div class="order-wrapper">
+  <div>
     <client-only>
       <div v-if="order.name">
-        <h2 class="section-header no-border has-text-left mb-3">
-          Order {{ order.name }}
-        </h2>
+        <h2 class="no-border has-text-left mb-3">Order {{ order.name }}</h2>
 
         <section class="columns">
           <div class="column is-two-thirds">

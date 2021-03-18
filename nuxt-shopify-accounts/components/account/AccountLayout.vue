@@ -1,6 +1,6 @@
 <template>
   <section class="section has-text-centered">
-    <div class="account-layout container">
+    <div class="container">
       <slot />
     </div>
   </section>
