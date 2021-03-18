@@ -2,6 +2,25 @@
   <transition name="slide">
     <div v-if="cartVisible" class="flyout">
       <cart-flyout-header @close="handleClose" />
+      <article v-for="item in lineItems" :key="item.id">
+        <h2>{{ item.title }}</h2>
+        <img :src="item.image.src" :alt="item.image.altText" />
+        <p>Qty: {{ item.quantity }}</p>
+        <p>
+          Price:
+          {{
+            new Intl.NumberFormat(
+              typeof window !== 'undefined'
+                ? window.navigator.language
+                : 'en-US',
+              {
+                style: 'currency',
+                currency: item.variant.priceCurrency
+              }
+            ).format(item.variant.price * item.quantity)
+          }}
+        </p>
+      </article>
       <cart-flyout-checkout-button />
     </div>
   </transition>
