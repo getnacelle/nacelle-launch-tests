@@ -1,16 +1,16 @@
 export const transformEdges = (object, field) => {
   if (field == null) {
-    return object.edges.map(edge => {
+    return object.edges.map((edge) => {
       return edge.node
     })
   } else {
-    return object.edges.map(edge => {
+    return object.edges.map((edge) => {
       return edge.node[field]
     })
   }
 }
 
-export const transformOrder = order => {
+export const transformOrder = (order) => {
   const { discountApplications, lineItems, ...rest } = order
   const transformedOrder = {
     discountApplications: discountApplications
@@ -23,7 +23,7 @@ export const transformOrder = order => {
   return transformedOrder
 }
 
-export const transformOrders = orders => {
+export const transformOrders = (orders) => {
   const edges = transformEdges(orders)
   const transformedOrders = edges.map(transformOrder)
 
