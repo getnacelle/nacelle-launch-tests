@@ -1,11 +1,11 @@
 require('../utils/passport')
-const axios = require('axios')
+const fetch = require('isomorphic-unfetch')
 const Multipassify = require('multipassify')
 const {
   COOKIE_SECURE,
   SHOPIFY_MULTIPASS_SECRET,
   MYSHOPIFY_DOMAIN,
-  SHOPIFY_GRAPHQL_TOKEN
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN
 } = require('../utils/secrets')
 
 const CUSTOMER_ACCESS_TOKEN_CREATE_WITH_MULTIPASS = `mutation customerAccessTokenCreateWithMultipass($multipassToken: String!) {
@@ -24,15 +24,17 @@ const CUSTOMER_ACCESS_TOKEN_CREATE_WITH_MULTIPASS = `mutation customerAccessToke
 
 const multipassify = new Multipassify(SHOPIFY_MULTIPASS_SECRET)
 
-const accountClient = axios.create({
-  baseURL: `https://${MYSHOPIFY_DOMAIN}/api/2020-04/graphql`,
-  timeout: 5000,
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    'X-Shopify-Storefront-Access-Token': SHOPIFY_GRAPHQL_TOKEN
-  }
-})
+async function accountClient(data) {
+  return await fetch(`https://${MYSHOPIFY_DOMAIN}/api/2020-04/graphql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN
+    },
+    body: JSON.stringify(data)
+  }).then((res) => res.json())
+}
 
 const multipassLogin = (customer, returnTo) => {
   const customerData = {
@@ -47,27 +49,23 @@ const multipassLogin = (customer, returnTo) => {
   }
 }
 
-const exchangeMultipassForAccessToken = async multipassToken => {
-  // eslint-disable-next-line no-useless-catch
-  try {
-    const variables = { multipassToken }
-    const query = CUSTOMER_ACCESS_TOKEN_CREATE_WITH_MULTIPASS
-    const response = await accountClient.post(null, { query, variables })
-    const { data, errors } = response.data
-    if (errors && errors.length) {
-      throw new Error(JSON.stringify(errors))
-    }
-    const {
-      customerAccessToken,
-      customerUserErrors
-    } = data.customerAccessTokenCreateWithMultipass
-    if (customerAccessToken) {
-      return customerAccessToken
-    } else {
-      throw new Error(customerUserErrors)
-    }
-  } catch (error) {
-    throw error
+const exchangeMultipassForAccessToken = async (multipassToken) => {
+  const variables = { multipassToken }
+  const query = CUSTOMER_ACCESS_TOKEN_CREATE_WITH_MULTIPASS
+  const response = await accountClient({ query, variables }).catch((err) => {
+    throw new Error(err)
+  })
+  const { data, errors } = response && response.data
+  if (errors && errors.length) {
+    throw new Error(JSON.stringify(errors))
+  }
+  const { customerAccessToken, customerUserErrors } =
+    data && data.customerAccessTokenCreateWithMultipass
+
+  if (customerAccessToken) {
+    return customerAccessToken
+  } else {
+    throw new Error(customerUserErrors)
   }
 }
 
@@ -96,7 +94,7 @@ const handleCallback = async (req, res) => {
         .cookie('ncl', JSON.stringify(payload), { secure: COOKIE_SECURE })
         .redirect(multipassUrl)
     } else {
-      throw new Error('Invalid returnTo url')
+      throw new TypeError('Invalid returnTo url')
     }
   } catch (error) {
     res.status(500).json({
@@ -107,14 +105,14 @@ const handleCallback = async (req, res) => {
 }
 
 // Needed for Dynamic Routing
-const preservedState = req => {
+const preservedState = (req) => {
   const { returnTo } = req.query
   return returnTo
     ? Buffer.from(JSON.stringify({ returnTo })).toString('base64')
     : undefined
 }
 
-const getStatus = async (req, res) => {
+const getStatus = (req, res) => {
   try {
     res.json(req.user)
   } catch (error) {

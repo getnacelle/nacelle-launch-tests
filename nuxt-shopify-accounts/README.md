@@ -60,13 +60,13 @@ If you want to have a better understanding of the queries and mutations that we 
 ```sh
 SHOPIFY_MULTIPASS_SECRET="15b40af008bfad7b5dfbf36c389abf70"
 MYSHOPIFY_DOMAIN="nacelle-accounts.myshopify.com"
-SHOPIFY_GRAPHQL_TOKEN="789bfb8d1376a93439b27953b60ac357"
+SHOPIFY_STOREFRONT_ACCESS_TOKEN="789bfb8d1376a93439b27953b60ac357"
 SHOPIFY_CUSTOM_DOMAIN="nacelle.commercejam.com"
 ```
 
 2. We'll need to expose these to various parts of our application through our `nuxt.config.js`:
 
-Note that `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
+Note that `SHOPIFY_STOREFRONT_ACCESS_TOKEN` is your store's Storefront API Token.
 
 ```js
 {
@@ -74,14 +74,14 @@ Note that `SHOPIFY_GRAPHQL_TOKEN` is your store's Storefront API Token.
    ...,
     shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   },
   nacelle: {
     ...,
     customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
-    shopifyToken: process.env.SHOPIFY_GRAPHQL_TOKEN,
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   }
 }
 ```
@@ -122,7 +122,7 @@ To use Multipass and the address form for account pages this project relies on t
 - [multipassify](https://github.com/beaucoo/multipassify)
 - [countrycitystatejson](https://github.com/khkwan0/countryCityStateJson)
 
-Both of these packages are *large* and can add a lot to your client bundle, so using them only in serverless functions keeps the client a little more lightweight. But if you want another reason, it also keeps your Multipass secret outside of client code.
+Both of these packages are _large_ and can add a lot to your client bundle, so using them only in serverless functions keeps the client a little more lightweight. But if you want another reason, it also keeps your Multipass secret outside of client code.
 
 This project includes two different folders for serverless functions:
 
@@ -149,19 +149,18 @@ When testing your serverless functions locally make sure to use the respective p
     - `sudo lsof -i :3000` find the PID that is running (ie. 12583)
     - `kill -9 12583` this will stop the process from running.
 
-
 ## Other Code Additions
 
-| Dir                                 | Description                                                       |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| [components/account/*][dirac]       | Account components                                                |
-| [gql/\*][dirgql]                    | exports GraphQl queries and related utility functions.            |
-| [middleware/\*][dirmid]             | SPA style route guards. Included on certain pages                 |
-| [pages/account/\*][dirpg]           | Account Page Templates                                            |
-| [plugins/authOnLoad.js][dirmid]     | Router on ready plugin for auth middleware                        |
-| [static/account-head.js][dirah]     | On page load guard clause for better UX                           |
-| [static/email-referrer-head-check.js][dirrh]       | On page load guard clause for better UX when being redirected from emails                          |
-| [store/account.js][dirst]           | Account related Actions and Mutations                             |
+| Dir                                          | Description                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| [components/account/\*][dirac]               | Account components                                                        |
+| [gql/\*][dirgql]                             | exports GraphQl queries and related utility functions.                    |
+| [middleware/\*][dirmid]                      | SPA style route guards. Included on certain pages                         |
+| [pages/account/\*][dirpg]                    | Account Page Templates                                                    |
+| [plugins/authOnLoad.js][dirmid]              | Router on ready plugin for auth middleware                                |
+| [static/account-head.js][dirah]              | On page load guard clause for better UX                                   |
+| [static/email-referrer-head-check.js][dirrh] | On page load guard clause for better UX when being redirected from emails |
+| [store/account.js][dirst]                    | Account related Actions and Mutations                                     |
 
 ## File Modifications
 
@@ -175,15 +174,15 @@ When testing your serverless functions locally make sure to use the respective p
 
 1. Password Recovery and Reset
 
-    - During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
-    - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
-    - The url path will appear like:
+   - During the password recovery flow, an email is sent to the customer with a link to the reset their password. We'll want to make sure to edit this link to point towards our app instead of the Shopify hosted domain.
+   - We are using using query parameters vs url parameters since we are using static site generation and can't handle dynamic routes.
+   - The url path will appear like:
 
-      - `/account/reset?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
+     - `/account/reset?id=2864558604347&token=a000add20a69bb53954976edd74870a4-1581119357`
 
-      versus:
+     versus:
 
-      - `/account/reset/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
+     - `/account/reset/2864558604347/a000add20a69bb53954976edd74870a4-1581119357`
 
 ```liquid
 {% comment %}
@@ -268,7 +267,8 @@ GOOGLE_CLIENT_SECRET="123423453456"
 ## Social App Setup
 
 1. In order to use Facebook authentication with `passport-facebook`, you must first create an app at [Facebook Developers](https://developers.facebook.com/). When created, an app is assigned an App ID and App Secret. Your application must also implement a redirect URL, to which Facebook will redirect users after they have approved access for your application. (ie. `https://<your-domain>/api/auth/facebook/callback`)
-    - Note facebook assumes to whitelist a localhost callback, so explicitly adding one is not necessary while the app status is set to "In Development"
+
+   - Note facebook assumes to whitelist a localhost callback, so explicitly adding one is not necessary while the app status is set to "In Development"
 
 2. Before using `passport-google-oauth20`, you must register an application with Google. If you have not already done so, a new project can be created in the [Google Developers Console](https://console.developers.google.com/). Your application will be issued a client ID and client secret, which need to be provided to the strategy. You will also need to configure a redirect URI which matches the route in your application. (ie. `https://<your-domain>/api/auth/google/callback` )
-    - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)
+   - Note google will require a callback for development and production (ie. `http://localhost:8888/.netlify/functions/auth/google/callback`)
