@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table v-if="orders.length">
+    <table v-if="orders && orders.length">
       <thead>
         <tr>
           <th scope="col" width="100">Order</th>
