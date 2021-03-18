@@ -21,11 +21,14 @@
           <td data-label="Date">
             <time :datetime="order.processedAt">{{ order.processedAt }}</time>
           </td>
-          <td data-label="Total">{{ order.totalPriceV2.amount }}</td>
+          <td data-label="Total">
+            {{ order.totalPriceV2 && order.totalPriceV2.amount }}
+          </td>
         </tr>
       </tbody>
     </table>
 
+    <div v-else-if="fetchingOrders">Fetching orders...</div>
     <div v-else>
       <h5>You haven't placed any orders yet.</h5>
     </div>
@@ -37,7 +40,7 @@ import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('account', ['orders'])
+    ...mapState('account', ['orders', 'fetchingOrders'])
   }
 }
 </script>
