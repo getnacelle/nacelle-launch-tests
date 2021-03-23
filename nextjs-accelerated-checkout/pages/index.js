@@ -5,7 +5,6 @@ import { ProductCard } from "~/components";
 export default function Home({ products }) {
   return (
     <div className="app">
-      <h1>Shopify Accelerated Checkout Demo</h1>
       <div className="card-container">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

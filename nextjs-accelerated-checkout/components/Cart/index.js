@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { useCheckout, useCart } from "@nacelle/react-hooks";
 import { formatCurrency } from "@nacelle/react-dev-utils";
 
 import useDetectDevice from "hooks/useDetectDevice";
+import styles from "./Cart.module.css";
 
 const checkoutCredentials = {
   nacelleSpaceId: process.env.NACELLE_SPACE_ID,
@@ -27,17 +27,17 @@ const Cart = () => {
   }, [checkoutData]);
 
   return (
-    <div>
+    <div className={styles.cart}>
       <header>
+        <h4>SubTotal:</h4>
+        <div>{calculateSubTotal(cart)}</div>
+        <div className={styles.checkout}>
+          <button onClick={checkout} disabled={!cart.length || isCheckingOut}>
+            {isCheckingOut ? "Processing Cart..." : "Checkout (Regular)"}
+          </button>
+        </div>
+
         <h3>Your Cart</h3>
-        <button onClick={cartActions.toggleCart}>
-          <Image
-            alt="cross for closing the cart"
-            src="https://nacelle-assets.s3-us-west-2.amazonaws.com/default-close-icon.svg"
-            width="15"
-            height="25"
-          />
-        </button>
       </header>
       <section>
         {cart.map((item) => (
@@ -49,15 +49,6 @@ const Cart = () => {
           />
         ))}
       </section>
-      <footer>
-        <h4>
-          <span>SubTotal:</span>
-          <span>{calculateSubTotal(cart)}</span>
-        </h4>
-      </footer>
-      <button onClick={checkout} disabled={!cart.length || isCheckingOut}>
-        {isCheckingOut ? "Processing Cart..." : "Checkout"}
-      </button>
     </div>
   );
 };
@@ -68,21 +59,17 @@ const CartItem = ({ item, cartActions, isMobile }) => {
   const removeItemFromCart = () => cartActions.removeFromCart(item);
 
   return (
-    <div>
-      <Link href={`/products/${item.handle}`}>
-        <a>
-          <Image src={item.image.thumbnailSrc} width="100" height="70" />
-        </a>
-      </Link>
+    <div className={styles.item}>
+      <Image src={item.image.thumbnailSrc} width="100" height="70" />
 
-      <div css={{ width: "100%" }}>
-        <div>
+      <div>
+        {/* <div>
           <h4>{item.title}</h4>
-          {isMobile && <span>{formatPrice(item.price)}</span>}
-        </div>
+          <span className={styles.price}>{formatPrice(item.price)}</span>
+        </div> */}
 
         <div>
-          {!isMobile && <span>{formatPrice(item.price)}</span>}
+          <div className={styles.price}>{formatPrice(item.price)}</div>
           <button onClick={removeItemFromCart}>Remove</button>
         </div>
       </div>
