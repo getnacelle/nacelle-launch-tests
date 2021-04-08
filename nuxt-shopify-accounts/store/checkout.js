@@ -41,8 +41,10 @@ export const actions = {
   async initializeCheckout({ commit, dispatch }) {
     const id = await get('checkout-id')
     const url = await get('checkout-url')
+
     if (id && url) {
       const { completed } = await this.$nacelle.checkout.get({ id, url })
+
       if (completed) {
         await dispatch('resetCheckout')
       } else {
@@ -60,11 +62,14 @@ export const actions = {
     if (isFunc(beforeCreate)) {
       await beforeCreate()
     }
+
     await dispatch('checkoutCreate')
     await dispatch('addCheckoutParams')
+
     if (isFunc(beforeRedirect)) {
       await beforeRedirect()
     }
+
     dispatch('checkoutRedirect')
   },
 
@@ -82,6 +87,7 @@ export const actions = {
         checkoutId
       })
       .catch((err) => handleCheckoutError(err))
+
     if (checkout && checkout.completed) {
       checkout = await this.$nacelle.checkout
         .process({
@@ -133,17 +139,24 @@ export const actions = {
     })
   },
 
-  async checkoutRedirect({ dispatch, state }) {
+  async checkoutRedirect({ dispatch, state, rootState }) {
+    const { customer } = rootState.account
+
     if (process.client) {
-      const response = await dispatch(
-        'account/multipassLogin',
-        {
-          returnTo: state.url
-        },
-        { root: true }
-      )
-      if (response && response.multipassUrl) {
-        window.location.href = response.multipassUrl
+      if (customer && customer.email) {
+        const response = await dispatch(
+          'account/multipassLogin',
+          {
+            returnTo: state.url
+          },
+          { root: true }
+        )
+
+        if (response && response.multipassUrl) {
+          window.location.href = response.multipassUrl
+        }
+      } else {
+        window.location.href = state.url
       }
     }
   }
