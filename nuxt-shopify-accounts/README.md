@@ -71,13 +71,12 @@ Note that `SHOPIFY_STOREFRONT_ACCESS_TOKEN` is your store's Storefront API Token
 ```js
 {
    env: {
-   ...,
-    shopifyMultipassSecret: process.env.SHOPIFY_MULTIPASS_SECRET,
+    // ...other environment variables,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
   },
   nacelle: {
-    ...,
+    // ...other Nacelle config,
     customEndpoint: process.env.NACELLE_CUSTOM_ENDPOINT,
     myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
     shopifyCustomDomain: process.env.SHOPIFY_CUSTOM_DOMAIN,
