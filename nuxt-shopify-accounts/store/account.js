@@ -282,7 +282,7 @@ export const actions = {
   },
 
   async multipassLogin({ state }, payload) {
-    if (process.browser) {
+    if (process.browser && state.customer && state.customer.email) {
       const { host, protocol } = window.location
       // multipass login
       const customerData = {
