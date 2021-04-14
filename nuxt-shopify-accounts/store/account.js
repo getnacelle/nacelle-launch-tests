@@ -29,9 +29,12 @@ const sameSite = 'strict'
 // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
 const secure = process.env.NODE_ENV !== 'development'
 
-async function accountClientPost(postData) {
-  const { myshopifyDomain, shopifyToken } = this.$config
-
+async function accountClientPost({
+  query,
+  variables,
+  myshopifyDomain,
+  shopifyToken
+}) {
   if (!myshopifyDomain) {
     throw new Error(`Missing 'myshopifyDomain' in publicRuntimeConfig`)
   }
@@ -39,15 +42,13 @@ async function accountClientPost(postData) {
   if (!shopifyToken) {
     throw new Error(`Missing 'shopifyToken' in publicRuntimeConfig`)
   }
-
   const url = `https://${myshopifyDomain}/api/2020-04/graphql`
-  const body = JSON.stringify(postData)
+  const body = JSON.stringify({ query, variables })
 
   // Default options are marked with *
   const response = await fetch(url, {
     method: 'POST',
     cache: 'no-cache',
-    // credentials: 'same-origin', // include, *same-origin, omit
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -59,13 +60,7 @@ async function accountClientPost(postData) {
 }
 
 async function apiPost(endpoint, { data }) {
-  const { serverlessEndpoint } = this.$config
-
-  if (!serverlessEndpoint) {
-    throw new Error(`Missing 'serverlessEndpoint' in publicRuntimeConfig`)
-  }
-
-  return await fetch(`${serverlessEndpoint}${endpoint}`, {
+  return await fetch(endpoint, {
     method: 'POST',
     body: JSON.stringify(data)
   }).then((res) => {
@@ -214,7 +209,13 @@ export const actions = {
     try {
       const variables = { customerAccessToken: payload }
       const query = CUSTOMER_ACCESS_TOKEN_RENEW
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const {
         customerAccessToken,
         userErrors
@@ -239,7 +240,13 @@ export const actions = {
         customerAccessToken: state.customerAccessToken.accessToken
       }
       const query = GET_CUSTOMER
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { customer, userErrors } = response.data
 
       if (customer) {
@@ -267,7 +274,13 @@ export const actions = {
         customer: { firstName, lastName, email, password, acceptsMarketing }
       }
       const query = CUSTOMER_UPDATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -302,9 +315,12 @@ export const actions = {
         return_to: (payload && payload.returnTo) || `${protocol}//${host}`
       }
       try {
-        const multipassUrl = await apiPost('/multipassify', {
-          data: { customerData }
-        })
+        const multipassUrl = await apiPost(
+          this.$config.serverlessEndpoint + '/multipassify',
+          {
+            data: { customerData }
+          }
+        )
 
         return { multipassUrl }
       } catch (error) {
@@ -319,7 +335,13 @@ export const actions = {
       const query = CUSTOMER_ACCESS_TOKEN_CREATE
 
       commit('setLoginStatus', 'loggingIn')
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const {
         customerAccessToken,
         userErrors
@@ -346,7 +368,13 @@ export const actions = {
       getCookie('customerAccessToken')
     const variables = { customerAccessToken: accessToken }
     const query = CUSTOMER_ACCESS_TOKEN_DELETE
-    const response = await accountClientPost({ query, variables })
+    const { myshopifyDomain, shopifyToken } = this.$config
+    const response = await accountClientPost({
+      query,
+      variables,
+      myshopifyDomain,
+      shopifyToken
+    })
     const {
       deletedAccessToken,
       userErrors
@@ -366,9 +394,12 @@ export const actions = {
         await dispatch('fetchCustomer')
       }
 
-      const ordersResponse = await apiPost('/customer-orders', {
-        data: { customerID: state.customer.id }
-      })
+      const ordersResponse = await apiPost(
+        this.$config.serverlessEndpoint + '/customer-orders',
+        {
+          data: { customerID: state.customer.id }
+        }
+      )
 
       commit('setOrders', ordersResponse)
       commit('setFetchingOrders', false)
@@ -385,9 +416,13 @@ export const actions = {
       }
 
       commit('setFetchingOrders', true)
-      const transactionsResponse = await apiPost('/customer-transactions', {
-        data: { orderID }
-      })
+
+      const transactionsResponse = await apiPost(
+        this.$config.serverlessEndpoint + '/customer-transactions',
+        {
+          data: { orderID }
+        }
+      )
 
       const transactionIDs = transactionsResponse.map(
         (transaction) => transaction.id
@@ -395,7 +430,7 @@ export const actions = {
 
       const transactions = Promise.all(
         transactionIDs.map((transactionID) =>
-          apiPost('/customer-transaction', {
+          apiPost(this.$config.serverlessEndpoint + '/customer-transaction', {
             data: { orderID, transactionID }
           })
         )
@@ -415,7 +450,13 @@ export const actions = {
         customerAccessToken: state.customerAccessToken.accessToken
       }
       const query = GET_CUSTOMER_ADDRESSES
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { customer, userErrors } = response.data
       if (customer) {
         commit('setAddresses', transformEdges(customer.addresses))
@@ -435,7 +476,13 @@ export const actions = {
         address
       }
       const query = CUSTOMER_ADDRESS_CREATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -459,7 +506,13 @@ export const actions = {
         id
       }
       const query = CUSTOMER_ADDRESS_UPDATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -484,7 +537,13 @@ export const actions = {
         id
       }
       const query = CUSTOMER_ADDRESS_DELETE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -510,7 +569,13 @@ export const actions = {
         addressId: address.id
       }
       const query = CUSTOMER_DEFAULT_ADDRESS_UPDATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -529,7 +594,13 @@ export const actions = {
     try {
       const variables = { input: { firstName, lastName, email, password } }
       const query = CUSTOMER_CREATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -548,7 +619,13 @@ export const actions = {
     try {
       const variables = { email }
       const query = CUSTOMER_RECOVER
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         commit('setErrors', errors)
@@ -569,7 +646,13 @@ export const actions = {
       )
       const variables = { id, input: { password, resetToken } }
       const query = CUSTOMER_RESET
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -587,7 +670,13 @@ export const actions = {
     try {
       const variables = { password, activationUrl }
       const query = CUSTOMER_ACTIVATE
-      const response = await accountClientPost({ query, variables })
+      const { myshopifyDomain, shopifyToken } = this.$config
+      const response = await accountClientPost({
+        query,
+        variables,
+        myshopifyDomain,
+        shopifyToken
+      })
       const { data, errors } = response
       if (errors && errors.length) {
         throw new Error(JSON.stringify(errors))
@@ -626,7 +715,9 @@ export const actions = {
   async fetchCountries({ state, commit }) {
     if (!state.countries.length) {
       try {
-        const countryResponse = await apiPost('/countries')
+        const countryResponse = await apiPost(
+          this.$config.serverlessEndpoint + '/countries'
+        )
 
         if (countryResponse) {
           commit('addCountries', countryResponse)
@@ -640,9 +731,12 @@ export const actions = {
 
   async fetchProvince({ commit }, { countryShortName }) {
     try {
-      const provinceResponse = await apiPost('/provinces', {
-        data: { countryShortName }
-      })
+      const provinceResponse = await apiPost(
+        this.$config.serverlessEndpoint + '/provinces',
+        {
+          data: { countryShortName }
+        }
+      )
       if (provinceResponse) {
         commit('setProvinces', provinceResponse)
       }
