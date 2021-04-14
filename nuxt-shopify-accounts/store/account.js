@@ -30,17 +30,14 @@ const sameSite = 'strict'
 const secure = process.env.NODE_ENV !== 'development'
 
 async function accountClientPost(postData) {
-  const myshopifyDomain = process.env.MYSHOPIFY_DOMAIN
-  const shopifyToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+  const { myshopifyDomain, shopifyToken } = this.$config
 
   if (!myshopifyDomain) {
-    throw new Error(`Function endpoint is missing process.env.MYSHOPIFY_DOMAIN`)
+    throw new Error(`Missing 'myshopifyDomain' in publicRuntimeConfig`)
   }
 
   if (!shopifyToken) {
-    throw new Error(
-      `Function endpoint is missing process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN`
-    )
+    throw new Error(`Missing 'shopifyToken' in publicRuntimeConfig`)
   }
 
   const url = `https://${myshopifyDomain}/api/2020-04/graphql`
@@ -62,12 +59,10 @@ async function accountClientPost(postData) {
 }
 
 async function apiPost(endpoint, { data }) {
-  const serverlessEndpoint = process.env.SERVERLESS_ENDPOINT
+  const { serverlessEndpoint } = this.$config
 
   if (!serverlessEndpoint) {
-    throw new Error(
-      `Function endpoint is missing process.env.SERVERLESS_ENDPOINT`
-    )
+    throw new Error(`Missing 'serverlessEndpoint' in publicRuntimeConfig`)
   }
 
   return await fetch(`${serverlessEndpoint}${endpoint}`, {
