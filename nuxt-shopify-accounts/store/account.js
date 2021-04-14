@@ -26,14 +26,23 @@ import {
 // The strict mode withholds the cookie from any kind of cross-site usage (including inbound links from external sites).
 const sameSite = 'strict'
 
-const myshopifyDomain = process.env.MYSHOPIFY_DOMAIN
-const shopifyToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-const serverlessEndpoint = process.env.SERVERLESS_ENDPOINT
-
 // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
 const secure = process.env.NODE_ENV !== 'development'
 
 async function accountClientPost(postData) {
+  const myshopifyDomain = process.env.MYSHOPIFY_DOMAIN
+  const shopifyToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+
+  if (!myshopifyDomain) {
+    throw new Error(`Function endpoint is missing process.env.MYSHOPIFY_DOMAIN`)
+  }
+
+  if (!shopifyToken) {
+    throw new Error(
+      `Function endpoint is missing process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN`
+    )
+  }
+
   const url = `https://${myshopifyDomain}/api/2020-04/graphql`
   const body = JSON.stringify(postData)
 
@@ -53,6 +62,14 @@ async function accountClientPost(postData) {
 }
 
 async function apiPost(endpoint, { data }) {
+  const serverlessEndpoint = process.env.SERVERLESS_ENDPOINT
+
+  if (!serverlessEndpoint) {
+    throw new Error(
+      `Function endpoint is missing process.env.SERVERLESS_ENDPOINT`
+    )
+  }
+
   return await fetch(`${serverlessEndpoint}${endpoint}`, {
     method: 'POST',
     body: JSON.stringify(data)
