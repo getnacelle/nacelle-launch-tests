@@ -12,7 +12,7 @@
         <tr v-for="order in orders" :key="order.id">
           <th data-label="Order" scope="row">
             <a
-              :href="order.order_status_url"
+              :href="orderStatusUrl(order.order_status_url)"
               class="button"
               :aria-label="`Order number ${order.name}`"
               >{{ order.name }}</a
@@ -41,6 +41,14 @@ import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState('account', ['orders', 'fetchingOrders'])
+  },
+  methods: {
+    orderStatusUrl(url) {
+      const domain = this.$store.state.space.domain
+      const urlArray = url.split('//').pop().split('/')
+      urlArray.shift()
+      return `${domain}${urlArray.join('/')}`
+    }
   }
 }
 </script>

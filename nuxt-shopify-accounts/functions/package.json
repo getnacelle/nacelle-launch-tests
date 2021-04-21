@@ -22,7 +22,6 @@
     "winston": "^3.2.1"
   },
   "main": "auth.js",
-  "devDependencies": {},
   "license": "ISC",
   "description": ""
 }
