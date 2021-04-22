@@ -26,12 +26,6 @@ export default {
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: ['~/components/account', '~/components/nacelle'],
 
-  env: {
-    myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
-    serverlessEndpoint: process.env.SERVERLESS_ENDPOINT,
-    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  },
-
   // Add environment variables to either `publicRuntimeConfig` (exposed to client)
   // or to `privateRuntimeConfig`
   // https://nuxtjs.org/blog/moving-from-nuxtjs-dotenv-to-runtime-config/#introducing-the-nuxtjs-runtime-config
@@ -40,7 +34,10 @@ export default {
     contentAssetStorage: process.env.CONTENT_ASSET_STORAGE || '',
     nacelleId: process.env.NACELLE_SPACE_ID,
     nacelleToken: process.env.NACELLE_GRAPHQL_TOKEN,
-    nacelleEndpoint: 'https://hailfrequency.com/v2/graphql'
+    nacelleEndpoint: 'https://hailfrequency.com/v2/graphql',
+    myshopifyDomain: process.env.MYSHOPIFY_DOMAIN,
+    serverlessEndpoint: process.env.SERVERLESS_ENDPOINT,
+    shopifyToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa

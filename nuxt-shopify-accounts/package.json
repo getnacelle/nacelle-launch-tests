@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "author": "Nacelle",
   "scripts": {
-    "dev": "nuxt",
     "dev:netlify": "NODE_ENV=dev NETLIFY=true netlify dev",
     "dev:vercel": "NODE_ENV=dev VERCEL=true vercel dev",
     "build": "nuxt build",
