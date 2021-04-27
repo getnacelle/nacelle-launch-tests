@@ -111,8 +111,8 @@ export default {
       this.form.resetToken = this.$route.query.token
       this.form.customerId = this.$route.query.id
     }
-    if (this.mode === 'activate') {
-      this.form.activationUrl = this.$route.query.activationUrl
+    if (this.mode === 'activate' && process.client) {
+      this.form.activationUrl = window.location
     }
   },
   methods: {
