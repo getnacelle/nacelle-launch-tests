@@ -16,7 +16,7 @@
   "dependencies": {
     "@nacelle/gatsby-theme-nacelle": "^1.0.8",
     "@nacelle/nacelle-react-hooks": "^1.0.4",
-    "axios": "^0.19.1",
+    "axios": "^0.21.1",
     "babel-plugin-styled-components": "^1.10.6",
     "dotenv": "^8.2.0",
     "gatsby": "^2.19.5",
