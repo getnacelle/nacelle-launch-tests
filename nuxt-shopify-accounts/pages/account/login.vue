@@ -3,10 +3,10 @@
     <h1>Login</h1>
     <login-form />
     <!-- Social Login -->
-    <!-- <nacelle-passport
+    <nacelle-passport
       :myshopify-domain="$nacelle.myshopifyDomain"
       title="or Log in via"
-    /> -->
+    />
 
     <div class="my-4">
       <nuxt-link :to="`/account/register#form`"> Create account </nuxt-link>
