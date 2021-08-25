@@ -8,7 +8,7 @@ import countrycitystatejson from 'countrycitystatejson'
  * @param {Object} res - HTTP response object (see https://vercel.com/docs/runtimes#official-runtimes/node-js/node-js-request-and-response-objects/node-js-helpers)
  */
 export default function (req, res) {
-  const { countryShortName } = JSON.parse(req)
+  const { countryShortName } = JSON.parse(req.body)
   try {
     if (!countryShortName) {
       res
