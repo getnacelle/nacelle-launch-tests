@@ -59,10 +59,11 @@ async function accountClientPost({
   return response.json()
 }
 
-async function apiPost(endpoint, { data }) {
+async function apiPost(endpoint, payload) {
+  const body = payload && payload.data ? JSON.stringify(payload.data) : null
   return await fetch(endpoint, {
     method: 'POST',
-    body: JSON.stringify(data)
+    body
   }).then((res) => {
     const contentType = res.headers.get('content-type')
 
